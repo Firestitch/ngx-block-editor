@@ -1,0 +1,146 @@
+.sidebar {
+  width: 285px;
+  font-size: 14px;
+  height: 100%;
+
+  .sidebar-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+
+    &.padding-row {
+      flex-wrap: unset;
+      ::ng-deep {
+        .mat-form-field {
+          width: 20%;
+          min-width: 0;
+        }
+      }
+    }
+
+    &.image-row {
+      margin-bottom: -5px;
+    }
+
+    ::ng-deep {
+      .mat-form-field-prefix,
+      .field-label {
+        color: #a5a5a5;
+        font-size: 11px;
+        margin-right: 2px;
+      }
+
+      .mat-form-field {
+        font-size: 12px;
+      }
+    }
+
+    > *:not(.mat-icon-button):not(fs-file) {
+      margin-right: 11px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .layer-up, .layer-down {
+    ::ng-deep .mat-button-wrapper {
+      position: relative;
+      mat-icon:first-child {
+        position: absolute;
+        transform: rotate(90deg) scale(0.6);
+        top: -6px;
+        color: #fff;
+      }
+    }
+  }
+
+  .layer-down {
+    mat-icon:first-child {
+      transform: rotate(270deg) scale(0.6);
+    }
+  }
+
+  .padding {
+    width: 45px;
+  }
+
+  .line-height,
+  .font-size,
+  .border-width {
+    width: 45px;
+  }
+
+  .shape-radius {
+    width: 50px;
+  }
+
+  .shape-corners {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1px;
+    row-gap: 1px;
+
+    .shape-corner {
+      height: 13px;
+      width: 13px;
+      background-color: #ccc;
+      cursor: pointer;
+
+      &.round {
+        &.shape-corner-top-right {
+          border-top-right-radius: 50%;
+        }
+
+        &.shape-corner-top-left {
+          border-top-left-radius: 50%;
+        }
+
+        &.shape-corner-bottom-left {
+          border-bottom-left-radius: 50%;
+        }
+
+        &.shape-corner-bottom-right {
+          border-bottom-right-radius: 50%;
+        }
+      }
+    }
+  }
+
+  button.toggle-button:not(.selected) mat-icon {
+    color: #ccc;
+  }
+
+  .sidebar-panel {
+    padding: 10px 10px 10px 10px;
+    border-bottom: 1px solid #dadada;
+
+    &.info-panel .sidebar-row {
+      justify-content: space-evenly;
+      .mat-form-field {
+        width: 41px;
+      }
+
+      > {
+        margin: 0;
+      }
+    }
+
+    &.typography-panel {
+      .style-row {
+        margin-bottom: -10px;
+      }
+
+      .align-row {
+        margin-bottom: -5px;
+      }
+    }
+
+    .sidebar-label {
+      font-size: 11px;
+      margin-bottom: 3px;
+      color: #9e9e9e;
+    }
+  }
+}

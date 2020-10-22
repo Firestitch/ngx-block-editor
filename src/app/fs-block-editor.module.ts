@@ -11,11 +11,11 @@ import { FsHtmlEditorModule } from '@firestitch/html-editor';
 import { FsColorPickerModule } from '@firestitch/colorpicker';
 import { FsFileModule } from '@firestitch/file';
 
-import { NgxMoveableModule } from 'ngx-moveable';
-
 import { FsBlockComponent } from './components/block/block.component';
 import { FsBlockEditorComponent } from './components/block-editor/block-editor.component';
 import { FsBlockEditorSidebarPanelDirective } from './directives/block-editor-sidebar-panel.directive';
+import { FsBlockEditorMarginDirective } from './directives/block-editor-margin.directive';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @NgModule({
   imports: [
@@ -30,8 +30,6 @@ import { FsBlockEditorSidebarPanelDirective } from './directives/block-editor-si
     FsHtmlEditorModule,
     FsFileModule,
     FsColorPickerModule,
-
-    NgxMoveableModule,
   ],
   exports: [
     FsBlockComponent,
@@ -42,6 +40,8 @@ import { FsBlockEditorSidebarPanelDirective } from './directives/block-editor-si
     FsBlockComponent,
     FsBlockEditorComponent,
     FsBlockEditorSidebarPanelDirective,
+    FsBlockEditorMarginDirective,
+    SidebarComponent,
   ],
 })
 export class FsBlockEditorModule {

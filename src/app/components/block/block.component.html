@@ -3,10 +3,11 @@
   class="block"
   [ngClass]="{ editable: editable }">
   <div
-    #content
+    #contentElement
     class="content"
     [style.zIndex]="block.index"
     [style.borderColor]="block.borderColor"
+    [style.borderWidth]="block.borderWidth ? block.borderWidth + 'pt' : ''"
     [style.borderStyle]="block.borderColor ? 'solid' : 'dashed'"
     [style.textAlign]="block.horizontalAlign"
     [style.fontStyle]="block.italic ? 'italic' : ''"
@@ -19,6 +20,7 @@
     [style.paddingBottom]="block.paddingBottom ? block.paddingBottom + unit : ''"
     [style.paddingLeft]="block.paddingLeft ? block.paddingLeft + unit : ''"
     [style.paddingRight]="block.paddingRight ? block.paddingRight + unit : ''"
+    [style.padding]="block.padding ? block.padding + unit : ''"
     [style.clipPath]="block.clipPath"
     [style.backgroundColor]="block.backgroundColor"
     [style.borderBottomLeftRadius]="block.shapeRadius && block.shapeBottomLeft === 'round' ? block.shapeRadius + unit : ''"
@@ -35,9 +37,7 @@
       #contentEditable
       contenteditable="true"
       class="content-editable"
-      [innerHTML]="block.content">
+      [innerHTML]="content">
     </div>
   </div>
 </div>
-
-

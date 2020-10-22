@@ -13,6 +13,7 @@ export interface BlockBase {
   horizontalAlign?: 'left' | 'right' | 'center';
   verticalAlign?: 'top' | 'center' | 'bottom';
   borderColor?: string;
+  borderWidth?: number;
   fontColor?: string;
   fontSize?: number;
   bold?: boolean;
@@ -25,6 +26,7 @@ export interface BlockBase {
   shapeTopLeft?: string;
   shapeBottomRight?: string;
   shapeBottomLeft?: string;
+  padding?: number;
   paddingTop?: number;
   paddingLeft?: number;
   paddingBottom?: number;

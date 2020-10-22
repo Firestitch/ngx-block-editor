@@ -2,7 +2,7 @@
   "name": "@firestitch/block-editor",
   "title": "Block Editor",
   "description": "@firestitch/block-editor",
-  "version": "9.0.0",
+  "version": "9.0.8",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/ngx-block-editor"
@@ -76,7 +76,6 @@
     "zone.js": "~0.10.3",
     "moveable": "^0.19.3",
     "scenejs": "^1.4.1",
-    "ngx-moveable": "^0.15.3",
     "froala-editor": "^3.2.1",
     "tributejs": "^5.1.3"
   },
@@ -85,8 +84,7 @@
   },
   "peerDependencies": {
     "froala-editor": "^3.2.1",
-    "@firestitch/html-editor": "^9.0.26",
-    "moveable": ">=0.19.3"
+    "@firestitch/html-editor": "^9.0.26"
   },
   "dependencies": {
     "tslib": "^1.10.0"

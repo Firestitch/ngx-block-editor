@@ -4,12 +4,13 @@ import { BehaviorSubject } from 'rxjs';
 
 import { Block } from './../interfaces/block';
 import { FsBlockComponent } from '../components/block/block.component';
-import { BlockEditorConfig } from '../interfaces';
+import { BlockEditorConfig } from '../interfaces/block-editor-config';
 
 @Injectable()
 export class BlockEditorService {
 
   public container;
+  public margin;
   public blockComponents: FsBlockComponent[] = [];
   public config: BlockEditorConfig;
 
@@ -25,15 +26,16 @@ export class BlockEditorService {
         return block.el;
       }),
       this.container,
+      this.margin,
     ];
   }
 
   public addBlock(block: Block<any>) {
-    this.blocks$.next([...this.blocks, block]);
+    this.blocks$.next([...this.blocks, this.sanitizeBlock(block)]);
   }
 
   public removeBlock(block: Block<any>) {
-    const index = this.blocks.indexOf(block);
+    const index = this.indexOf(block);
     if (index !== -1) {
       this.blocks.splice(index, 1);
       this.blocks$.next(this.blocks);
@@ -54,6 +56,10 @@ export class BlockEditorService {
 
   public isSelectedBlock(block) {
     return this.selectedBlockComponents.indexOf(block) !== -1;
+  }
+
+  public indexOf(block) {
+    return this.blocks.map((e) => e.reference).indexOf(block.reference);
   }
 
   public set selectedBlockComponents(blocks) {
@@ -111,4 +117,21 @@ export class BlockEditorService {
   public registerContainer(container) {
     this.container = container;
   }
+
+  public registerMargin(margin) {
+    this.margin = margin;
+  }
+
+  public sanitizeBlock(block) {
+    return {
+      shapeBottomLeft: 'round',
+      shapeTopLeft: 'round',
+      shapeTopRight: 'round',
+      shapeBottomRight: 'round',
+      verticalAlign: 'top',
+      horizontalAlign: 'left',
+      ...block,
+    };
+  }
+
 }

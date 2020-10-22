@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { KitchenSinkConfigureComponent } from '../kitchen-sink-configure';
 import { FsExampleComponent } from '@firestitch/example';
 import { FsMessage } from '@firestitch/message';
-import { Block } from 'src/app/interfaces';
+import { Block } from 'src/app/interfaces/block';
 import { Observable, of } from 'rxjs';
 
 @Component({
@@ -30,7 +30,7 @@ export class KitchenSinkComponent implements OnInit {
   public ngOnInit(): void {
 
     const blocks: Block<CustomBlock>[] = [
-      { reference: 1, type: 'text', width: 4, height: 3, top: 2, left: 3, borderColor: 'pink', content: 'Block A', mapping: 'asd' },
+      { reference: 1, type: 'text', width: 4, height: 3, top: 2, left: 3, borderColor: 'pink', content: 'Block A', padding: .8 },
       { reference: 2, type: 'text', width: 5, height: 2.5, top: 4, left: 1, content: 'Block B', backgroundColor: '#628597' },
     ];
 
@@ -38,12 +38,17 @@ export class KitchenSinkComponent implements OnInit {
       unit: 'in',
       width: 8.5,
       height: 11,
+      marginTop: 1,
+      marginRight: 1,
+      marginBottom: 1,
+      marginLeft: 1,
       blocks: blocks,
       blockChanged: (block) => {
         console.log('Block Changed', block);
       },
       blockAdded: (block) => {
         console.log('Block Added', block);
+        return of(block);
       },
       blocksSelected: (blocks) => {
         this.selectedBlocks = blocks;
@@ -51,6 +56,7 @@ export class KitchenSinkComponent implements OnInit {
       },
       blocksRemoved: (blocks) => {
         console.log('Blocks Removed', blocks);
+        return of(true);
       },
       fileUpload: (file: Blob) => {
         return new Observable((observer) => {

@@ -23,8 +23,8 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   @ViewChild('element', { static: true })
   public element: ElementRef;
 
-  @ViewChild('content', { static: true })
-  public content: ElementRef;
+  @ViewChild('contentElement', { static: true })
+  public contentElement: ElementRef;
 
   @ViewChild('contentEditable', { static: true })
   public contentEditable: ElementRef;
@@ -39,6 +39,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public matrix;
   public unit;
+  public content: string;
   public justifyContent;
   public htmlConfig: FsHtmlEditorConfig = {};
 
@@ -92,78 +93,114 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public set lineHeight(value) {
     this.block.lineHeight = value;
-    this.markForCheck();
+    this._triggerChanged();
+  }
+
+  public set borderWidth(value) {
+    this.block.borderWidth = value;
     this._triggerChanged();
   }
 
   public set fontSize(value) {
     this.block.fontSize = value;
-    this.markForCheck();
     this._triggerChanged();
   }
 
   public set backgroundColor(value) {
     this.block.backgroundColor = value;
-    this.markForCheck();
+    this._triggerChanged();
+  }
+
+  public set width(value) {
+    this.element.nativeElement.style.width = `${value}${this.unit}`;
+    this.block.width = value;
+    this._moveable.updateRect();
+    this._triggerChanged();
+  }
+
+  public set height(value) {
+    this.element.nativeElement.style.height = `${value}${this.unit}`;
+    this.block.height = value;
+    this._moveable.updateRect();
+    this._triggerChanged();
+  }
+
+  public set top(value) {
+    this.element.nativeElement.style.top = `${value}${this.unit}`;
+    this.block.top = value;
+    this._moveable.updateRect();
+    this._triggerChanged();
+  }
+
+  public set left(value) {
+    this.element.nativeElement.style.left = `${value}${this.unit}`;
+    this.block.left = value;
+    this._moveable.updateRect();
+    this._triggerChanged();
+  }
+
+  public set rotate(value) {
+    this._moveable.request('rotatable', { rotate: value }, true);
+    this.block.rotate = value;
     this._triggerChanged();
   }
 
   public set shapeRadius(value) {
     this.block.shapeRadius = value;
-    this.markForCheck();
     this._triggerChanged();
   }
 
   public set index(value) {
     this.block.index = value;
-    this.markForCheck();
   }
 
   public set borderColor(value) {
     this.block.borderColor = value;
-    this.markForCheck();
+    this._triggerChanged();
+  }
+
+  public set paddingAll(value) {
+    this.block.padding = value;
+    this.block.paddingTop = null;
+    this.block.paddingBottom = null;
+    this.block.paddingLeft = null;
+    this.block.paddingRight = null;
     this._triggerChanged();
   }
 
   public padding(name, value) {
     this.block[name] = value;
-    this.markForCheck();
+    this.block.padding = null;
     this._triggerChanged();
   }
 
   public set imageUrl(value) {
     this.block.imageUrl = value;
-    this.markForCheck();
     this._triggerChanged();
   }
 
   public set fontColor(value) {
     this.block.fontColor = value;
-    this.markForCheck();
     this._triggerChanged();
   }
 
   public set verticalAlign(value) {
     this.block.verticalAlign = value;
-    this.markForCheck();
     this._triggerChanged();
   }
 
   public shapeRound(name, value) {
     this.block[name] = value;
-    this.markForCheck();
     this._triggerChanged();
   }
 
   public set horizontalAlign(value) {
     this.block.horizontalAlign = value;
-    this.markForCheck();
     this._triggerChanged();
   }
 
   public set italic(value) {
     this.block.italic = value;
-    this.markForCheck();
     this._triggerChanged();
   }
 
@@ -173,7 +210,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public set bold(value) {
     this.block.bold = value;
-    this.markForCheck();
     this._triggerChanged();
   }
 
@@ -183,7 +219,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public set underline(value) {
     this.block.underline = value;
-    this.markForCheck();
     this._triggerChanged();
   }
 
@@ -196,19 +231,9 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public ngOnInit(): void {
-
+    this.block = this._service.sanitizeBlock(this.block);
     this.unit = this._service.config.unit;
-
-    Object.assign(
-      this.block,
-      {
-        shapeBottomLeft: 'round',
-        shapeTopLeft: 'round',
-        shapeTopRight: 'round',
-        shapeBottomRight: 'round',
-        verticalAlign: 'top',
-        horizontalAlign: 'left',
-      });
+    this.content = this.block.content;
 
     this.htmlConfig = {
       autofocus: false,
@@ -231,13 +256,21 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.el.style.left = this.block.left + this.unit;
     this._setTransform();
 
+    fromEvent(this.contentEditable.nativeElement, 'input')
+      .pipe(
+        takeUntil(this._destroy$),
+    ).subscribe((event: any) => {
+        this.block.content = event.target.innerHTML;
+        this._triggerChanged();
+      });
+
     fromEvent(this.el, 'mousedown')
       .pipe(
         takeUntil(this._destroy$),
       ).subscribe((event: UIEvent) => {
 
         if (this.editable) {
-          if (this.content.nativeElement.isSameNode(event.target)) {
+          if (this.contentElement.nativeElement.isSameNode(event.target)) {
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
