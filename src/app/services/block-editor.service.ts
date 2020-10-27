@@ -70,11 +70,11 @@ export class BlockEditorService {
     this._selectedBlockComponents$.next(blocks);
   }
 
-  public get selectedBlockComponents() {
+  public get selectedBlockComponents(): FsBlockComponent[] {
     return this._selectedBlockComponents$.getValue();
   }
 
-  public get selectedBlocks() {
+  public get selectedBlocks(): Block<any>[] {
     return this.selectedBlockComponents.map((blockComponent) => blockComponent.block);
   }
 

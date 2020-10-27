@@ -1,7 +1,7 @@
 <div
   #element
   class="block"
-  [ngClass]="{ editable: editable }">
+  [ngClass]="{ editable: editable, readonly: block.readonly }">
   <div
     #contentElement
     class="content"
@@ -35,7 +35,7 @@
     <img [src]="block.imageUrl" *ngIf="block.imageUrl">
     <div
       #contentEditable
-      contenteditable="true"
+      [contentEditable]="editable"
       class="content-editable"
       [innerHTML]="content">
     </div>

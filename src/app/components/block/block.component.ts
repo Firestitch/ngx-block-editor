@@ -1,4 +1,4 @@
-import { skipWhile, takeUntil } from 'rxjs/operators';
+import { filter, skipWhile, takeUntil } from 'rxjs/operators';
 import {
   AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
   EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild,
@@ -47,6 +47,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   private _editable = false;
   private _selectedElements = [];
   private _rotateStart;
+  private _transformable;
   private _destroy$ = new Subject();
 
   constructor(
@@ -83,7 +84,12 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this._moveable.clippable = value;
   }
 
+  public get transformable() {
+    return this._transformable;
+  }
+
   public set transformable(value) {
+    this._transformable = value;
     this.moveable.draggable = value;
     this.moveable.resizable = value;
     this.moveable.draggable = value;
@@ -112,36 +118,36 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public set width(value) {
-    this.element.nativeElement.style.width = `${value}${this.unit}`;
-    this.block.width = value;
+    this.block.width = parseFloat(value);
+    this.element.nativeElement.style.width = `${this.block.width}${this.unit}`;
     this._moveable.updateRect();
     this._triggerChanged();
   }
 
   public set height(value) {
-    this.element.nativeElement.style.height = `${value}${this.unit}`;
-    this.block.height = value;
+    this.block.height = parseFloat(value);
+    this.element.nativeElement.style.height = `${this.block.height}${this.unit}`;
     this._moveable.updateRect();
     this._triggerChanged();
   }
 
   public set top(value) {
-    this.element.nativeElement.style.top = `${value}${this.unit}`;
-    this.block.top = value;
+    this.block.top = parseFloat(value);
+    this.element.nativeElement.style.top = `${this.block.top}${this.unit}`;
     this._moveable.updateRect();
     this._triggerChanged();
   }
 
   public set left(value) {
-    this.element.nativeElement.style.left = `${value}${this.unit}`;
-    this.block.left = value;
+    this.block.left = parseFloat(value);
+    this.element.nativeElement.style.left = `${this.block.left}${this.unit}`;
     this._moveable.updateRect();
     this._triggerChanged();
   }
 
   public set rotate(value) {
-    this._moveable.request('rotatable', { rotate: value }, true);
-    this.block.rotate = value;
+    this.block.rotate = parseFloat(value);
+    this._moveable.request('rotatable', { rotate: this.block.rotate }, true);
     this._triggerChanged();
   }
 
@@ -226,6 +232,10 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     return this.block.underline;
   }
 
+  public updateRect(): void {
+    this.moveable.updateRect();
+  }
+
   public markForCheck(): void {
     this._cdRef.markForCheck();
   }
@@ -267,6 +277,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     fromEvent(this.el, 'mousedown')
       .pipe(
         takeUntil(this._destroy$),
+        filter(() => !this.block.readonly)
       ).subscribe((event: UIEvent) => {
 
         if (this.editable) {
@@ -282,17 +293,21 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
     fromEvent(this.el, 'dblclick')
       .pipe(
-        skipWhile(() => {
-          return this.editable;
-        }),
+        filter(() => (!this.editable)),
         takeUntil(this._destroy$),
       )
-      .subscribe((e) => {
-        this.editable = true;
+      .subscribe((event: MouseEvent) => {
 
-        setTimeout(() => {
-          this.selectAll();
-        });
+        if (this.block.readonly) {
+          event.preventDefault();
+        } else {
+          this.editable = true;
+          this._cdRef.markForCheck();
+
+          setTimeout(() => {
+            this.selectAll();
+          });
+        }
     });
 
     this._moveable = new Moveable(this._elementRef.nativeElement, {
@@ -411,7 +426,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public selectAll(): void {
     const range = document.createRange();
-    //const el = this.htmlEditor.editor.$el.get(0);
     range.selectNodeContents(this.contentEditable.nativeElement);
     const sel = window.getSelection();
     sel.removeAllRanges();

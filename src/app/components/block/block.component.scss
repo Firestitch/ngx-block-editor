@@ -2,16 +2,21 @@
   position: absolute;
   display: block;
   outline: none;
-  cursor: pointer;
+  user-select: none;
+
+  &:not(.readonly) {
+    cursor: pointer;
+  }
 
   .content-editable {
     outline: none;
     position: relative;
-    z-index: 1;
   }
 
-  &.editable .content-editable {
-    cursor: text;
+  &.editable {
+    .content-editable {
+      cursor: text;
+    }
   }
 
   .content {
@@ -21,6 +26,7 @@
     border: 1px dashed #c5c5c5;
     position: relative;
     box-sizing: border-box;
+    overflow: hidden;
 
     fs-html-editor {
       width: 100%;

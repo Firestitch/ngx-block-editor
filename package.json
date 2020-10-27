@@ -2,7 +2,7 @@
   "name": "@firestitch/block-editor",
   "title": "Block Editor",
   "description": "@firestitch/block-editor",
-  "version": "9.0.8",
+  "version": "9.0.10",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/ngx-block-editor"

@@ -1,11 +1,11 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
   ContentChildren, ElementRef, Input,
-  OnDestroy, OnInit, QueryList, ViewChild, ViewChildren
+  OnDestroy, OnInit, QueryList, ViewChild, ViewChildren,
 } from '@angular/core';
 
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { fromEvent, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 import { BlockEditorConfig } from './../../interfaces/block-editor-config';
 import { FsBlockComponent } from './../block/block.component';
@@ -81,6 +81,34 @@ export class FsBlockEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       .subscribe((blocks) => {
         this.blocks = blocks;
       });
+
+    fromEvent(window, 'keydown')
+      .pipe(
+        takeUntil(this._destroy$),
+        filter((event: KeyboardEvent) => {
+          return !!event.key.match(/^Arrow/) && !!this._service.selectedBlockComponents.length;
+        }),
+      )
+      .subscribe((event: any) => {
+        event.preventDefault();
+        const inchPixel = 1 / 100;
+        this._service.selectedBlockComponents.forEach((blockComponent) => {
+          switch (event.key) {
+            case 'ArrowUp':
+              blockComponent.top = blockComponent.block.top - inchPixel;
+              break;
+            case 'ArrowDown':
+              blockComponent.top = blockComponent.block.top + inchPixel;
+              break;
+            case 'ArrowLeft':
+              blockComponent.left = blockComponent.block.left - inchPixel;
+              break;
+            case 'ArrowRight':
+              blockComponent.left = blockComponent.block.left + inchPixel;
+              break;
+          }
+        });
+      });
   }
 
   public artboardClick(event): void {
@@ -90,6 +118,7 @@ export class FsBlockEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     ) {
       this._service.selectedBlockComponents.forEach((block) => {
         block.deselect();
+        block.markForCheck();
       });
 
       this._service.selectedBlockComponents = [];

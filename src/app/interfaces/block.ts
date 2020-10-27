@@ -4,7 +4,6 @@ export type Block<T = {}> = BlockBase & T;
 
 export interface BlockBase {
   reference: any;
-  type: 'image' | 'text';
   width?: number;
   height?: number;
   top?: number;
@@ -36,4 +35,5 @@ export interface BlockBase {
   index?: number;
   imageUrl?: string;
   clipPath?: string;
+  readonly?: boolean;
 }
