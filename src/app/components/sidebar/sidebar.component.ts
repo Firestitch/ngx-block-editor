@@ -1,7 +1,7 @@
 import { FsBlockComponent } from './../block/block.component';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ContentChildren, ElementRef, Input,
+  ContentChildren, ElementRef, EventEmitter, Input,
   OnDestroy, OnInit, QueryList,
 } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -28,7 +28,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   @Input() public config: BlockEditorConfig;
   @Input() public blocks;
-  @Input() public blockComponents: QueryList<FsBlockComponent>;
+  @Input() public blockAdded: EventEmitter<FsBlockComponent>;
 
   public block: Block<any>;
   public clippable;
@@ -268,19 +268,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
           this.addBlock(block);
           this.changeDetector.markForCheck();
 
-          this.blockComponents.changes
+          this.blockAdded
             .pipe(
               take(1),
               takeUntil(this._destroy$),
             )
-            .subscribe((queryList: QueryList<FsBlockComponent>) => {
-                const blockComponent = queryList.find((item) => {
-                  return item.block.reference === reference;
-                });
-
-              if (blockComponent) {
-                this._service.selectedBlockComponents = [blockComponent];
-              }
+            .subscribe((blockComponent: FsBlockComponent) => {
+              this._service.selectedBlockComponents = [blockComponent];
             });
         });
     }

@@ -1,7 +1,9 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ContentChildren, ElementRef, Input,
-  OnDestroy, OnInit, QueryList, ViewChild, ViewChildren,
+  ContentChildren, ElementRef, EventEmitter, Input,
+  IterableDiffer,
+  IterableDiffers,
+  OnDestroy, OnInit, Output, QueryList, ViewChild, ViewChildren,
 } from '@angular/core';
 
 import { fromEvent, Subject } from 'rxjs';
@@ -49,15 +51,22 @@ export class FsBlockEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @Input() public config: BlockEditorConfig;
 
+  @Output() blockAdded = new EventEmitter<FsBlockComponent>();
+  @Output() blockRemoved = new EventEmitter<FsBlockComponent>();
+
   public blocks: Block<any>[];
 
+  private _differ: IterableDiffer<FsBlockComponent>;
   private _destroy$ = new Subject();
 
   constructor(
     private _el: ElementRef,
     private _service: BlockEditorService,
     private _cdRef: ChangeDetectorRef,
-  ) {}
+    private _differs: IterableDiffers,
+  ) {
+    this._differ = _differs.find([]).create(null);
+  }
 
   public get el(): any {
     return this._el.nativeElement;
@@ -133,7 +142,18 @@ export class FsBlockEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   public ngAfterViewInit(): void {
+    this.blockComponents.changes.subscribe((changes) => {
+      const changeDiff = this._differ.diff(changes);
+      if (changeDiff) {
+        changeDiff.forEachAddedItem((change) => {
+          this.blockAdded.emit(change.item);
+        });
 
+        changeDiff.forEachRemovedItem((change) => {
+          this.blockRemoved.emit(change.item);
+        });
+      }
+    });
   }
 
   public ngOnDestroy(): void {
