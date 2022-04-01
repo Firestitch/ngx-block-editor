@@ -38,7 +38,7 @@ import 'froala-editor/js/plugins/align.min.js';
     FsExampleModule.forRoot(),
     FsMessageModule.forRoot(),
     ToastrModule.forRoot({ preventDuplicates: true }),
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
   ],
   declarations: [
     AppComponent,
