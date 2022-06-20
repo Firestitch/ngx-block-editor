@@ -4,8 +4,6 @@ import {
   EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild,
 } from '@angular/core';
 
-import { FsHtmlEditorComponent, FsHtmlEditorConfig } from '@firestitch/html-editor';
-
 import Moveable from 'moveable';
 import { fromEvent, Subject } from 'rxjs';
 
@@ -29,9 +27,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   @ViewChild('contentEditable', { static: true })
   public contentEditable: ElementRef;
 
-  @ViewChild(FsHtmlEditorComponent)
-  public htmlEditor: FsHtmlEditorComponent;
-
   @Input() public block: Block<any>;
   @Input() public html: string;
 
@@ -41,11 +36,9 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   public unit;
   public content: string;
   public justifyContent;
-  public htmlConfig: FsHtmlEditorConfig = {};
 
   private _moveable;
   private _editable = false;
-  private _selectedElements = [];
   private _rotateStart;
   private _transformable;
   private _destroy$ = new Subject();
@@ -244,19 +237,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.block = this._service.sanitizeBlock(this.block);
     this.unit = this._service.config.unit;
     this.content = this.block.content;
-
-    this.htmlConfig = {
-      autofocus: false,
-      froalaConfig: {}
-    };
-  }
-
-  public saveSelectedElements(): void {
-    this._selectedElements = this.htmlEditor.editor.selection.blocks();
-  }
-
-  public clearSelectedElements(): void {
-    this._selectedElements = [];
   }
 
   public ngAfterContentInit(): void {

@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 
-import { FsHtmlEditorModule } from '@firestitch/html-editor';
 import { FsColorPickerModule } from '@firestitch/colorpicker';
 import { FsFileModule } from '@firestitch/file';
 
@@ -27,7 +26,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     MatInputModule,
     MatFormFieldModule,
 
-    FsHtmlEditorModule,
     FsFileModule,
     FsColorPickerModule,
   ],

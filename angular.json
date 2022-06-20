@@ -21,7 +21,7 @@
             "tsConfig": "playground/tsconfig.app.json",
             "assets": [
               "playground/favicon.ico",
-              "playground/assets" 
+              "playground/assets"
             ],
             "styles": [
               "playground/styles.scss"
@@ -156,8 +156,8 @@
           "options": {
             "tsConfig": "src/tsconfig.lib.json",
             "project": "src/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "src/tsconfig.lib.prod.json"
             }

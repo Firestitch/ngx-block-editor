@@ -9,5 +9,8 @@
         "playground/environments/environment.ts"
       ]
     }
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": false
   }
 }

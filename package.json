@@ -2,7 +2,7 @@
   "name": "@firestitch/block-editor",
   "title": "Block Editor",
   "description": "@firestitch/block-editor",
-  "version": "12.0.0",
+  "version": "12.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/ngx-block-editor"
@@ -54,7 +54,6 @@
     "@firestitch/example": "^12.0.0",
     "@firestitch/exif-js": "^2.3.0",
     "@firestitch/file": "^12.0.4",
-    "@firestitch/html-editor": "^12.0.0",
     "@firestitch/iframe": "^12.0.0",
     "@firestitch/label": "^12.0.0",
     "@firestitch/menu": "^12.0.1",
@@ -70,7 +69,6 @@
     "date-fns": "^2.28.0",
     "date-fns-tz": "^1.3.3",
     "fileapi": "^2.2.0",
-    "froala-editor": "^3.2.1",
     "hammerjs": "^2.0.8",
     "highlight.js": "^9.18.1",
     "lodash-es": "^4.17.15",
@@ -89,10 +87,6 @@
   },
   "engines": {
     "node": ">=6.0.0"
-  },
-  "peerDependencies": {
-    "@firestitch/html-editor": "^9.0.26",
-    "froala-editor": "^3.2.1"
   },
   "dependencies": {
     "tslib": "^2.0.0"

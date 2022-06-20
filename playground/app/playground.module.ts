@@ -23,8 +23,6 @@ const routes: Routes = [
   { path: '', component: ExamplesComponent },
 ];
 
-import 'froala-editor/js/plugins/align.min.js';
-
 @NgModule({
   bootstrap: [ AppComponent ],
   imports: [
