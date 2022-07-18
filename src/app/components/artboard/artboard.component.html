@@ -1,0 +1,25 @@
+<div
+      #artboard
+      class="artboard mat-elevation-z4 deselectable"
+      [style.width]="config.width + config.unit"
+      [style.height]="config.height + config.unit">
+    <fs-block
+      *ngFor="let block of blocks"
+      [zoompan]="zoompan"
+      [block]="block"
+      (changed)="blockChanged($event)">
+    </fs-block>
+    <div class="margin margin-top" *ngIf="config.marginTop" [style.top]="config.marginTop + 'in'"></div>
+    <div class="margin margin-left" *ngIf="config.marginLeft" [style.left]="config.marginLeft + 'in'"></div>
+    <div class="margin margin-bottom" *ngIf="config.marginBottom" [style.bottom]="config.marginBottom + 'in'"></div>
+    <div class="margin margin-right" *ngIf="config.marginRight" [style.right]="config.marginRight + 'in'"></div>
+    <div
+      #marginContainer
+      class="margin-container"
+      [style.top]="config.marginTop + 'in'"
+      [style.right]="config.marginRight + 'in'"
+      [style.bottom]="config.marginBottom + 'in'"
+      [style.left]="config.marginLeft + 'in'">
+    </div>
+</div>              
+

@@ -1,3 +1,4 @@
+import { BlockType } from '../enums';
 import { FsBlockComponent } from './../components/block/block.component';
 
 export type Block<T = {}> = BlockBase & T;
@@ -36,4 +37,13 @@ export interface BlockBase {
   imageUrl?: string;
   clipPath?: string;
   readonly?: boolean;
+  name?: string;
+  format?: string;
+  required?: boolean;
+  label?: string;
+  description?: string;
+  default?: string;
+  groupLabel?: string;
+  groupDescription?: string;
+  type?: BlockType;
 }

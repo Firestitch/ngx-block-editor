@@ -8,6 +8,12 @@
     cursor: pointer;
   }
 
+  &.block-textarea,
+  &.block-radiobutton,
+  &.block-checkbox {
+    background-color: rgb(170 181 225 / 80%);
+  }
+
   .content-editable {
     outline: none;
     position: relative;

@@ -1,30 +1,25 @@
-<div class="editor-container">
+<div class="editor-container deselectable">
   <div
-    #artboardContainer
-    class="artboard-container"
-    (click)="artboardClick($event)">
-    <div
-      #artboard
-      class="artboard mat-elevation-z2"
-      [style.width]="config.width + config.unit"
-      [style.height]="config.height + config.unit">
-          <fs-block
-            *ngFor="let block of blocks; trackBy"
-            [block]="block"
-            (changed)="blockChanged($event)">
-        </fs-block>
-        <div class="margin margin-top" *ngIf="config.marginTop" [style.top]="config.marginTop + 'in'"></div>
-        <div class="margin margin-left" *ngIf="config.marginLeft" [style.left]="config.marginLeft + 'in'"></div>
-        <div class="margin margin-bottom" *ngIf="config.marginBottom" [style.bottom]="config.marginBottom + 'in'"></div>
-        <div class="margin margin-right" *ngIf="config.marginRight" [style.right]="config.marginRight + 'in'"></div>
-        <div
-          #marginContainer
-          class="margin-container"
-          [style.top]="config.marginTop + 'in'"
-          [style.right]="config.marginRight + 'in'"
-          [style.bottom]="config.marginBottom + 'in'"
-          [style.left]="config.marginLeft + 'in'"></div>
-    </div>
+      #artboardContainer
+      class="artboard-container deselectable"
+      (click)="artboardClick($event)">
+
+      <!-- <div fxFlexLayout="row">
+        <button mat-icon-button (click)="zoomIn()"><mat-icon>zoom_in</mat-icon></button>
+        <button mat-icon-button (click)="zoomOut()"><mat-icon>zoom_out</mat-icon></button>
+        <button mat-icon-button (click)="reset()"><mat-icon>youtube_searched_for</mat-icon></button>
+        <button mat-icon-button (click)="add()"><mat-icon>add</mat-icon></button>
+      </div> -->
+      <div #zoomPanContaner class="zoom-pan-container deselectable">
+        <fs-zoom-pan>
+          <ng-template fsZoomPanContent>
+            <app-artboard 
+              [zoompan]="zoompan"
+              [config]="config">
+            </app-artboard>
+          </ng-template>
+        </fs-zoom-pan>
+      </div>
   </div>
   <sidebar
     [config]="config"

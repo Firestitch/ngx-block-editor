@@ -1,0 +1,27 @@
+.artboard {
+  position: relative;
+  display: inline-flex;
+
+  .margin-container {
+    position: absolute;
+    z-index: -1;
+  }
+
+  .margin {
+    position: absolute;
+
+    border-color: #ff85bd5e;
+    border-style: dashed;
+    border-width: 0px;
+
+    &.margin-top, &.margin-bottom {
+      width: 100%;
+      border-top-width: 1px;
+    }
+
+    &.margin-left, &.margin-right {
+      height: 100%;
+      border-left-width: 1px;
+    }
+  }
+}

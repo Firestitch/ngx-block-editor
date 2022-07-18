@@ -1,4 +1,4 @@
-import { filter, skipWhile, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import {
   AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
   EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild,
@@ -9,6 +9,8 @@ import { fromEvent, Subject } from 'rxjs';
 
 import { BlockEditorService } from './../../services/block-editor.service';
 import { Block } from './../../interfaces/block';
+import { FsZoomPanComponent } from '@firestitch/zoom-pan';
+import { BlockType } from '../../enums/block-type';
 
 @Component({
   selector: 'fs-block',
@@ -29,13 +31,13 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   @Input() public block: Block<any>;
   @Input() public html: string;
+  @Input() public zoompan: FsZoomPanComponent;
 
   @Output() changed = new EventEmitter<Block<any>>();
 
-  public matrix;
   public unit;
   public content: string;
-  public justifyContent;
+  public BlockType = BlockType;
 
   private _moveable;
   private _editable = false;
@@ -44,7 +46,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   private _destroy$ = new Subject();
 
   constructor(
-    private _service: BlockEditorService,
+    private _blockEditor: BlockEditorService,
     private _elementRef: ElementRef,
     private _cdRef: ChangeDetectorRef,
   ) { }
@@ -234,9 +236,18 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public ngOnInit(): void {
-    this.block = this._service.sanitizeBlock(this.block);
-    this.unit = this._service.config.unit;
+    this.block = this._blockEditor.sanitizeBlock(this.block);
+    this.unit = this._blockEditor.config.unit;
     this.content = this.block.content;
+
+    this._blockEditor.blocks$
+    .pipe(
+      //filter((block) => block === this.block),
+      takeUntil(this._destroy$),
+    )
+    .subscribe(() => {
+      this._cdRef.markForCheck();
+    });
   }
 
   public ngAfterContentInit(): void {
@@ -259,7 +270,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         takeUntil(this._destroy$),
         filter(() => !this.block.readonly)
       ).subscribe((event: UIEvent) => {
-
         if (this.editable) {
           if (this.contentElement.nativeElement.isSameNode(event.target)) {
             event.preventDefault();
@@ -267,7 +277,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
             event.stopPropagation();
           }
         } else {
-          this._service.selectedBlockComponents = [this];
+          this._blockEditor.selectedBlockComponents = [this];
         }
       });
 
@@ -277,7 +287,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         takeUntil(this._destroy$),
       )
       .subscribe((event: MouseEvent) => {
-
         if (this.block.readonly) {
           event.preventDefault();
         } else {
@@ -292,7 +301,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
     this._moveable = new Moveable(this._elementRef.nativeElement, {
       target: this.el,
-      container: this._service.container,
+      container: this._blockEditor.container,
       draggable: false,
       resizable: false,
       scalable: false,
@@ -312,7 +321,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       throttleResize: 1,
     });
 
-    this._service.registerBlock(this);
+    this._blockEditor.registerBlock(this);
 
     this._moveable
     .on('clip', e => {
@@ -322,8 +331,10 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     });
 
     this._moveable.on('dragStart', ({ target, clientX, clientY }) => {
+      this.zoompan.disable();
       this.editable = false;
     }).on('drag', ({ target, left, top }) => {
+      this.zoompan.enable();
       target!.style.left = this.pxToIn(left) + this.unit;
       target!.style.top = this.pxToIn(top) + this.unit;
       this.block.top = this.pxToIn(top);
@@ -332,8 +343,10 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     });
 
     this._moveable.on('resizeStart', ({ target, clientX, clientY }) => {
+      this.zoompan.disable();
       this.editable = false;
     }).on('resize', ({ target, width, height, dist, delta, direction }) => {
+      this.zoompan.enable();
       width = this.pxToIn(width);
       height = this.pxToIn(height);
 
@@ -360,6 +373,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       this._triggerChanged();
 
     }).on('resizeEnd', ({ target }) => {
+      this.zoompan.enable();
       const matrix = new WebKitCSSMatrix(target.style.transform);
       this.block.top = parseFloat(target.style.top) + this.pxToIn(matrix.m42);
       this.block.left = parseFloat(target.style.left) + this.pxToIn(matrix.m41);
@@ -371,9 +385,11 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     });
 
     this._moveable.on('rotateStart', ({ target, clientX, clientY }) => {
+      this.zoompan.disable();
       this.editable = false;
       this._rotateStart = this.block.rotate || 0;
     }).on('rotate', ({ rotate, transform }) => {
+      this.zoompan.enable();
       this.block.rotate = this._rotateStart + rotate;
       this.el.style.transform = transform;
       this._triggerChanged();
@@ -427,6 +443,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   private _triggerChanged() {
+    this._blockEditor.blockChange(this.block);
     this.changed.emit(this.block);
   }
 }

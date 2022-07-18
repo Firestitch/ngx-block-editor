@@ -2,36 +2,36 @@
   <div class="sidebar-panel">
     <div class="sidebar-label">Tools</div>
     <div class="sidebar-row">
-      <button
-        mat-icon-button
-        color="basic"
-        type="button"
-        (click)="blockAddClick()">
-        <mat-icon>add</mat-icon>
+      <button   
+          mat-icon-button
+          color="basic"
+          type="button"
+          [fsMenuTriggerFor]="menu">
+        <mat-icon>add_circle_outline</mat-icon>
       </button>
       <ng-container *ngIf="block">
         <button
-          mat-icon-button
-          color="basic"
-          type="button"
-          (click)="blockRemoveClick()">
-          <mat-icon>clear</mat-icon>
+            mat-icon-button
+            color="basic"
+            type="button"
+            (click)="blockRemoveClick()">
+          <mat-icon>delete_outline</mat-icon>
         </button>
         <button
-          class="layer-up"
-          mat-icon-button
-          color="basic"
-          type="button"
-          (click)="layerUp()">
+            class="layer-up"
+            mat-icon-button
+            color="basic"
+            type="button"
+            (click)="layerUp()">
           <mat-icon>arrow_back</mat-icon>
           <mat-icon>layers</mat-icon>
         </button>
         <button
-          class="layer-down"
-          mat-icon-button
-          color="basic"
-          type="button"
-          (click)="layerDown()">
+            class="layer-down"
+            mat-icon-button
+            color="basic"
+            type="button"
+            (click)="layerDown()">
           <mat-icon>arrow_back</mat-icon>
           <mat-icon>layers</mat-icon>
         </button>
@@ -44,11 +44,11 @@
       <div class="sidebar-row">
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-            matInput
-            [ngModel]="block.width"
-            name="width"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="widthChange($event)">
+              matInput
+              [ngModel]="block.width"
+              name="width"
+              (focus)="inputFocus($event)"
+              (ngModelChange)="widthChange($event)">
             <span matPrefix>W</span>
         </mat-form-field>
         <mat-form-field class="form-field-padless" floatLabel="never">
@@ -89,6 +89,86 @@
         </mat-form-field>
       </div>
     </div>
+    <ng-container *ngIf="block.type === BlockType.Textarea || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">
+      <div class="sidebar-panel form-field-panel">
+        <div class="sidebar-label">Form Field</div>
+        <div class="sidebar-row">
+
+          <mat-form-field class="form-field-padless full-width" floatLabel="never">
+            <input
+              matInput
+              [ngModel]="block.name"
+              name="name"
+              placeholder="Name">
+          </mat-form-field>
+
+          <ng-container *ngIf="block.type === BlockType.Date">
+            <mat-form-field class="form-field-padless full-width" floatLabel="never">
+              <input
+                matInput
+                [ngModel]="block.format"
+                name="format"
+                placeholder="Format">
+            </mat-form-field>
+          </ng-container>
+
+          <ng-container *ngIf="block.type === BlockType.Textarea">
+            <mat-form-field class="form-field-padless full-width" floatLabel="never">
+              <input
+                matInput
+                [ngModel]="block.formula"
+                name="formula"
+                placeholder="Formula">
+            </mat-form-field>
+          </ng-container>
+
+          <ng-container *ngIf="block.type === BlockType.Textarea || block.type === BlockType.Date">
+            <mat-form-field class="form-field-padless full-width" floatLabel="never">
+              <input
+                matInput
+                [ngModel]="block.default"
+                name="default"
+                placeholder="Default">
+            </mat-form-field>
+          </ng-container>
+
+          <mat-form-field class="form-field-padless full-width" floatLabel="never">
+            <textarea
+              matInput
+              [matTextareaAutosize]="true"
+              [ngModel]="block.description"
+              name="description"
+              placeholder="Description">
+            </textarea>
+          </mat-form-field>
+
+          <ng-container *ngIf="block.type === BlockType.RadioButton || block.type === BlockType.Checkbox">
+
+            <mat-form-field class="form-field-padless full-width" floatLabel="never">
+              <input
+                matInput
+                [ngModel]="block.groupLabel"
+                name="groupLabel"
+                placeholder="Group Label">
+            </mat-form-field>
+            
+            <mat-form-field class="form-field-padless full-width" floatLabel="never">
+              <textarea
+                matInput
+                [matTextareaAutosize]="true"
+                [ngModel]="block.groupDescription"
+                name="groupDescription"
+                placeholder="Group Description">
+              </textarea>
+            </mat-form-field>
+          </ng-container>
+
+          <div class="form-field-options">
+            <mat-checkbox name="required" [(ngModel)]="block.required">Required</mat-checkbox>
+          </div>
+        </div>
+      </div>
+    </ng-container>
     <div class="sidebar-panel typography-panel">
       <div class="sidebar-label">Typography</div>
       <div class="sidebar-row">
@@ -122,87 +202,87 @@
 
       <div class="sidebar-row style-row">
         <button
-          mat-icon-button
-          class="toggle-button"
-          color="basic"
-          type="button"
-          [ngClass]="{ selected: block.bold }"
-          (click)="boldClick()">
+            mat-icon-button
+            class="toggle-button"
+            color="basic"
+            type="button"
+            [ngClass]="{ selected: block.bold }"
+            (click)="boldClick()">
           <mat-icon>format_bold</mat-icon>
         </button>
         <button
-          mat-icon-button
-          class="toggle-button"
-          color="basic"
-          type="button"
-          [ngClass]="{ selected: block.italic }"
-          (click)="italicClick()">
+            mat-icon-button
+            class="toggle-button"
+            color="basic"
+            type="button"
+            [ngClass]="{ selected: block.italic }"
+            (click)="italicClick()">
           <mat-icon>format_italic</mat-icon>
         </button>
         <button
-          mat-icon-button
-          class="toggle-button"
-          color="basic"
-          type="button"
-          [ngClass]="{ selected: block.underline }"
-          (click)="underlineClick()">
+            mat-icon-button
+            class="toggle-button"
+            color="basic"
+            type="button"
+            [ngClass]="{ selected: block.underline }"
+            (click)="underlineClick()">
           <mat-icon>format_underline</mat-icon>
         </button>
       </div>
 
       <div class="sidebar-row align-row">
         <button
-          mat-icon-button
-          class="toggle-button"
-          color="basic"
-          type="button"
-          [ngClass]="{ selected: block.horizontalAlign === 'left' }"
-          (click)="horizontalAlignClick('left')">
+            mat-icon-button
+            class="toggle-button"
+            color="basic"
+            type="button"
+            [ngClass]="{ selected: block.horizontalAlign === 'left' }"
+            (click)="horizontalAlignClick('left')">
           <mat-icon>format_align_left</mat-icon>
         </button>
         <button
-          mat-icon-button
-          class="toggle-button"
-          color="basic"
-          type="button"
-          [ngClass]="{ selected: block.horizontalAlign === 'center' }"
-          (click)="horizontalAlignClick('center')">
+            mat-icon-button
+            class="toggle-button"
+            color="basic"
+            type="button"
+            [ngClass]="{ selected: block.horizontalAlign === 'center' }"
+            (click)="horizontalAlignClick('center')">
           <mat-icon>format_align_center</mat-icon>
         </button>
         <button
-          mat-icon-button
-          class="toggle-button"
-          color="basic"
-          type="button"
-          [ngClass]="{ selected: block.horizontalAlign === 'right' }"
-          (click)="horizontalAlignClick('right')">
+            mat-icon-button
+            class="toggle-button"
+            color="basic"
+            type="button"
+            [ngClass]="{ selected: block.horizontalAlign === 'right' }"
+            (click)="horizontalAlignClick('right')">
           <mat-icon>format_align_right</mat-icon>
         </button>
         <button
-          mat-icon-button
-          class="toggle-button"
-          color="basic"
-          type="button"
-          [ngClass]="{ selected: block.verticalAlign === 'top' }"
-          (click)="verticalAlignClick('top')">
+            mat-icon-button
+            class="toggle-button"
+            color="basic"
+            type="button"
+            [ngClass]="{ selected: block.verticalAlign === 'top' }"
+            (click)="verticalAlignClick('top')">
           <mat-icon>vertical_align_top</mat-icon>
         </button>
         <button
-          mat-icon-button
-          class="toggle-button"
-          color="basic"
-          type="button"
-          [ngClass]="{ selected: block.verticalAlign === 'center' }"
-          (click)="verticalAlignClick('center')">
+            mat-icon-button
+            class="toggle-button"
+            color="basic"
+            type="button"
+            [ngClass]="{ selected: block.verticalAlign === 'center' }"
+            (click)="verticalAlignClick('center')">
           <mat-icon>vertical_align_center</mat-icon>
         </button>
         <button
-          mat-icon-button
-          class="toggle-button"
-          color="basic"
-          type="button"
-          [ngClass]="{ selected: block.verticalAlign === 'bottom' }"
-          (click)="verticalAlignClick('bottom')">
+            mat-icon-button
+            class="toggle-button"
+            color="basic"
+            type="button"
+            [ngClass]="{ selected: block.verticalAlign === 'bottom' }"
+            (click)="verticalAlignClick('bottom')">
           <mat-icon>vertical_align_bottom</mat-icon>
         </button>
       </div>
@@ -218,12 +298,12 @@
 
         <mat-form-field class="form-field-padless border-width" floatLabel="never">
           <input
-            matInput
-            [(ngModel)]="block.borderWidth"
-            name="borderWidth"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="borderWidthChange($event)"
-            placeholder="Width">
+              matInput
+              [(ngModel)]="block.borderWidth"
+              name="borderWidth"
+              (focus)="inputFocus($event)"
+              (ngModelChange)="borderWidthChange($event)"
+              placeholder="Width">
             <span matPrefix *ngIf="block.borderWidth">W</span>
         </mat-form-field>
       </div>
@@ -240,12 +320,12 @@
 
         <mat-form-field class="form-field-padless shape-radius" floatLabel="never">
           <input
-            matInput
-            [(ngModel)]="block.shapeRadius"
-            name="shapeRadius"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="shapeRadiusChange($event)"
-            placeholder="Radius">
+              matInput
+              [(ngModel)]="block.shapeRadius"
+              name="shapeRadius"
+              (focus)="inputFocus($event)"
+              (ngModelChange)="shapeRadiusChange($event)"
+              placeholder="Radius">
             <span matPrefix *ngIf="block.shapeRadius">R</span>
         </mat-form-field>
 
@@ -277,19 +357,19 @@
         </fs-file>
         <ng-container *ngIf="block.imageUrl">
           <button
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="imageRemove()">
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="imageRemove()">
             <mat-icon>clear</mat-icon>
           </button>
           <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: clippable }"
-            (click)="imageClip()">
+              mat-icon-button
+              class="toggle-button"
+              color="basic"
+              type="button"
+              [ngClass]="{ selected: clippable }"
+              (click)="imageClip()">
             <mat-icon>crop</mat-icon>
           </button>
         </ng-container>
@@ -301,56 +381,56 @@
 
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-            matInput
-            [ngModel]="block.padding"
-            name="padding"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="paddingAllChange($event)"
-            placeholder="All">
+              matInput
+              [ngModel]="block.padding"
+              name="padding"
+              (focus)="inputFocus($event)"
+              (ngModelChange)="paddingAllChange($event)"
+              placeholder="All">
             <span matPrefix *ngIf="block.padding">A</span>
         </mat-form-field>
 
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-            matInput
-            [ngModel]="block.paddingTop"
-            name="paddingTop"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="paddingChange('paddingTop',$event)"
-            placeholder="Top">
+              matInput
+              [ngModel]="block.paddingTop"
+              name="paddingTop"
+              (focus)="inputFocus($event)"
+              (ngModelChange)="paddingChange('paddingTop',$event)"
+              placeholder="Top">
             <span matPrefix *ngIf="block.paddingTop">T</span>
         </mat-form-field>
 
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-            matInput
-            [ngModel]="block.paddingBottom"
-            name="paddingBottom"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="paddingChange('paddingBottom',$event)"
-            placeholder="Bottom">
+              matInput
+              [ngModel]="block.paddingBottom"
+              name="paddingBottom"
+              (focus)="inputFocus($event)"
+              (ngModelChange)="paddingChange('paddingBottom',$event)"
+              placeholder="Bottom">
             <span matPrefix *ngIf="block.paddingBottom">B</span>
         </mat-form-field>
 
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-            matInput
-            [ngModel]="block.paddingLeft"
-            name="paddingLeft"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="paddingChange('paddingLeft',$event)"
-            placeholder="Left">
+              matInput
+              [ngModel]="block.paddingLeft"
+              name="paddingLeft"
+              (focus)="inputFocus($event)"
+              (ngModelChange)="paddingChange('paddingLeft',$event)"
+              placeholder="Left">
             <span matPrefix *ngIf="block.paddingLeft">L</span>
         </mat-form-field>
 
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-            matInput
-            [ngModel]="block.paddingRight"
-            name="paddingRight"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="paddingChange('paddingRight',$event)"
-            placeholder="Right">
+              matInput
+              [ngModel]="block.paddingRight"
+              name="paddingRight"
+              (focus)="inputFocus($event)"
+              (ngModelChange)="paddingChange('paddingRight',$event)"
+              placeholder="Right">
             <span matPrefix *ngIf="block.paddingRight">R</span>
         </mat-form-field>
       </div>
@@ -366,3 +446,42 @@
     </div>
   </ng-container>
 </div>
+
+
+<fs-menu #menu>
+  <ng-template
+      fs-menu-item
+      (click)="blockAddClick(BlockType.Rectangle)">
+    Rectangle
+  </ng-template>  
+  <ng-template
+      fs-menu-item
+      (click)="blockAddClick(BlockType.Textarea)">
+    Textarea
+  </ng-template>
+  <ng-template
+      fs-menu-item
+      (click)="blockAddClick(BlockType.Checkbox)">
+    Checkbox
+  </ng-template>
+  <ng-template
+      fs-menu-item
+      (click)="blockAddClick(BlockType.RadioButton)">
+    Radio Button
+  </ng-template>
+  <ng-template
+      fs-menu-item
+      (click)="blockAddClick(BlockType.Date)">
+    Date
+  </ng-template> 
+  <ng-template
+      fs-menu-item
+      (click)="blockAddClick(BlockType.Signature)">
+    Signature
+  </ng-template>
+  <ng-template
+    fs-menu-item
+    (click)="blockAddClick(BlockType.Image)">
+    Image
+  </ng-template> 
+</fs-menu>

@@ -14,6 +14,7 @@ export class BlockEditorService {
   public blockComponents: FsBlockComponent[] = [];
   public config: BlockEditorConfig;
 
+  private _blockChanged$ = new BehaviorSubject<Block<any>>(null);
   private _blocks$ = new BehaviorSubject<Block<any>[]>([]);
   private _selectionRange;
   private _selectedBlockComponents$ = new BehaviorSubject<FsBlockComponent[]>([]);
@@ -44,6 +45,14 @@ export class BlockEditorService {
 
   public get blocks$() {
     return this._blocks$;
+  }
+
+  public get blockChanged$() {
+    return this._blockChanged$;
+  }
+
+  public blockChange(block) {
+    this._blockChanged$.next(block);
   }
 
   public get blocks() {

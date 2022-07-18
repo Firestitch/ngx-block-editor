@@ -9,6 +9,10 @@
     flex-wrap: wrap;
     align-items: center;
 
+    fs-color-picker-chip {
+      margin-left: 6px;
+    }
+
     &.padding-row {
       flex-wrap: unset;
       ::ng-deep {
@@ -31,6 +35,7 @@
         margin-right: 2px;
       }
 
+      .mat-checkbox,
       .mat-form-field {
         font-size: 12px;
       }
@@ -49,8 +54,8 @@
       position: relative;
       mat-icon:first-child {
         position: absolute;
-        transform: rotate(90deg) scale(0.6);
-        top: -6px;
+        transform: rotate(90deg) scale(0.5);
+        top: -7px;
         color: #fff;
       }
     }
@@ -143,4 +148,8 @@
       color: #9e9e9e;
     }
   }
+}
+
+.full-width {
+  width: 100%;
 }

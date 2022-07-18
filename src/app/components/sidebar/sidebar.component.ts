@@ -5,7 +5,7 @@ import {
   OnDestroy, OnInit, QueryList,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { filter, switchMap, take, takeUntil } from 'rxjs/operators';
 
 import { FsFile } from '@firestitch/file';
 import { guid } from '@firestitch/common';
@@ -14,6 +14,8 @@ import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { BlockEditorService } from '../../services/block-editor.service';
 import { Block } from '../../interfaces/block';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
+import { FsPrompt } from '@firestitch/prompt';
+import { BlockType } from '../../enums/block-type';
 
 @Component({
   selector: 'sidebar',
@@ -32,6 +34,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public block: Block<any>;
   public clippable;
+  public BlockType = BlockType;
 
   private _destroy$ = new Subject();
 
@@ -39,6 +42,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     private _el: ElementRef,
     private _service: BlockEditorService,
     private _cdRef: ChangeDetectorRef,
+    private _prompt: FsPrompt,
   ) { }
 
   public get changeDetector(): ChangeDetectorRef {
@@ -63,6 +67,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
           this.config.blocksSelected(blocks.map((block) => block.block));
         }
       });
+
+      this._service.blockChanged$
+      .pipe(
+        filter((block) => block === this.block),
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        this._cdRef.markForCheck();
+      });      
   }
 
   public verticalAlignClick(value): void {
@@ -230,12 +243,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public blockRemoveClick() {
-
     if (this.config.blocksRemoved) {
-      this.config.blocksRemoved(this._service.selectedBlocks)
-        .pipe(
-          takeUntil(this._destroy$),
-        )
+      this._prompt.confirm({
+        title: 'Confirm',
+        template: 'Are you sure your would like to delete this block?',
+      })
+      .pipe(
+        switchMap(() => this.config.blocksRemoved(this._service.selectedBlocks)),
+        takeUntil(this._destroy$),
+      )
         .subscribe(() => {
           this._service.selectedBlocks.forEach((block) => {
             this._service.removeBlock(block);
@@ -246,12 +262,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  public blockAddClick() {
+  public blockAddClick(type) {
     const width = (this.config.width * .333).toFixed(2);
     const height = (this.config.height * .333).toFixed(2);
     const reference = guid();
     const block: Block<any> = {
-      type: 'text',
+      type,
       reference,
       top:  height,
       left:  width,

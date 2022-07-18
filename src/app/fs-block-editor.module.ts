@@ -9,12 +9,16 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { FsColorPickerModule } from '@firestitch/colorpicker';
 import { FsFileModule } from '@firestitch/file';
+import { FsMenuModule } from '@firestitch/menu';
+import { FsZoomPanModule } from '@firestitch/zoom-pan';
 
 import { FsBlockComponent } from './components/block/block.component';
 import { FsBlockEditorComponent } from './components/block-editor/block-editor.component';
 import { FsBlockEditorSidebarPanelDirective } from './directives/block-editor-sidebar-panel.directive';
 import { FsBlockEditorMarginDirective } from './directives/block-editor-margin.directive';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { ArtboardComponent } from './components/artboard/artboard.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   imports: [
@@ -25,9 +29,12 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
+    MatCheckboxModule,
 
     FsFileModule,
     FsColorPickerModule,
+    FsMenuModule,
+    FsZoomPanModule,
   ],
   exports: [
     FsBlockComponent,
@@ -40,6 +47,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     FsBlockEditorSidebarPanelDirective,
     FsBlockEditorMarginDirective,
     SidebarComponent,
+    ArtboardComponent,
   ],
 })
 export class FsBlockEditorModule {

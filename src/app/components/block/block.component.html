@@ -1,38 +1,52 @@
 <div
-  #element
-  class="block"
-  [ngClass]="{ editable: editable, readonly: block.readonly }">
+    #element
+    [class]="'block ' + 'block-' + block.type"
+    [ngClass]="{ editable: editable, readonly: block.readonly }">
   <div
-    #contentElement
-    class="content"
-    [style.zIndex]="block.index"
-    [style.borderColor]="block.borderColor"
-    [style.borderWidth]="block.borderWidth ? block.borderWidth + 'pt' : ''"
-    [style.borderStyle]="block.borderColor ? 'solid' : 'dashed'"
-    [style.textAlign]="block.horizontalAlign"
-    [style.fontStyle]="block.italic ? 'italic' : ''"
-    [style.fontSize]="block.fontSize ? block.fontSize + 'pt' : ''"
-    [style.lineHeight]="block.lineHeight ? block.lineHeight + 'pt' : ''"
-    [style.color]="block.fontColor"
-    [style.fontWeight]="block.bold ? 'bold' : ''"
-    [style.textDecoration]="block.underline ? 'underline' : ''"
-    [style.paddingTop]="block.paddingTop ? block.paddingTop + unit : ''"
-    [style.paddingBottom]="block.paddingBottom ? block.paddingBottom + unit : ''"
-    [style.paddingLeft]="block.paddingLeft ? block.paddingLeft + unit : ''"
-    [style.paddingRight]="block.paddingRight ? block.paddingRight + unit : ''"
-    [style.padding]="block.padding ? block.padding + unit : ''"
-    [style.clipPath]="block.clipPath"
-    [style.backgroundColor]="block.backgroundColor"
-    [style.borderBottomLeftRadius]="block.shapeRadius && block.shapeBottomLeft === 'round' ? block.shapeRadius + unit : ''"
-    [style.borderBottomRightRadius]="block.shapeRadius && block.shapeBottomRight === 'round' ? block.shapeRadius + unit : ''"
-    [style.borderTopRightRadius]="block.shapeRadius && block.shapeTopRight === 'round' ? block.shapeRadius + unit : ''"
-    [style.borderTopLeftRadius]="block.shapeRadius && block.shapeTopLeft === 'round' ? block.shapeRadius + unit : ''"
-    [ngClass]="{
-      'editable': editable,
-      'vertical-align-center': block.verticalAlign === 'center',
-      'vertical-align-bottom': block.verticalAlign === 'bottom'
-    }">
-    <img [src]="block.imageUrl" *ngIf="block.imageUrl">
+      #contentElement
+      class="content"
+      [style.zIndex]="block.index"
+      [style.borderColor]="block.borderColor"
+      [style.borderWidth]="block.borderWidth ? block.borderWidth + 'pt' : ''"
+      [style.borderStyle]="block.borderColor ? 'solid' : 'dashed'"
+      [style.textAlign]="block.horizontalAlign"
+      [style.fontStyle]="block.italic ? 'italic' : ''"
+      [style.fontSize]="block.fontSize ? block.fontSize + 'pt' : ''"
+      [style.lineHeight]="block.lineHeight ? block.lineHeight + 'pt' : ''"
+      [style.color]="block.fontColor"
+      [style.fontWeight]="block.bold ? 'bold' : ''"
+      [style.textDecoration]="block.underline ? 'underline' : ''"
+      [style.paddingTop]="block.paddingTop ? block.paddingTop + unit : ''"
+      [style.paddingBottom]="block.paddingBottom ? block.paddingBottom + unit : ''"
+      [style.paddingLeft]="block.paddingLeft ? block.paddingLeft + unit : ''"
+      [style.paddingRight]="block.paddingRight ? block.paddingRight + unit : ''"
+      [style.padding]="block.padding ? block.padding + unit : ''"
+      [style.clipPath]="block.clipPath"
+      [style.backgroundColor]="block.backgroundColor"
+      [style.borderBottomLeftRadius]="block.shapeRadius && block.shapeBottomLeft === 'round' ? block.shapeRadius + unit : ''"
+      [style.borderBottomRightRadius]="block.shapeRadius && block.shapeBottomRight === 'round' ? block.shapeRadius + unit : ''"
+      [style.borderTopRightRadius]="block.shapeRadius && block.shapeTopRight === 'round' ? block.shapeRadius + unit : ''"
+      [style.borderTopLeftRadius]="block.shapeRadius && block.shapeTopLeft === 'round' ? block.shapeRadius + unit : ''"
+      [ngClass]="{
+        'editable': editable,
+        'vertical-align-center': block.verticalAlign === 'center',
+        'vertical-align-bottom': block.verticalAlign === 'bottom'
+      }">
+    <ng-container [ngSwitch]="block.type">
+      <ng-container *ngSwitchCase="BlockType.Pdf">
+        <!-- <embed
+          src="http://infolab.stanford.edu/pub/papers/google.pdf#toolbar=0&navpanes=0&scrollbar=0#page=1&view=fitH,100"
+          type="application/pdf"
+          frameBorder="0"
+          scrolling="auto"
+          height="100%"
+          width="100%"> -->
+      </ng-container>
+      <img [src]="block.imageUrl" *ngIf="block.imageUrl">
+    </ng-container>
+    <ng-container *ngIf="block.type === BlockType.Textarea || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">
+      {{block.name}}
+    </ng-container>
     <div
       #contentEditable
       [contentEditable]="editable"
