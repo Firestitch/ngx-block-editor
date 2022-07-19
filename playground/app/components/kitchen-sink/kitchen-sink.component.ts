@@ -31,7 +31,7 @@ export class KitchenSinkComponent implements OnInit {
 
     const blocks: Block<CustomBlock>[] = [
       //{ reference: 1, width: 4, height: 3, top: 2, left: 3, borderColor: 'pink', content: 'Block A', padding: .1, readonly: true },
-      { reference: 2, width: 5, height: 2.5, top: 4, left: 1, content: 'Block B', backgroundColor: '#628597' },
+      { guid: '2', width: 5, height: 2.5, top: 4, left: 1, content: 'Block B', backgroundColor: '#628597' },
     ];
 
     this.config = {

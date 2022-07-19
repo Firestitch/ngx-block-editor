@@ -8,7 +8,7 @@ import { filter, switchMap, takeUntil } from 'rxjs/operators';
 
 import { FsFile } from '@firestitch/file';
 import { FsPrompt } from '@firestitch/prompt';
-import { guid, index } from '@firestitch/common';
+import { index } from '@firestitch/common';
 
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { BlockEditorService } from '../../services/block-editor.service';
@@ -260,12 +260,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public layerDown(): void {
     this.layerMove(-1);
-  }
-
-  public getBlock(reference: any): Block<any> {
-    return this._blockEditor.blocks.find((block) => {
-      return block.reference === reference;
-    });
   }
 
   public blockChanged(block: Block<any>): void {

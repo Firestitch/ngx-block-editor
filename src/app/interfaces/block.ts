@@ -4,7 +4,6 @@ import { FsBlockComponent } from './../components/block/block.component';
 export type Block<T = any> = BlockBase & T;
 
 export interface BlockBase {
-  reference: any;
   width?: number;
   height?: number;
   top?: number;
@@ -46,5 +45,6 @@ export interface BlockBase {
   default?: string;
   groupLabel?: string;
   groupDescription?: string;
+  guid?: string;
   type?: BlockType;
 }

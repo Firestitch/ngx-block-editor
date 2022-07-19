@@ -264,7 +264,7 @@ export class BlockEditorService implements OnDestroy {
       verticalAlign: 'top',
       horizontalAlign: 'left',
       ...block,
-      guid: block.guid || guid(),
+      guid: block.guid || guid('xxxxxxxxxxxx'),
     };
   }
 
