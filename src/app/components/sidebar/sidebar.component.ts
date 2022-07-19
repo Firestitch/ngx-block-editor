@@ -69,7 +69,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this._cdRef.markForCheck();
-      });      
+      });
   }
 
   public verticalAlignClick(value): void {
@@ -96,7 +96,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public borderWidthChange(value): void {
     value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'borderWidth');    
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'borderWidth');
   }
 
   public italicClick(): void {
@@ -108,37 +108,37 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public backgroundColorChange(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'backgroundColor');   
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'backgroundColor');
   }
 
   public widthChange(value): void {
     value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'width');    
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'width');
   }
 
   public heightChange(value): void {
     value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'height');    
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'height');
   }
 
   public topChange(value): void {
     value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'top');        
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'top');
   }
 
   public leftChange(value): void {
     value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'left');        
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'left');
   }
 
   public rotateChange(value): void {
     value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'rotate');         
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'rotate');
   }
 
   public paddingChange(name, value): void {
     value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'padding');       
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'padding');
   }
 
   public paddingAllChange(value): void {
@@ -155,33 +155,33 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public borderColorChange(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'borderColor');  
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'borderColor');
   }
 
   public toggleKeepRatio(): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.keepRatio, 'keepRatio');  
+    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.keepRatio, 'keepRatio');
   }
 
   public horizontalAlignClick(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'horizontalAlign');  
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'horizontalAlign');
   }
 
   public shapeRound(name): void {
     const value = this.block[name] === 'round' ? 'square' : 'round';
-    this._blockEditor.selectedBlockComponentChangeProperty(value, name); 
+    this._blockEditor.selectedBlockComponentChangeProperty(value, name);
   }
 
   public imageRemove(): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(null, 'imageUrl'); 
+    this._blockEditor.selectedBlockComponentChangeProperty(null, 'imageUrl');
   }
 
   public imageClip(): void {
     this.clippable = !this.clippable;
-    this._blockEditor.selectedBlockComponentChangeProperty(this.clippable, 'clippable'); 
+    this._blockEditor.selectedBlockComponentChangeProperty(this.clippable, 'clippable');
   }
 
   public shapeRadiusChange(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'shapeRadius'); 
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'shapeRadius');
   }
 
   public blockChangeProperty(value, name): void {
@@ -192,7 +192,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     if (this.config.imageUpload) {
       this.config.imageUpload(fsFile.file)
         .subscribe((value) => {
-          this._blockEditor.selectedBlockComponentChangeProperty(value, 'imageUrl'); 
+          this._blockEditor.selectedBlockComponentChangeProperty(value, 'imageUrl');
         });
     }
   }
@@ -222,7 +222,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public blockAdd(type: BlockType): void {
-    if(type === BlockType.Pdf || type === BlockType.Image) {
+    if (type === BlockType.Pdf || type === BlockType.Image) {
       return;
     }
 
@@ -236,12 +236,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public layerMove(direction): void {
     this._blockEditor.blockComponents.forEach((blockComponent) => {
       if (this._blockEditor.isSelectedBlock(blockComponent)) {
-        blockComponent.block.index + (999 * direction);
+        blockComponent.block.index += (999 * direction);
       }
     });
 
     const sorted = this._blockEditor.blockComponents.sort((a, b) => {
-      return a.index > b.index ? 1 : -1;
+      return a.block.index > b.block.index ? 1 : -1;
     });
 
     sorted.forEach((item, index) => {

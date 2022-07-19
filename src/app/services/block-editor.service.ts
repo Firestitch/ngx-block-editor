@@ -45,7 +45,7 @@ export class BlockEditorService implements OnDestroy {
     return this.blockComponents
     .filter((blockComponent) => this.selectedBlocks.indexOf(blockComponent.block) !== -1);
   }
-  
+
   public blockUpload(block: Block, fsFile: FsFile) {
     if (this.config.blockUpload) {
       this.config.blockUpload(block, fsFile.file)
@@ -53,17 +53,19 @@ export class BlockEditorService implements OnDestroy {
           takeUntil(this._destroy$),
         )
         .subscribe((block) => {
-          this.blocks = [
-            ...this.blocks, 
+          const blocks = [
+            ...this.blocks,
             block,
           ];
-          
+
+          this.blocks = this._updateIndexesFor(blocks);
+
           this._blockAdded$.next(block);
-      
-          if(this.config.blockAdded) {
+
+          if (this.config.blockAdded) {
             this.config.blockAdded(block);
           }
-          //this._updateIndexes();          
+          //this._updateIndexes();
         });
     }
   }
@@ -75,19 +77,29 @@ export class BlockEditorService implements OnDestroy {
           takeUntil(this._destroy$),
         )
         .subscribe((block) => {
-          this.blocks = [
-            ...this.blocks, 
+          const blocks = [
+            ...this.blocks,
             block,
           ];
-          
+
+          this.blocks = this._updateIndexesFor(blocks);
+
           this._blockAdded$.next(block);
-      
-          if(this.config.blockAdded) {
+
+          if (this.config.blockAdded) {
             this.config.blockAdded(block);
           }
-          //this._updateIndexes();          
+          //this._updateIndexes();
         });
     }
+  }
+
+  private _updateIndexesFor(blocks: Block<unknown>[]) {
+    blocks.forEach((block, index) => {
+      block.index = index;
+    });
+
+    return blocks;
   }
 
   // private _updateIndexes(): void {
@@ -101,7 +113,7 @@ export class BlockEditorService implements OnDestroy {
   //     }).index = index;
   //   });
   // }
-  
+
   public removeBlock(block: Block<any>) {
     const index = this.indexOf(block);
     if (index !== -1) {
@@ -151,8 +163,8 @@ export class BlockEditorService implements OnDestroy {
     this._blocks$.next(blocks);
   }
 
-  public isSelectedBlock(block: Block) {
-    return this.selectedBlocks.indexOf(block) !== -1;
+  public isSelectedBlock(block: any) {
+    return this.selectedBlocks.indexOf(block.block) !== -1;
   }
 
   public indexOf(block) {
@@ -160,11 +172,32 @@ export class BlockEditorService implements OnDestroy {
   }
 
   public selectedBlockComponentChangeProperty(value, name) {
-    this.selectedBlocks
-    .forEach((block: Block) => {
-      block[name] = value;
-      this.blockChange(block);
-    });
+    if (name === 'index') {
+      const blocks = this.blocks;
+      const affectedGUIDs = this.selectedBlocks.map((block) => block.guid);
+
+      blocks.forEach((block, index) => {
+        const guidIndex = affectedGUIDs.indexOf(block.guid);
+
+        if (guidIndex !== -1) {
+          blocks.splice(index, 1);
+          blocks.splice(+value, 0, block);
+          block.index = +value;
+
+          this.blockChange(block);
+        }
+      });
+
+      this._updateIndexesFor(blocks);
+
+    } else {
+      this.selectedBlocks
+        .forEach((block: Block) => {
+          block[name] = value;
+          this.blockChange(block);
+        });
+    }
+
   }
 
   public get selectedBlocks$(): Observable<Block<any>[]> {
@@ -175,7 +208,7 @@ export class BlockEditorService implements OnDestroy {
     this.selectedBlocks = [block];
   }
 
-  public set selectedBlocks(blocks: Block<any>[]) {    
+  public set selectedBlocks(blocks: Block<any>[]) {
     this.blockComponents
     .forEach((blockComponent) => {
       blockComponent.editable = false;
@@ -229,7 +262,7 @@ export class BlockEditorService implements OnDestroy {
       item.elementGuidelines = blocks;
     });
   }
-  
+
   public unregisterBlock(block: Block) {
     this._blockComponents.delete(block);
   }
@@ -250,7 +283,7 @@ export class BlockEditorService implements OnDestroy {
       top:  height,
       left:  width,
       width: height,
-      height: width,      
+      height: width,
       ...block,
     });
   }
@@ -272,5 +305,5 @@ export class BlockEditorService implements OnDestroy {
     this._destroy$.next();
     this._destroy$.complete();
   }
-  
+
 }
