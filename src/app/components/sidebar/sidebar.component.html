@@ -130,7 +130,7 @@
         <div class="sidebar-label">{{blockTypeNames[block.type]}} Field</div>
         <div class="sidebar-row">
 
-          <mat-form-field class="form-field-padless full-width">
+          <mat-form-field class="form-field-padless-bottom full-width">
             <input
               matInput
               [ngModel]="block.name"
@@ -140,7 +140,7 @@
           </mat-form-field>
 
           <ng-container *ngIf="block.type === BlockType.Date">
-            <mat-form-field class="form-field-padless full-width">
+            <mat-form-field class="form-field-padless-bottom full-width">
               <input
                 matInput
                 [ngModel]="block.format"
@@ -151,7 +151,7 @@
           </ng-container>
 
           <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText">
-            <mat-form-field class="form-field-padless full-width">
+            <mat-form-field class="form-field-padless-bottom full-width">
               <textarea
                 matInput
                 [matTextareaAutosize]="true"
@@ -164,7 +164,7 @@
           </ng-container>
 
           <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.Date">
-            <mat-form-field class="form-field-padless full-width">
+            <mat-form-field class="form-field-padless-bottom full-width">
               <textarea
                 matInput
                 [matTextareaAutosize]="true"
@@ -176,7 +176,7 @@
             </mat-form-field>
           </ng-container>
 
-          <mat-form-field class="form-field-padless full-width">
+          <mat-form-field class="form-field-padless-bottom full-width">
             <textarea
               matInput
               [matTextareaAutosize]="true"
@@ -188,7 +188,7 @@
           </mat-form-field>
 
           <ng-container *ngIf="block.type === BlockType.RadioButton || block.type === BlockType.Checkbox">
-            <mat-form-field class="form-field-padless full-width">
+            <mat-form-field class="form-field-padless-bottom full-width">
               <textarea
                 matInput
                 [matTextareaAutosize]="true"
@@ -199,7 +199,7 @@
               </textarea>
             </mat-form-field>
             
-            <mat-form-field class="form-field-padless full-width">
+            <mat-form-field class="form-field-padless-bottom full-width">
               <mat-label>Group Description</mat-label>
               <textarea
                 matInput
@@ -211,7 +211,7 @@
             </mat-form-field>
           </ng-container>
 
-          <mat-form-field class="form-field-padless full-width">
+          <mat-form-field class="form-field-padless-bottom full-width">
             <mat-label>Index</mat-label>
             <input
               matInput

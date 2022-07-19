@@ -117,8 +117,18 @@
       border-top: 1px solid #dadada;
     }
 
+    &.form-field-panel {
+      mat-form-field + mat-form-field {
+        margin-top: 12px;
+      }
+    }
+
     &.info-panel .sidebar-row {
       
+      + .sidebar-row {
+        margin-top: 12px;
+      }
+
       .mat-form-field {
         width: 41px;
       }

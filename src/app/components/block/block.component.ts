@@ -1,6 +1,7 @@
 import { filter, takeUntil } from 'rxjs/operators';
 import {
   AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
+  HostBinding,
   Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 
@@ -33,6 +34,9 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   @Input() public block: Block;
   @Input() public html: string;
   @Input() public zoompan: FsZoomPanComponent;
+
+  @HostBinding('class.transforming')
+  public transformating = false;
 
   public unit;
   public content: string;
@@ -238,67 +242,85 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       this._triggerChanged();
     });
 
-    this.moveable.on('dragStart', ({ target, clientX, clientY }) => {
-      this.editable = false;
-    }).on('drag', ({ target, left, top }) => {
-      target!.style.left = this.pxToIn(left) + this.unit;
-      target!.style.top = this.pxToIn(top) + this.unit;
-      this.block.top = this.pxToIn(top);
-      this.block.left = this.pxToIn(left);
-      this._triggerChanged();
-    });
+    this.moveable
+      .on('dragStart', () => {
+        this.editable = false;
+        this.transformating = true;
+        this._cdRef.markForCheck();
+      })
+      .on('drag', ({ target, left, top }) => {
+        target!.style.left = this.pxToIn(left) + this.unit;
+        target!.style.top = this.pxToIn(top) + this.unit;
+        this.block.top = this.pxToIn(top);
+        this.block.left = this.pxToIn(left);
+        this._triggerChanged();
+      })
+      .on('dragEnd', () => {
+        this.transformating = false;
+        this._cdRef.markForCheck();
+      })
+      .on('resizeStart', () => {
+        this.editable = false;
+        this.zoompan.disable();
+        this.transformating = true;
+        this._cdRef.markForCheck();
+      })
+      .on('resize', ({ target, width, height, dist, delta, direction }) => {
+        width = this.pxToIn(width);
+        height = this.pxToIn(height);
 
-    this.moveable.on('resizeStart', ({ target, clientX, clientY }) => {
-      this.editable = false;
-      this.zoompan.disable();
-    }).on('resize', ({ target, width, height, dist, delta, direction }) => {
-      width = this.pxToIn(width);
-      height = this.pxToIn(height);
+        if (delta[0]) {
+          this.block.width = width;
+          target!.style.width = width + this.unit;
+        }
 
-      if (delta[0]) {
-        this.block.width = width;
-        target!.style.width = width + this.unit;
-      }
+        if (delta[1]) {
+          this.block.height = height;
+          target!.style.height = height + this.unit;
+        }
 
-      if (delta[1]) {
-        this.block.height = height;
-        target!.style.height = height + this.unit;
-      }
+        const transform = [0, 0];
+        if (direction[1] === -1) {
+          transform[1] = dist[1] * -1;
+        }
 
-      const transform = [0, 0];
-      if (direction[1] === -1) {
-        transform[1] = dist[1] * -1;
-      }
+        if (direction[0] === -1) {
+          transform[0] = dist[0] * -1;
+        }
 
-      if (direction[0] === -1) {
-        transform[0] = dist[0] * -1;
-      }
+        this._setTransform([`translate(${transform[0]}px, ${transform[1]}px)`]);
+        this._triggerChanged();
+      })
+      .on('resizeEnd', ({ target }) => {
+        const matrix = new WebKitCSSMatrix(target.style.transform);
+        this.block.top = parseFloat(target.style.top) + this.pxToIn(matrix.m42);
+        this.block.left = parseFloat(target.style.left) + this.pxToIn(matrix.m41);
 
-      this._setTransform([`translate(${transform[0]}px, ${transform[1]}px)`]);
-      this._triggerChanged();
-      
-    }).on('resizeEnd', ({ target }) => {
-      const matrix = new WebKitCSSMatrix(target.style.transform);
-      this.block.top = parseFloat(target.style.top) + this.pxToIn(matrix.m42);
-      this.block.left = parseFloat(target.style.left) + this.pxToIn(matrix.m41);
-
-      target.style.top = this.block.top + this.unit;
-      target.style.left = this.block.left + this.unit;
-      this._setTransform();
-      this._triggerChanged();
-      this.zoompan.enable();
-    });
-
-    this.moveable.on('rotateStart', ({ target, clientX, clientY }) => {
-      this.zoompan.disable();
-      this.editable = false;
-      this._rotateStart = this.block.rotate || 0;
-    }).on('rotate', ({ rotate, transform }) => {
-      this.block.rotate = this._rotateStart + rotate;
-      this.el.style.transform = transform;
-      this._triggerChanged();
-      this.zoompan.enable();
-    });
+        target.style.top = this.block.top + this.unit;
+        target.style.left = this.block.left + this.unit;
+        this._setTransform();
+        this._triggerChanged();            
+        this.zoompan.enable();
+        this.transformating = false;
+        this._cdRef.markForCheck();
+      })
+      .on('rotateStart', () => {
+        this.zoompan.disable();
+        this.editable = false;                  
+        this._rotateStart = this.block.rotate || 0;
+        this.transformating = true;
+        this._cdRef.markForCheck();
+      })
+      .on('rotate', ({ rotate, transform }) => {
+        this.block.rotate = this._rotateStart + rotate;
+        this.el.style.transform = transform;
+        this._triggerChanged();
+        this.zoompan.enable();
+      })
+      .on('rotateEnd', () => {
+        this.transformating = false;
+        this._cdRef.markForCheck();
+      });
   }
 
   private _initEvents(): void {

@@ -1,10 +1,20 @@
-:host ::ng-deep {
-  .moveable-control {
-    width: 10px!important;
-    height: 10px!important;
-    margin-top: -5px!important;
-    margin-left: -5px!important;
+:host {
+  ::ng-deep {
+    .moveable-control {
+      width: 10px!important;
+      height: 10px!important;
+      margin-top: -5px!important;
+      margin-left: -5px!important;
+    }
   }
+
+  &.transforming {
+    ::ng-deep {
+      .moveable-control {
+        display: none;
+      }
+    }
+  } 
 }
 
 .block {
