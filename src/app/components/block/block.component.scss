@@ -1,3 +1,12 @@
+:host ::ng-deep {
+  .moveable-control {
+    width: 10px!important;
+    height: 10px!important;
+    margin-top: -5px!important;
+    margin-left: -5px!important;
+  }
+}
+
 .block {
   position: absolute;
   display: block;
@@ -9,9 +18,10 @@
   }
 
   &.block-shorttext,
-  &.block-long-text,
+  &.block-longtext,
   &.block-date,
   &.block-radiobutton,
+  &.block-signature,
   &.block-checkbox {
     background-color: rgb(170 181 225 / 80%);
     color: #585555;

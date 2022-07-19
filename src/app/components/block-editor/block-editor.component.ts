@@ -73,6 +73,10 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
       .subscribe((blocks) => {
         this.blocks = blocks;
       });
+
+    setTimeout(() => {
+      this.zoompan.center(this.artboard.nativeElement, { vertical: false });
+    });
   }
 
   public artboardClick(event): void {

@@ -19,6 +19,7 @@ import { FsBlockEditorMarginDirective } from './directives/block-editor-margin.d
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ArtboardComponent } from './components/artboard/artboard.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   imports: [
@@ -30,6 +31,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatInputModule,
     MatFormFieldModule,
     MatCheckboxModule,
+    MatTooltipModule,
 
     FsFileModule,
     FsColorPickerModule,

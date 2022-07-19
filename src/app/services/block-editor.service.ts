@@ -6,6 +6,8 @@ import { Block } from './../interfaces/block';
 import { FsBlockComponent } from '../components/block/block.component';
 import { BlockEditorConfig } from '../interfaces/block-editor-config';
 import { takeUntil } from 'rxjs/operators';
+import { FsFile } from '@firestitch/file';
+import { guid } from '@firestitch/common';
 
 @Injectable()
 export class BlockEditorService implements OnDestroy {
@@ -42,6 +44,28 @@ export class BlockEditorService implements OnDestroy {
   public get selectedComponentBlocks() {
     return this.blockComponents
     .filter((blockComponent) => this.selectedBlocks.indexOf(blockComponent.block) !== -1);
+  }
+  
+  public blockUpload(block: Block, fsFile: FsFile) {
+    if (this.config.blockUpload) {
+      this.config.blockUpload(block, fsFile.file)
+        .pipe(
+          takeUntil(this._destroy$),
+        )
+        .subscribe((block) => {
+          this.blocks = [
+            ...this.blocks, 
+            block,
+          ];
+          
+          this._blockAdded$.next(block);
+      
+          if(this.config.blockAdded) {
+            this.config.blockAdded(block);
+          }
+          //this._updateIndexes();          
+        });
+    }
   }
 
   public blockAdd(block: Block<any>) {
@@ -218,6 +242,19 @@ export class BlockEditorService implements OnDestroy {
     this.margin = margin;
   }
 
+  public sanitizeNewBlock(block) {
+    const width = (this.config.width * .333).toFixed(2);
+    const height = (this.config.height * .333).toFixed(2);
+
+    return this.sanitizeBlock({
+      top:  height,
+      left:  width,
+      width: height,
+      height: width,      
+      ...block,
+    });
+  }
+
   public sanitizeBlock(block) {
     return {
       shapeBottomLeft: 'round',
@@ -227,6 +264,7 @@ export class BlockEditorService implements OnDestroy {
       verticalAlign: 'top',
       horizontalAlign: 'left',
       ...block,
+      guid: block.guid || guid(),
     };
   }
 

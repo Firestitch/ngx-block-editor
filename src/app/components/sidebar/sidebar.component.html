@@ -1,44 +1,71 @@
 <div class="sidebar mat-elevation-z2">
   <div class="sidebar-panel">
-    <div class="sidebar-label">Tools</div>
+    <div class="sidebar-label">Add</div>
     <div class="sidebar-row">
-      <button   
-          mat-icon-button
-          color="basic"
-          type="button"
-          [fsMenuTriggerFor]="menu">
-        <mat-icon>add_circle_outline</mat-icon>
-      </button>
-      <ng-container *ngIf="block">
-        <button
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="blockRemoveClick()">
-          <mat-icon>delete_outline</mat-icon>
-        </button>
-        <button
-            class="layer-up"
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="layerUp()">
-          <mat-icon>arrow_back</mat-icon>
-          <mat-icon>layers</mat-icon>
-        </button>
-        <button
-            class="layer-down"
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="layerDown()">
-          <mat-icon>arrow_back</mat-icon>
-          <mat-icon>layers</mat-icon>
-        </button>
-      </ng-container>
+        <ng-container *ngFor="let blockType of BlockTypes">
+          <ng-container [ngSwitch]="blockType.value">
+            <ng-container *ngSwitchCase="BlockType.Pdf">
+              <ng-container *ngTemplateOutlet="addFile"></ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="BlockType.Image">
+              <ng-container *ngTemplateOutlet="addFile"></ng-container>
+            </ng-container>            
+            <ng-container *ngSwitchDefault>
+              <ng-container *ngTemplateOutlet="addButton"></ng-container>
+            </ng-container>
+          </ng-container>
+
+          <ng-template #addFile>
+            <fs-file (select)="blockUpload(blockType.value, $event)" [accept]="blockType.accept">
+              <ng-container *ngTemplateOutlet="addButton"></ng-container>
+            </fs-file>
+          </ng-template>
+
+          <ng-template #addButton>
+            <button            
+                type="button"
+                mat-icon-button
+                [matTooltip]="'Add ' + blockType.name"
+                (click)="blockAdd(blockType.value)">
+              <mat-icon>{{blockType.icon}}</mat-icon>
+            </button>
+          </ng-template>
+        </ng-container>
     </div>
   </div>
   <ng-container *ngIf="block">
+    <div class="sidebar-panel">
+      <div class="sidebar-label">Tools</div>
+      <div class="sidebar-row">
+        <ng-container *ngIf="block">
+          <button
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="blockRemoveClick()">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+          <button
+              class="layer-up"
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="layerUp()">
+            <mat-icon>arrow_back</mat-icon>
+            <mat-icon>layers</mat-icon>
+          </button>
+          <button
+              class="layer-down"
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="layerDown()">
+            <mat-icon>arrow_back</mat-icon>
+            <mat-icon>layers</mat-icon>
+          </button>
+        </ng-container>
+      </div>
+    </div>
     <div class="sidebar-panel info-panel">
       <div class="sidebar-label">Info</div>
       <div class="sidebar-row">
@@ -100,7 +127,7 @@
     </div>
     <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">
       <div class="sidebar-panel form-field-panel">
-        <div class="sidebar-label">Form Field</div>
+        <div class="sidebar-label">{{blockTypeNames[block.type]}} Field</div>
         <div class="sidebar-row">
 
           <mat-form-field class="form-field-padless full-width">
@@ -118,7 +145,8 @@
                 matInput
                 [ngModel]="block.format"
                 name="format"
-                placeholder="Format">
+                placeholder="Format"
+                (ngModelChange)="blockChangeProperty($event, 'format')">
             </mat-form-field>
           </ng-container>
 
@@ -129,7 +157,8 @@
                 [matTextareaAutosize]="true"
                 [ngModel]="block.formula"
                 name="formula"
-                placeholder="Formula">
+                placeholder="Formula"
+                (ngModelChange)="blockChangeProperty($event, 'formula')">
               </textarea>
             </mat-form-field>
           </ng-container>
@@ -141,7 +170,8 @@
                 [matTextareaAutosize]="true"
                 [ngModel]="block.default"
                 name="default"
-                placeholder="Default">
+                placeholder="Default"
+                (ngModelChange)="blockChangeProperty($event, 'default')">
               </textarea>
             </mat-form-field>
           </ng-container>
@@ -152,7 +182,8 @@
               [matTextareaAutosize]="true"
               [ngModel]="block.description"
               name="description"
-              placeholder="Description">
+              placeholder="Description"
+              (ngModelChange)="blockChangeProperty($event, 'description')">
             </textarea>
           </mat-form-field>
 
@@ -163,23 +194,39 @@
                 [matTextareaAutosize]="true"
                 [ngModel]="block.groupLabel"
                 name="groupLabel"
-                placeholder="Group Label">
+                placeholder="Group Label"
+                (ngModelChange)="blockChangeProperty($event, 'groupLabel')">
               </textarea>
             </mat-form-field>
             
             <mat-form-field class="form-field-padless full-width">
+              <mat-label>Group Description</mat-label>
               <textarea
                 matInput
                 [matTextareaAutosize]="true"
                 [ngModel]="block.groupDescription"
                 name="groupDescription"
-                placeholder="Group Description">
+                (ngModelChange)="blockChangeProperty($event, 'groupDescription')">
               </textarea>
             </mat-form-field>
           </ng-container>
 
+          <mat-form-field class="form-field-padless full-width">
+            <mat-label>Index</mat-label>
+            <input
+              matInput
+              [(ngModel)]="block.index"
+              name="index"
+              (ngModelChange)="blockChangeProperty($event, 'index')">
+          </mat-form-field>
+
           <div class="form-field-options">
-            <mat-checkbox name="required" [(ngModel)]="block.required">Required</mat-checkbox>
+            <mat-checkbox 
+                name="required" 
+                [(ngModel)]="block.required"
+                (ngModelChange)="blockChangeProperty($event, 'required')">
+              Required
+            </mat-checkbox>
           </div>
         </div>
       </div>
@@ -364,32 +411,34 @@
         </div>
       </div>
     </div>
+    <ng-container *ngIf="block.type !== BlockType.Pdf">
       <div class="sidebar-panel">
-      <div class="sidebar-label">Image</div>
-      <div class="sidebar-row image-row">
-        <fs-file (select)="fileSelect($event)">
-          <button type="button" mat-icon-button><mat-icon>cloud_upload</mat-icon></button>
-        </fs-file>
-        <ng-container *ngIf="block.imageUrl">
-          <button
-              mat-icon-button
-              color="basic"
-              type="button"
-              (click)="imageRemove()">
-            <mat-icon>clear</mat-icon>
-          </button>
-          <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: clippable }"
-              (click)="imageClip()">
-            <mat-icon>crop</mat-icon>
-          </button>
-        </ng-container>
+        <div class="sidebar-label">Image</div>
+        <div class="sidebar-row image-row">
+          <fs-file (select)="imageSelect($event)">
+            <button type="button" mat-icon-button><mat-icon>cloud_upload</mat-icon></button>
+          </fs-file>
+          <ng-container *ngIf="block.imageUrl">
+            <button
+                mat-icon-button
+                color="basic"
+                type="button"
+                (click)="imageRemove()">
+              <mat-icon>clear</mat-icon>
+            </button>
+            <button
+                mat-icon-button
+                class="toggle-button"
+                color="basic"
+                type="button"
+                [ngClass]="{ selected: clippable }"
+                (click)="imageClip()">
+              <mat-icon>crop</mat-icon>
+            </button>
+          </ng-container>
+        </div>
       </div>
-    </div>
+    </ng-container>
     <div class="sidebar-panel">
       <div class="sidebar-label">Padding</div>
       <div class="sidebar-row padding-row">
@@ -462,46 +511,3 @@
   </ng-container>
 </div>
 
-
-<fs-menu #menu>
-  <ng-template
-      fs-menu-item
-      (click)="blockAddClick(BlockType.Rectangle)">
-    Rectangle
-  </ng-template>  
-  <ng-template
-      fs-menu-item
-      (click)="blockAddClick(BlockType.ShortText)">
-    Short Text
-  </ng-template> 
-  <ng-template
-      fs-menu-item
-      (click)="blockAddClick(BlockType.LongText)">
-    Long Text
-  </ng-template>
-  <ng-template
-      fs-menu-item
-      (click)="blockAddClick(BlockType.Checkbox)">
-    Checkbox
-  </ng-template>
-  <ng-template
-      fs-menu-item
-      (click)="blockAddClick(BlockType.RadioButton)">
-    Radio Button
-  </ng-template>
-  <ng-template
-      fs-menu-item
-      (click)="blockAddClick(BlockType.Date)">
-    Date
-  </ng-template> 
-  <ng-template
-      fs-menu-item
-      (click)="blockAddClick(BlockType.Signature)">
-    Signature
-  </ng-template>
-  <ng-template
-    fs-menu-item
-    (click)="blockAddClick(BlockType.Image)">
-    Image
-  </ng-template> 
-</fs-menu>

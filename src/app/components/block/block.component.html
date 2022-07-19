@@ -34,13 +34,7 @@
       }">
     <ng-container [ngSwitch]="block.type">
       <ng-container *ngSwitchCase="BlockType.Pdf">
-        <!-- <embed
-          src="http://infolab.stanford.edu/pub/papers/google.pdf#toolbar=0&navpanes=0&scrollbar=0#page=1&view=fitH,100"
-          type="application/pdf"
-          frameBorder="0"
-          scrolling="auto"
-          height="100%"
-          width="100%"> -->
+        <img [src]="block.imageUrl">
       </ng-container>
       <img [src]="block.imageUrl" *ngIf="block.imageUrl">
     </ng-container>

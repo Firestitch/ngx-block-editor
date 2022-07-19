@@ -1,16 +1,17 @@
 import { filter, takeUntil } from 'rxjs/operators';
 import {
   AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
-  Input, OnDestroy, OnInit, Output, ViewChild,
+  Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 
-import Moveable from 'moveable';
-import { fromEvent, merge, Subject } from 'rxjs';
-
-import { BlockEditorService } from './../../services/block-editor.service';
-import { Block } from './../../interfaces/block';
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
-import { BlockType } from '../../enums/block-type';
+
+import Moveable from 'moveable';
+import { fromEvent, Subject } from 'rxjs';
+
+import { BlockEditorService } from './../../services';
+import { Block } from './../../interfaces/block';
+import { BlockType } from '../../enums';
 
 @Component({
   selector: 'fs-block',
@@ -122,10 +123,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.moveable.keepRatio = value;
   }
 
-  public updateRect(): void {
-    this.moveable.updateRect();
-  }
-
   public markForCheck(): void {
     this._cdRef.markForCheck();
   }
@@ -150,16 +147,18 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public ngAfterContentInit(): void {
-    this._setTransform();
-    this._initEvents();
-    this._initMoveable();
+    setTimeout(() => {
+      this._initEvents();
+      this._initMoveable();
+      this._setTransform();
 
-    this.width = this.block.width;
-    this.height = this.block.height;
-    this.top = this.block.top;
-    this.left = this.block.left;
+      this.width = this.block.width;
+      this.height = this.block.height;
+      this.top = this.block.top;
+      this.left = this.block.left;
 
-    this._blockEditor.registerBlock(this.block, this);
+      this._blockEditor.registerBlock(this.block, this);
+    });
   }
 
   public pxToIn(px) {
@@ -299,7 +298,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       this.el.style.transform = transform;
       this._triggerChanged();
       this.zoompan.enable();
-
     });
   }
 
@@ -333,7 +331,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       .pipe(
         takeUntil(this._destroy$),
         filter(() => !this.block.readonly)
-      ).subscribe((event: UIEvent) => {
+      ).subscribe(() => {
         this.zoompan.enable();
       });
 

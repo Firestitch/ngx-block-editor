@@ -8,13 +8,14 @@ import { filter, switchMap, takeUntil } from 'rxjs/operators';
 
 import { FsFile } from '@firestitch/file';
 import { FsPrompt } from '@firestitch/prompt';
-import { guid } from '@firestitch/common';
+import { guid, index } from '@firestitch/common';
 
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { BlockEditorService } from '../../services/block-editor.service';
 import { Block } from '../../interfaces/block';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
-import { BlockType } from '../../enums/block-type';
+import { BlockType } from '../../enums';
+import { BlockTypes } from '../../consts';
 
 
 @Component({
@@ -31,7 +32,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   @Input() public config: BlockEditorConfig;
   @Input() public blocks;
 
-  public block: Block<any>;
+  public block: Block;
+  public BlockTypes = BlockTypes;
+  public blockTypeNames = index(BlockTypes, 'value', 'name');
   public clippable;
   public BlockType = BlockType;
 
@@ -185,9 +188,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this._blockEditor.selectedBlockComponentChangeProperty(value, name);
   }
 
-  public fileSelect(fsFile: FsFile): void {
-    if (this.config.fileUpload) {
-      this.config.fileUpload(fsFile.file)
+  public imageSelect(fsFile: FsFile): void {
+    if (this.config.imageUpload) {
+      this.config.imageUpload(fsFile.file)
         .subscribe((value) => {
           this._blockEditor.selectedBlockComponentChangeProperty(value, 'imageUrl'); 
         });
@@ -210,16 +213,21 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  public blockAddClick(type) {
-    const width = (this.config.width * .333).toFixed(2);
-    const height = (this.config.height * .333).toFixed(2);
-    const block: Block = this._blockEditor.sanitizeBlock({
+  public blockUpload(blockType, fsFile: FsFile): void {
+    const block: Block = this._blockEditor.sanitizeNewBlock({
+      type: blockType,
+    });
+
+    this._blockEditor.blockUpload(block, fsFile);
+  }
+
+  public blockAdd(type: BlockType): void {
+    if(type === BlockType.Pdf || type === BlockType.Image) {
+      return;
+    }
+
+    const block: Block = this._blockEditor.sanitizeNewBlock({
       type,
-      guid: guid(),
-      top:  height,
-      left:  width,
-      width: height,
-      height: width,
     });
 
     this._blockEditor.blockAdd(block);

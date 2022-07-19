@@ -1,17 +1,12 @@
 <div class="editor-container deselectable">
   <div
-      #artboardContainer
-      class="artboard-container deselectable"
-      (mousedown)="artboardClick($event)">
-
-      <!-- <div fxFlexLayout="row">
-        <button mat-icon-button (click)="zoomIn()"><mat-icon>zoom_in</mat-icon></button>
-        <button mat-icon-button (click)="zoomOut()"><mat-icon>zoom_out</mat-icon></button>
-        <button mat-icon-button (click)="reset()"><mat-icon>youtube_searched_for</mat-icon></button>
-        <button mat-icon-button (click)="add()"><mat-icon>add</mat-icon></button>
-      </div> -->
+        #artboardContainer
+        class="artboard-container deselectable"
+        (mousedown)="artboardClick($event)">
       <div #zoomPanContaner class="zoom-pan-container deselectable">
-        <fs-zoom-pan>
+        <fs-zoom-pan 
+            [zoomMax]="5"
+            [top]="10">
           <ng-template fsZoomPanContent>
             <app-artboard 
               [zoompan]="zoompan"

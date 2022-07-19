@@ -1,1 +1,1 @@
-export * from './block-type';
+export * from './block-type.enum';

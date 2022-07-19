@@ -61,12 +61,25 @@ export class KitchenSinkComponent implements OnInit {
         console.log('Blocks Removed', blocks);
         return of(true);
       },
-      fileUpload: (file: Blob) => {
+      imageUpload: (file: Blob): Observable<string> => {
         return new Observable((observer) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
           reader.onloadend = () => {
             observer.next(String(reader.result));
+            observer.complete();
+          }
+        });
+      },
+      blockUpload: (block, file: Blob): Observable<Block> =>  {
+        return new Observable((observer) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onloadend = () => {
+            observer.next({
+              ...block,
+              imageUrl: String(reader.result),
+            });
             observer.complete();
           }
         });
