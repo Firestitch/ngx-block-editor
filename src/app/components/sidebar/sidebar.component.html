@@ -1,6 +1,5 @@
 <div class="sidebar mat-elevation-z2">
   <div class="sidebar-panel">
-    <div class="sidebar-label">Add</div>
     <div class="sidebar-row">
         <ng-container *ngFor="let blockType of BlockTypes">
           <ng-container [ngSwitch]="blockType.value">
@@ -33,10 +32,17 @@
         </ng-container>
     </div>
   </div>
-  <ng-container *ngIf="block">
+
     <div class="sidebar-panel">
-      <div class="sidebar-label">Tools</div>
       <div class="sidebar-row">
+        <button
+              mat-icon-button
+              color="basic"
+              type="button"
+              matTooltip="Reset zoom"
+              (click)="zoomCenter.emit()">
+            <mat-icon>crop_free</mat-icon>
+          </button>
         <ng-container *ngIf="block">
           <button
               mat-icon-button
@@ -66,6 +72,7 @@
         </ng-container>
       </div>
     </div>
+  <ng-container *ngIf="block">    
     <div class="sidebar-panel info-panel">
       <div class="sidebar-label">Info</div>
       <div class="sidebar-row">
@@ -133,11 +140,24 @@
           <mat-form-field class="form-field-padless-bottom full-width">
             <input
               matInput
-              [ngModel]="block.name"
-              name="name"
-              placeholder="Name"
-              (ngModelChange)="blockChangeProperty($event, 'name')">
+              [ngModel]="block.label"
+              name="label"
+              placeholder="Label"
+              (ngModelChange)="blockChangeProperty($event, 'label')">
           </mat-form-field>
+
+          <ng-container *ngIf="block.type !== BlockType.Checkbox && block.type !== BlockType.RadioButton">
+            <mat-form-field class="form-field-padless-bottom full-width">
+              <textarea
+                matInput
+                [matTextareaAutosize]="true"
+                [ngModel]="block.description"
+                name="description"
+                placeholder="Description"
+                (ngModelChange)="blockChangeProperty($event, 'description')">
+              </textarea>
+            </mat-form-field>
+          </ng-container>
 
           <ng-container *ngIf="block.type === BlockType.Date">
             <mat-form-field class="form-field-padless-bottom full-width">
@@ -147,19 +167,6 @@
                 name="format"
                 placeholder="Format"
                 (ngModelChange)="blockChangeProperty($event, 'format')">
-            </mat-form-field>
-          </ng-container>
-
-          <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText">
-            <mat-form-field class="form-field-padless-bottom full-width">
-              <textarea
-                matInput
-                [matTextareaAutosize]="true"
-                [ngModel]="block.formula"
-                name="formula"
-                placeholder="Formula"
-                (ngModelChange)="blockChangeProperty($event, 'formula')">
-              </textarea>
             </mat-form-field>
           </ng-container>
 
@@ -176,16 +183,18 @@
             </mat-form-field>
           </ng-container>
 
-          <mat-form-field class="form-field-padless-bottom full-width">
-            <textarea
-              matInput
-              [matTextareaAutosize]="true"
-              [ngModel]="block.description"
-              name="description"
-              placeholder="Description"
-              (ngModelChange)="blockChangeProperty($event, 'description')">
-            </textarea>
-          </mat-form-field>
+          <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText">
+            <mat-form-field class="form-field-padless-bottom full-width">
+              <textarea
+                matInput
+                [matTextareaAutosize]="true"
+                [ngModel]="block.formula"
+                name="formula"
+                placeholder="Formula"
+                (ngModelChange)="blockChangeProperty($event, 'formula')">
+              </textarea>
+            </mat-form-field>
+          </ng-container>
 
           <ng-container *ngIf="block.type === BlockType.RadioButton || block.type === BlockType.Checkbox">
             <mat-form-field class="form-field-padless-bottom full-width">
@@ -212,6 +221,15 @@
           </ng-container>
 
           <mat-form-field class="form-field-padless-bottom full-width">
+            <input
+              matInput
+              [ngModel]="block.name"
+              name="name"
+              placeholder="Name"
+              (ngModelChange)="blockChangeProperty($event, 'name')">
+          </mat-form-field>
+
+          <mat-form-field class="form-field-padless-bottom full-width">
             <mat-label>Index</mat-label>
             <input
               matInput
@@ -226,6 +244,13 @@
                 [(ngModel)]="block.required"
                 (ngModelChange)="blockChangeProperty($event, 'required')">
               Required
+            </mat-checkbox>
+
+            <mat-checkbox 
+                name="readonly" 
+                [(ngModel)]="block.readonly"
+                (ngModelChange)="blockChangeProperty($event, 'readonly')">
+              Readonly
             </mat-checkbox>
           </div>
         </div>

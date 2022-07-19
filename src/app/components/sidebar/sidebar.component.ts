@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ContentChildren, ElementRef, Input,
-  OnDestroy, OnInit, QueryList,
+  ContentChildren, ElementRef, EventEmitter, Input,
+  OnDestroy, OnInit, Output, QueryList,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
@@ -31,6 +31,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   @Input() public config: BlockEditorConfig;
   @Input() public blocks;
+  
+  @Output() public zoomCenter = new EventEmitter();
 
   public block: Block;
   public BlockTypes = BlockTypes;

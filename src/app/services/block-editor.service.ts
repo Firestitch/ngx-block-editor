@@ -249,18 +249,17 @@ export class BlockEditorService implements OnDestroy {
 
   public registerBlock(block: Block, blockComponent: FsBlockComponent) {
     this._blockComponents.set(block, blockComponent);
-
     this.blockComponents.push(block);
 
-    this.blockComponents.forEach((item: FsBlockComponent) => {
+    // Disabled for now
+    // this.blockComponents.forEach((blockComponent: FsBlockComponent) => {
+    //   const blocks = this.elementGuidelines
+    //     .filter((el) => {
+    //       return !el.isSameNode(blockComponent.el);
+    //     });
 
-      const blocks = this.elementGuidelines
-        .filter((el) => {
-          return !el.isSameNode(item.el);
-        });
-
-      item.elementGuidelines = blocks;
-    });
+    //     blockComponent.elementGuidelines = blocks;
+    // });
   }
 
   public unregisterBlock(block: Block) {

@@ -10,7 +10,8 @@
 
   &.transforming {
     ::ng-deep {
-      .moveable-control {
+      .moveable-control,
+      .moveable-rotation {
         display: none;
       }
     }

@@ -2,6 +2,7 @@
   width: 285px;
   font-size: 14px;
   height: 100%;
+  overflow: auto;
 
   .sidebar-row {
     display: flex;
@@ -121,6 +122,18 @@
       mat-form-field + mat-form-field {
         margin-top: 12px;
       }
+
+      .form-field-options {
+        margin-top: 11px;
+
+        mat-checkbox {
+          display: block;
+
+          + mat-checkbox {
+            margin-top: 2px;
+          }
+        }
+      }
     }
 
     &.info-panel .sidebar-row {
@@ -160,4 +173,12 @@
 
 .full-width {
   width: 100%;
+}
+
+:host ::ng-deep {
+  .mat-form-field-prefix {
+    color: #9e9e9e;
+    margin-right: 3px;
+    font-size: 85%;
+  }
 }
