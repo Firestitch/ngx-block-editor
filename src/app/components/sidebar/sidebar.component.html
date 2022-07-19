@@ -44,24 +44,6 @@
       <div class="sidebar-row">
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.width"
-              name="width"
-              (focus)="inputFocus($event)"
-              (ngModelChange)="widthChange($event)">
-            <span matPrefix>W</span>
-        </mat-form-field>
-        <mat-form-field class="form-field-padless" floatLabel="never">
-          <input
-            matInput
-            [ngModel]="block.height"
-            name="height"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="heightChange($event)">
-            <span matPrefix>H</span>
-        </mat-form-field>
-        <mat-form-field class="form-field-padless" floatLabel="never">
-          <input
             matInput
             [ngModel]="block.left"
             name="left"
@@ -88,22 +70,50 @@
             <span matPrefix>R</span>
         </mat-form-field>
       </div>
+
+      <div class="sidebar-row">
+        <mat-form-field class="form-field-padless" floatLabel="never">
+          <input
+              matInput
+              [ngModel]="block.width"
+              name="width"
+              (focus)="inputFocus($event)"
+              (ngModelChange)="widthChange($event)">
+            <span matPrefix>W</span>
+        </mat-form-field>
+
+        <div>
+          <a (click)="toggleKeepRatio()" class="keep-ratio">
+            <mat-icon>{{block.keepRatio ? 'lock_outline' : 'lock_open'}}</mat-icon>
+          </a>
+        </div>
+        <mat-form-field class="form-field-padless" floatLabel="never">
+          <input
+            matInput
+            [ngModel]="block.height"
+            name="height"
+            (focus)="inputFocus($event)"
+            (ngModelChange)="heightChange($event)">
+            <span matPrefix>H</span>
+        </mat-form-field>
+      </div>
     </div>
-    <ng-container *ngIf="block.type === BlockType.Textarea || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">
+    <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">
       <div class="sidebar-panel form-field-panel">
         <div class="sidebar-label">Form Field</div>
         <div class="sidebar-row">
 
-          <mat-form-field class="form-field-padless full-width" floatLabel="never">
+          <mat-form-field class="form-field-padless full-width">
             <input
               matInput
               [ngModel]="block.name"
               name="name"
-              placeholder="Name">
+              placeholder="Name"
+              (ngModelChange)="blockChangeProperty($event, 'name')">
           </mat-form-field>
 
           <ng-container *ngIf="block.type === BlockType.Date">
-            <mat-form-field class="form-field-padless full-width" floatLabel="never">
+            <mat-form-field class="form-field-padless full-width">
               <input
                 matInput
                 [ngModel]="block.format"
@@ -112,27 +122,31 @@
             </mat-form-field>
           </ng-container>
 
-          <ng-container *ngIf="block.type === BlockType.Textarea">
-            <mat-form-field class="form-field-padless full-width" floatLabel="never">
-              <input
+          <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText">
+            <mat-form-field class="form-field-padless full-width">
+              <textarea
                 matInput
+                [matTextareaAutosize]="true"
                 [ngModel]="block.formula"
                 name="formula"
                 placeholder="Formula">
+              </textarea>
             </mat-form-field>
           </ng-container>
 
-          <ng-container *ngIf="block.type === BlockType.Textarea || block.type === BlockType.Date">
-            <mat-form-field class="form-field-padless full-width" floatLabel="never">
-              <input
+          <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.Date">
+            <mat-form-field class="form-field-padless full-width">
+              <textarea
                 matInput
+                [matTextareaAutosize]="true"
                 [ngModel]="block.default"
                 name="default"
                 placeholder="Default">
+              </textarea>
             </mat-form-field>
           </ng-container>
 
-          <mat-form-field class="form-field-padless full-width" floatLabel="never">
+          <mat-form-field class="form-field-padless full-width">
             <textarea
               matInput
               [matTextareaAutosize]="true"
@@ -143,16 +157,17 @@
           </mat-form-field>
 
           <ng-container *ngIf="block.type === BlockType.RadioButton || block.type === BlockType.Checkbox">
-
-            <mat-form-field class="form-field-padless full-width" floatLabel="never">
-              <input
+            <mat-form-field class="form-field-padless full-width">
+              <textarea
                 matInput
+                [matTextareaAutosize]="true"
                 [ngModel]="block.groupLabel"
                 name="groupLabel"
                 placeholder="Group Label">
+              </textarea>
             </mat-form-field>
             
-            <mat-form-field class="form-field-padless full-width" floatLabel="never">
+            <mat-form-field class="form-field-padless full-width">
               <textarea
                 matInput
                 [matTextareaAutosize]="true"
@@ -456,8 +471,13 @@
   </ng-template>  
   <ng-template
       fs-menu-item
-      (click)="blockAddClick(BlockType.Textarea)">
-    Textarea
+      (click)="blockAddClick(BlockType.ShortText)">
+    Short Text
+  </ng-template> 
+  <ng-template
+      fs-menu-item
+      (click)="blockAddClick(BlockType.LongText)">
+    Long Text
   </ng-template>
   <ng-template
       fs-menu-item

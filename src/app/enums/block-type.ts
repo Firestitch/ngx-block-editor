@@ -1,6 +1,7 @@
 export enum BlockType {
   Rectangle = 'rectangle',
-  Textarea = 'textarea',
+  ShortText = 'shorttext',
+  LongText = 'longtext',
   Image = 'image',
   RadioButton = 'radiobutton',
   Checkbox = 'checkbox',

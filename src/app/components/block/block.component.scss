@@ -8,10 +8,14 @@
     cursor: pointer;
   }
 
-  &.block-textarea,
+  &.block-shorttext,
+  &.block-long-text,
+  &.block-date,
   &.block-radiobutton,
   &.block-checkbox {
     background-color: rgb(170 181 225 / 80%);
+    color: #585555;
+    font-size: 12px;
   }
 
   .content-editable {

@@ -2,7 +2,7 @@
   <div
       #artboardContainer
       class="artboard-container deselectable"
-      (click)="artboardClick($event)">
+      (mousedown)="artboardClick($event)">
 
       <!-- <div fxFlexLayout="row">
         <button mat-icon-button (click)="zoomIn()"><mat-icon>zoom_in</mat-icon></button>
@@ -23,7 +23,6 @@
   </div>
   <sidebar
     [config]="config"
-    [blocks]="blocks"
-    [blockAdded]="blockAdded">
+    [blocks]="blocks">
   </sidebar>
 </div>

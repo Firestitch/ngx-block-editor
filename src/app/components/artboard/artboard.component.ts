@@ -8,8 +8,8 @@ import {
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 
-import { fromEvent, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { forkJoin, fromEvent, merge, Subject, zip } from 'rxjs';
+import { delay, filter, takeUntil } from 'rxjs/operators';
 
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { FsBlockComponent } from '../block/block.component';
@@ -49,15 +49,14 @@ export class ArtboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() public config: BlockEditorConfig;
   @Input() public zoompan: FsZoomPanComponent;
 
-  @Output() blockAdded = new EventEmitter<FsBlockComponent>();
-  @Output() blockRemoved = new EventEmitter<FsBlockComponent>();
+  public blocks: Block[] = [];
 
   private _differ: IterableDiffer<FsBlockComponent>;
   private _destroy$ = new Subject();
 
   constructor(
     private _el: ElementRef,
-    private _service: BlockEditorService,
+    private _blockEditor: BlockEditorService,
     private _cdRef: ChangeDetectorRef,
     private _differs: IterableDiffers,
   ) {
@@ -74,20 +73,41 @@ export class ArtboardComponent implements OnInit, AfterViewInit, OnDestroy {
       unit: 'in',
     };
 
-    this._service.registerContainer(this.artboard.nativeElement);
-    this._service.registerMargin(this.marginContainer.nativeElement);
+    this._blockEditor.registerContainer(this.artboard.nativeElement);
+    this._blockEditor.registerMargin(this.marginContainer.nativeElement);
+
+    this._blockEditor.blocks$
+    .pipe(
+      takeUntil(this._destroy$),
+    )
+    .subscribe((blocks) => {
+      this.blocks = blocks;
+      this._cdRef.markForCheck();
+    });
+
+    this._blockEditor.blockAdded$
+    .pipe(
+      delay(300),
+      takeUntil(this._destroy$),
+    )
+    .subscribe((block) => {
+      this._blockEditor.selectedBlocks = [block];
+
+      this._cdRef.markForCheck();
+    });
 
     fromEvent(window, 'keydown')
       .pipe(
         takeUntil(this._destroy$),
         filter((event: KeyboardEvent) => {
-          return !!event.key.match(/^Arrow/) && !!this._service.selectedBlockComponents.length;
+          return !!event.key.match(/^Arrow/) && !!this._blockEditor.selectedBlocks.length;
         }),
       )
       .subscribe((event: any) => {
         event.preventDefault();
         const inchPixel = 1 / 100;
-        this._service.selectedBlockComponents.forEach((blockComponent) => {
+        this._blockEditor.selectedComponentBlocks
+        .forEach((blockComponent: FsBlockComponent) => {
           switch (event.key) {
             case 'ArrowUp':
               blockComponent.top = blockComponent.block.top - inchPixel;
@@ -106,10 +126,6 @@ export class ArtboardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  public get blocks(): Block[] {
-    return this._service.blocks;
-  }
-
   public blockChanged(block: Block<any>): void {
     if (this.config.blockChanged) {
       this.config.blockChanged(block);
@@ -117,18 +133,22 @@ export class ArtboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    this.blockComponents.changes.subscribe((changes) => {
-      const changeDiff = this._differ.diff(changes);
-      if (changeDiff) {
-        changeDiff.forEachAddedItem((change) => {
-          this.blockAdded.emit(change.item);
-        });
+    // this.blockComponents.changes
+    // .pipe(
+    //   takeUntil(this._destroy$),
+    // )
+    // .subscribe((changes) => {
+    //   const changeDiff = this._differ.diff(changes);
+    //   if (changeDiff) {
+    //     changeDiff.forEachAddedItem((change) => {
+    //       //this.blockAdded.emit(change.item);
+    //     });
 
-        changeDiff.forEachRemovedItem((change) => {
-          this.blockRemoved.emit(change.item);
-        });
-      }
-    });
+    //     changeDiff.forEachRemovedItem((change) => {
+    //       //this.blockRemoved.emit(change.item);
+    //     });
+    //   }
+    // });
   }
 
   public ngOnDestroy(): void {

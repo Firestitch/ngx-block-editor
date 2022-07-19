@@ -44,7 +44,7 @@
       </ng-container>
       <img [src]="block.imageUrl" *ngIf="block.imageUrl">
     </ng-container>
-    <ng-container *ngIf="block.type === BlockType.Textarea || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">
+    <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">
       {{block.name}}
     </ng-container>
     <div

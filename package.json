@@ -73,7 +73,6 @@
     "hammerjs": "^2.0.8",
     "highlight.js": "^9.18.1",
     "lodash-es": "^4.17.15",
-    "moveable": "^0.19.3",
     "ng-packagr": "^12.2.7",
     "ngx-highlightjs": "^6.1.2",
     "ngx-toastr": "^14.2.2",
@@ -90,6 +89,7 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "moveable": "^0.30.0"
   }
 }

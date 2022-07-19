@@ -1,7 +1,7 @@
 import { BlockType } from '../enums';
 import { FsBlockComponent } from './../components/block/block.component';
 
-export type Block<T = {}> = BlockBase & T;
+export type Block<T = any> = BlockBase & T;
 
 export interface BlockBase {
   reference: any;
@@ -19,6 +19,7 @@ export interface BlockBase {
   bold?: boolean;
   italic?: boolean;
   underline?: boolean;
+  keepRatio?: boolean;
   backgroundColor?: string;
   shapeRadius?: number;
   lineHeight?: number;

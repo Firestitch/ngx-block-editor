@@ -1,21 +1,21 @@
-import { FsBlockComponent } from './../block/block.component';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ContentChildren, ElementRef, EventEmitter, Input,
+  ContentChildren, ElementRef, Input,
   OnDestroy, OnInit, QueryList,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { filter, switchMap, take, takeUntil } from 'rxjs/operators';
+import { filter, switchMap, takeUntil } from 'rxjs/operators';
 
 import { FsFile } from '@firestitch/file';
+import { FsPrompt } from '@firestitch/prompt';
 import { guid } from '@firestitch/common';
 
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { BlockEditorService } from '../../services/block-editor.service';
 import { Block } from '../../interfaces/block';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
-import { FsPrompt } from '@firestitch/prompt';
 import { BlockType } from '../../enums/block-type';
+
 
 @Component({
   selector: 'sidebar',
@@ -30,7 +30,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   @Input() public config: BlockEditorConfig;
   @Input() public blocks;
-  @Input() public blockAdded: EventEmitter<FsBlockComponent>;
 
   public block: Block<any>;
   public clippable;
@@ -40,35 +39,27 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   constructor(
     private _el: ElementRef,
-    private _service: BlockEditorService,
+    private _blockEditor: BlockEditorService,
     private _cdRef: ChangeDetectorRef,
     private _prompt: FsPrompt,
   ) { }
-
-  public get changeDetector(): ChangeDetectorRef {
-    return this._cdRef;
-  }
 
   public get el(): any {
     return this._el.nativeElement;
   }
 
   public ngOnInit(): void {
-    this._service.selectedBlockComponents$
+    this._blockEditor.selectedBlocks$
       .pipe(
         takeUntil(this._destroy$),
       )
-      .subscribe((blocks: FsBlockComponent[]) => {
+      .subscribe((blocks: Block[]) => {
         this.clippable = false;
-        this.block = blocks[0] ? blocks[0].block : null;
-        this.changeDetector.markForCheck();
-
-        if (this.config.blocksSelected) {
-          this.config.blocksSelected(blocks.map((block) => block.block));
-        }
+        this.block = blocks[0] ? blocks[0] : null;
+        this._cdRef.markForCheck();
       });
 
-      this._service.blockChanged$
+      this._blockEditor.blockChanged$
       .pipe(
         filter((block) => block === this.block),
         takeUntil(this._destroy$),
@@ -79,185 +70,142 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public verticalAlignClick(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.verticalAlign = value;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'verticalAlign');
   }
 
   public boldClick(): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.bold = !block.bold;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.bold, 'bold');
   }
 
   public fontColorChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.fontColor = value;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'fontColor');
   }
 
   public lineHeightChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      if (this.validNumeric(value)) {
-        block.lineHeight = value || null;
-      }
-    });
+    value = this.validNumeric(value) ? value : null;
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'lineHeight');
   }
 
   public fontSizeChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      if (this.validNumeric(value)) {
-        block.fontSize = value || null;
-      }
-    });
+    value = this.validNumeric(value) ? value : null;
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'fontSize');
   }
 
   public borderWidthChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      if (this.validNumeric(value)) {
-        block.borderWidth = value || null;
-      }
-    });
+    value = this.validNumeric(value) ? value : null;
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'borderWidth');    
   }
 
   public italicClick(): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.italic = !block.italic;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.italic, 'italic');
   }
 
   public underlineClick(): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.underline = !block.underline;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.underline, 'underline');
   }
 
   public backgroundColorChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.backgroundColor = value;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'backgroundColor');   
   }
 
   public widthChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      if (this.validNumeric(value)) {
-        block.width = value;
-      }
-    });
+    value = this.validNumeric(value) ? value : null;
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'width');    
   }
 
   public heightChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      if (this.validNumeric(value)) {
-        block.height = value;
-      }
-    });
+    value = this.validNumeric(value) ? value : null;
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'height');    
   }
 
   public topChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      if (this.validNumeric(value)) {
-        block.top = value;
-      }
-    });
+    value = this.validNumeric(value) ? value : null;
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'top');        
   }
 
   public leftChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      if (this.validNumeric(value)) {
-        block.left = value;
-      }
-    });
+    value = this.validNumeric(value) ? value : null;
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'left');        
   }
 
   public rotateChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      if (this.validNumeric(value)) {
-        block.rotate = value;
-      }
-    });
+    value = this.validNumeric(value) ? value : null;
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'rotate');         
   }
 
   public paddingChange(name, value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      if (this.validNumeric(value)) {
-        block.padding(name, value || null);
-      }
-    });
+    value = this.validNumeric(value) ? value : null;
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'padding');       
   }
 
   public paddingAllChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      if (this.validNumeric(value)) {
-        block.paddingAll = value;
-      }
-    });
+    value = this.validNumeric(value) ? value : null;
+    this.block.paddingTop = value;
+    this.block.paddingLeft = value;
+    this.block.paddingBottom = value;
+    this.block.paddingRight = value;
+
+    this.paddingChange('top', value);
+    this.paddingChange('left', value);
+    this.paddingChange('right', value);
+    this.paddingChange('bottom', value);
   }
 
   public borderColorChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.borderColor = value;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'borderColor');  
+  }
+
+  public toggleKeepRatio(): void {
+    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.keepRatio, 'keepRatio');  
   }
 
   public horizontalAlignClick(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.horizontalAlign = value;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'horizontalAlign');  
   }
 
-  public shapeRound(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.shapeRound(value, block.block[value] === 'round' ? 'square' : 'round');
-    });
+  public shapeRound(name): void {
+    const value = this.block[name] === 'round' ? 'square' : 'round';
+    this._blockEditor.selectedBlockComponentChangeProperty(value, name); 
   }
 
   public imageRemove(): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.imageUrl = null;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(null, 'imageUrl'); 
   }
 
   public imageClip(): void {
     this.clippable = !this.clippable;
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.clippable = this.clippable;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(this.clippable, 'clippable'); 
   }
 
   public shapeRadiusChange(value): void {
-    this._service.selectedBlockComponents.forEach((block) => {
-      block.shapeRadius = value;
-    });
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'shapeRadius'); 
+  }
+
+  public blockChangeProperty(value, name): void {
+    this._blockEditor.selectedBlockComponentChangeProperty(value, name);
   }
 
   public fileSelect(fsFile: FsFile): void {
     if (this.config.fileUpload) {
       this.config.fileUpload(fsFile.file)
         .subscribe((value) => {
-          this._service.selectedBlockComponents.forEach((block) => {
-            block.imageUrl = value;
-          });
+          this._blockEditor.selectedBlockComponentChangeProperty(value, 'imageUrl'); 
         });
     }
   }
 
   public blockRemoveClick() {
-    if (this.config.blocksRemoved) {
+    if (this.config.blocksRemove) {
       this._prompt.confirm({
         title: 'Confirm',
         template: 'Are you sure your would like to delete this block?',
       })
       .pipe(
-        switchMap(() => this.config.blocksRemoved(this._service.selectedBlocks)),
+        switchMap(() => this.config.blocksRemove(this._blockEditor.selectedBlocks)),
         takeUntil(this._destroy$),
       )
         .subscribe(() => {
-          this._service.selectedBlocks.forEach((block) => {
-            this._service.removeBlock(block);
-          });
-
-          this._service.selectedBlockComponents = [];
+          this._blockEditor.removeSelectedBlocks();
         });
     }
   }
@@ -265,63 +213,26 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public blockAddClick(type) {
     const width = (this.config.width * .333).toFixed(2);
     const height = (this.config.height * .333).toFixed(2);
-    const reference = guid();
-    const block: Block<any> = {
+    const block: Block = this._blockEditor.sanitizeBlock({
       type,
-      reference,
+      guid: guid(),
       top:  height,
       left:  width,
-      width: width,
-      height: height,
-    };
-
-    if (this.config.blockAdded) {
-      this.config.blockAdded(block)
-        .pipe(
-          takeUntil(this._destroy$),
-        )
-        .subscribe((block) => {
-          this.addBlock(block);
-          this.changeDetector.markForCheck();
-
-          this.blockAdded
-            .pipe(
-              take(1),
-              takeUntil(this._destroy$),
-            )
-            .subscribe((blockComponent: FsBlockComponent) => {
-              this._service.selectedBlockComponents = [blockComponent];
-            });
-        });
-    }
-  }
-
-  public addBlock(block: Block<any>): void {
-    this._service.addBlock(block);
-    this._updateIndexes();
-  }
-
-  private _updateIndexes(): void {
-
-    const sort = this.blocks.slice().sort((a, b) => {
-      return a.index > b.index ? 1 : -1;
-    })
-
-    sort.forEach((block, index) => {
-      this.blocks.find((item) => {
-        return block.reference === item.reference;
-      }).index = index;
+      width: height,
+      height: width,
     });
+
+    this._blockEditor.blockAdd(block);
   }
 
   public layerMove(direction): void {
-    this._service.blockComponents.forEach((blockComponent) => {
-      if (this._service.isSelectedBlock(blockComponent)) {
+    this._blockEditor.blockComponents.forEach((blockComponent) => {
+      if (this._blockEditor.isSelectedBlock(blockComponent)) {
         blockComponent.block.index + (999 * direction);
       }
     });
 
-    const sorted = this._service.blockComponents.sort((a, b) => {
+    const sorted = this._blockEditor.blockComponents.sort((a, b) => {
       return a.index > b.index ? 1 : -1;
     });
 
@@ -344,7 +255,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public getBlock(reference: any): Block<any> {
-    return this._service.blocks.find((block) => {
+    return this._blockEditor.blocks.find((block) => {
       return block.reference === reference;
     });
   }

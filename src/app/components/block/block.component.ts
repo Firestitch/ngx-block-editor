@@ -1,11 +1,11 @@
 import { filter, takeUntil } from 'rxjs/operators';
 import {
   AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
-  EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild,
+  Input, OnDestroy, OnInit, Output, ViewChild,
 } from '@angular/core';
 
 import Moveable from 'moveable';
-import { fromEvent, Subject } from 'rxjs';
+import { fromEvent, merge, Subject } from 'rxjs';
 
 import { BlockEditorService } from './../../services/block-editor.service';
 import { Block } from './../../interfaces/block';
@@ -29,11 +29,9 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   @ViewChild('contentEditable', { static: true })
   public contentEditable: ElementRef;
 
-  @Input() public block: Block<any>;
+  @Input() public block: Block;
   @Input() public html: string;
   @Input() public zoompan: FsZoomPanComponent;
-
-  @Output() changed = new EventEmitter<Block<any>>();
 
   public unit;
   public content: string;
@@ -41,8 +39,8 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   private _moveable;
   private _editable = false;
+  private _transformable = false;
   private _rotateStart;
-  private _transformable;
   private _destroy$ = new Subject();
 
   constructor(
@@ -55,7 +53,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     return this.element.nativeElement;
   }
 
-  public get moveable(): any {
+  public get moveable(): Moveable {
     return this._moveable;
   }
 
@@ -64,7 +62,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public set elementGuidelines(value) {
-    this._moveable.elementGuidelines = value;
+    this.moveable.elementGuidelines = value;
   }
 
   public set editable(value) {
@@ -76,7 +74,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public set clippable(value) {
-    this._moveable.clippable = value;
+    this.moveable.clippable = value;
   }
 
   public get transformable() {
@@ -87,144 +85,41 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this._transformable = value;
     this.moveable.draggable = value;
     this.moveable.resizable = value;
-    this.moveable.draggable = value;
     this.moveable.roundable = value;
     this.moveable.rotatable = value;
   }
 
-  public set lineHeight(value) {
-    this.block.lineHeight = value;
-    this._triggerChanged();
-  }
-
-  public set borderWidth(value) {
-    this.block.borderWidth = value;
-    this._triggerChanged();
-  }
-
-  public set fontSize(value) {
-    this.block.fontSize = value;
-    this._triggerChanged();
-  }
-
-  public set backgroundColor(value) {
-    this.block.backgroundColor = value;
-    this._triggerChanged();
-  }
-
   public set width(value) {
-    this.block.width = parseFloat(value);
-    this.element.nativeElement.style.width = `${this.block.width}${this.unit}`;
-    this._moveable.updateRect();
-    this._triggerChanged();
+    this.element.nativeElement.style.width = `${parseFloat(value)}${this.unit}`;
+    this.moveable.updateRect();
   }
 
   public set height(value) {
-    this.block.height = parseFloat(value);
-    this.element.nativeElement.style.height = `${this.block.height}${this.unit}`;
-    this._moveable.updateRect();
-    this._triggerChanged();
+    this.element.nativeElement.style.height = `${parseFloat(value)}${this.unit}`;
+    this.moveable.updateRect();
   }
 
   public set top(value) {
-    this.block.top = parseFloat(value);
-    this.element.nativeElement.style.top = `${this.block.top}${this.unit}`;
-    this._moveable.updateRect();
-    this._triggerChanged();
+    this.element.nativeElement.style.top = `${parseFloat(value)}${this.unit}`;
+    this.moveable.updateRect();
   }
 
   public set left(value) {
-    this.block.left = parseFloat(value);
-    this.element.nativeElement.style.left = `${this.block.left}${this.unit}`;
-    this._moveable.updateRect();
-    this._triggerChanged();
+    this.element.nativeElement.style.left = `${parseFloat(value)}${this.unit}`;
+    this.moveable.updateRect();
   }
 
   public set rotate(value) {
-    this.block.rotate = parseFloat(value);
-    this._moveable.request('rotatable', { rotate: this.block.rotate }, true);
-    this._triggerChanged();
-  }
-
-  public set shapeRadius(value) {
-    this.block.shapeRadius = value;
-    this._triggerChanged();
+    this.moveable.request('rotatable', { rotate: parseFloat(value) }, true);
+    this.moveable.updateRect();
   }
 
   public set index(value) {
     this.block.index = value;
   }
 
-  public set borderColor(value) {
-    this.block.borderColor = value;
-    this._triggerChanged();
-  }
-
-  public set paddingAll(value) {
-    this.block.padding = value;
-    this.block.paddingTop = null;
-    this.block.paddingBottom = null;
-    this.block.paddingLeft = null;
-    this.block.paddingRight = null;
-    this._triggerChanged();
-  }
-
-  public padding(name, value) {
-    this.block[name] = value;
-    this.block.padding = null;
-    this._triggerChanged();
-  }
-
-  public set imageUrl(value) {
-    this.block.imageUrl = value;
-    this._triggerChanged();
-  }
-
-  public set fontColor(value) {
-    this.block.fontColor = value;
-    this._triggerChanged();
-  }
-
-  public set verticalAlign(value) {
-    this.block.verticalAlign = value;
-    this._triggerChanged();
-  }
-
-  public shapeRound(name, value) {
-    this.block[name] = value;
-    this._triggerChanged();
-  }
-
-  public set horizontalAlign(value) {
-    this.block.horizontalAlign = value;
-    this._triggerChanged();
-  }
-
-  public set italic(value) {
-    this.block.italic = value;
-    this._triggerChanged();
-  }
-
-  public get italic() {
-    return this.block.italic;
-  }
-
-  public set bold(value) {
-    this.block.bold = value;
-    this._triggerChanged();
-  }
-
-  public get bold() {
-    return this.block.bold;
-  }
-
-  public set underline(value) {
-    this.block.underline = value;
-    this._triggerChanged();
-  }
-
-  public get underline() {
-    return this.block.underline;
+  public set keepRatio(value) {
+    this.moveable.keepRatio = value;
   }
 
   public updateRect(): void {
@@ -236,69 +131,89 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public ngOnInit(): void {
-    this.block = this._blockEditor.sanitizeBlock(this.block);
     this.unit = this._blockEditor.config.unit;
     this.content = this.block.content;
 
-    this._blockEditor.blocks$
+    this._blockEditor.blockChanged$
     .pipe(
-      //filter((block) => block === this.block),
+      filter((block) => block === this.block),
       takeUntil(this._destroy$),
     )
-    .subscribe(() => {
+    .subscribe((block) => {
+      this.keepRatio = block.keepRatio;
+      this.width = block.width;
+      this.height = block.height;
+      this.top = block.top;
+      this.left = block.left;
       this._cdRef.markForCheck();
     });
   }
 
   public ngAfterContentInit(): void {
-    this.el.style.width = this.block.width + this.unit;
-    this.el.style.height = this.block.height + this.unit;
-    this.el.style.top = this.block.top + this.unit;
-    this.el.style.left = this.block.left + this.unit;
     this._setTransform();
+    this._initEvents();
+    this._initMoveable();
 
-    fromEvent(this.contentEditable.nativeElement, 'input')
-      .pipe(
-        takeUntil(this._destroy$),
-    ).subscribe((event: any) => {
-        this.block.content = event.target.innerHTML;
-        this._triggerChanged();
-      });
+    this.width = this.block.width;
+    this.height = this.block.height;
+    this.top = this.block.top;
+    this.left = this.block.left;
 
-    fromEvent(this.el, 'mousedown')
-      .pipe(
-        takeUntil(this._destroy$),
-        filter(() => !this.block.readonly)
-      ).subscribe((event: UIEvent) => {
-        if (this.editable) {
-          if (this.contentElement.nativeElement.isSameNode(event.target)) {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            event.stopPropagation();
-          }
-        } else {
-          this._blockEditor.selectedBlockComponents = [this];
-        }
-      });
+    this._blockEditor.registerBlock(this.block, this);
+  }
 
-    fromEvent(this.el, 'dblclick')
-      .pipe(
-        filter(() => (!this.editable)),
-        takeUntil(this._destroy$),
-      )
-      .subscribe((event: MouseEvent) => {
-        if (this.block.readonly) {
-          event.preventDefault();
-        } else {
-          this.editable = true;
-          this._cdRef.markForCheck();
+  public pxToIn(px) {
+    return this.round(px / 96, 2);
+  }
 
-          setTimeout(() => {
-            this.selectAll();
-          });
-        }
-    });
+  public round(value, decimals) {
+    return parseFloat(value.toFixed(decimals));
+  }
 
+  public deselect(): void {
+    this.transformable = false;
+    this.editable = false;
+  }
+
+  public deselectContent() {
+    if (window.getSelection) {
+      if (window.getSelection().empty) {
+        window.getSelection().empty();
+      } else if (window.getSelection().removeAllRanges) {
+        window.getSelection().removeAllRanges();
+      }
+    }
+  }
+
+  public selectAll(): void {
+    const range = document.createRange();
+    range.selectNodeContents(this.contentEditable.nativeElement);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  public ngOnDestroy(): void {
+    this._blockEditor.unregisterBlock(this.block);
+    this._destroy$.next();
+    this._destroy$.complete();
+  }
+
+  private _setTransform(transforms = []): void {
+    transforms = transforms ?? [];
+
+    if (this.block.rotate) {
+      transforms.push(`rotate(${this.block.rotate}deg)`);
+    }
+
+    this.el.style.transform = transforms.join(' ');
+  }
+
+  private _triggerChanged() {
+    this._blockEditor.blockChange(this.block);
+  }
+
+  private _initMoveable(): void {
     this._moveable = new Moveable(this._elementRef.nativeElement, {
       target: this.el,
       container: this._blockEditor.container,
@@ -308,12 +223,8 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       rotatable: false,
       warpable: false,
       origin: false,
-      keepRatio: false,
+      keepRatio: this.block.keepRatio,
       snappable: true,
-      snapHorizontal: true,
-      snapVertical: true,
-      snapCenter: true,
-      snapElement: true,
       edge: false,
       throttleDrag: 1,
       throttleScale: 0.01,
@@ -321,20 +232,16 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       throttleResize: 1,
     });
 
-    this._blockEditor.registerBlock(this);
-
-    this._moveable
-    .on('clip', e => {
+    this.moveable
+    .on('clip', (e) => {
         this.block.clipPath = e.clipStyle;
       e.target.style.clipPath = e.clipStyle;
       this._triggerChanged();
     });
 
-    this._moveable.on('dragStart', ({ target, clientX, clientY }) => {
-      this.zoompan.disable();
+    this.moveable.on('dragStart', ({ target, clientX, clientY }) => {
       this.editable = false;
     }).on('drag', ({ target, left, top }) => {
-      this.zoompan.enable();
       target!.style.left = this.pxToIn(left) + this.unit;
       target!.style.top = this.pxToIn(top) + this.unit;
       this.block.top = this.pxToIn(top);
@@ -342,11 +249,10 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       this._triggerChanged();
     });
 
-    this._moveable.on('resizeStart', ({ target, clientX, clientY }) => {
-      this.zoompan.disable();
+    this.moveable.on('resizeStart', ({ target, clientX, clientY }) => {
       this.editable = false;
+      this.zoompan.disable();
     }).on('resize', ({ target, width, height, dist, delta, direction }) => {
-      this.zoompan.enable();
       width = this.pxToIn(width);
       height = this.pxToIn(height);
 
@@ -371,9 +277,8 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
       this._setTransform([`translate(${transform[0]}px, ${transform[1]}px)`]);
       this._triggerChanged();
-
+      
     }).on('resizeEnd', ({ target }) => {
-      this.zoompan.enable();
       const matrix = new WebKitCSSMatrix(target.style.transform);
       this.block.top = parseFloat(target.style.top) + this.pxToIn(matrix.m42);
       this.block.left = parseFloat(target.style.left) + this.pxToIn(matrix.m41);
@@ -382,68 +287,73 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       target.style.left = this.block.left + this.unit;
       this._setTransform();
       this._triggerChanged();
+      this.zoompan.enable();
     });
 
-    this._moveable.on('rotateStart', ({ target, clientX, clientY }) => {
+    this.moveable.on('rotateStart', ({ target, clientX, clientY }) => {
       this.zoompan.disable();
       this.editable = false;
       this._rotateStart = this.block.rotate || 0;
     }).on('rotate', ({ rotate, transform }) => {
-      this.zoompan.enable();
       this.block.rotate = this._rotateStart + rotate;
       this.el.style.transform = transform;
       this._triggerChanged();
+      this.zoompan.enable();
+
+    });
+  }
+
+  private _initEvents(): void {
+    fromEvent(this.contentEditable.nativeElement, 'input')
+      .pipe(
+        takeUntil(this._destroy$),
+    ).subscribe((event: any) => {
+        this.block.content = event.target.innerHTML;
+        this._triggerChanged();
+      });
+
+      fromEvent(this.el, 'mousedown')
+      .pipe(
+        takeUntil(this._destroy$),
+        filter(() => !this.block.readonly)
+      ).subscribe((event: UIEvent) => {
+        this.zoompan.disable();
+        if (this.editable) {
+          if (this.contentElement.nativeElement.isSameNode(event.target)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            event.stopPropagation();
+          }
+        } else {
+          this._blockEditor.selectedBlock = this.block;
+        }
+      });
+
+      fromEvent(this.el, 'mouseup')
+      .pipe(
+        takeUntil(this._destroy$),
+        filter(() => !this.block.readonly)
+      ).subscribe((event: UIEvent) => {
+        this.zoompan.enable();
+      });
+
+    fromEvent(this.el, 'dblclick')
+      .pipe(
+        filter(() => (!this.editable)),
+        takeUntil(this._destroy$),
+      )
+      .subscribe((event: MouseEvent) => {
+        if (this.block.readonly) {
+          event.preventDefault();
+        } else {
+          this.editable = true;
+          this._cdRef.markForCheck();
+
+          setTimeout(() => {
+            this.selectAll();
+          });
+        }
     });
 
-  }
-
-  public pxToIn(px) {
-    return this.round(px / 96, 2);
-  }
-
-  public round(value, decimals) {
-    return parseFloat(value.toFixed(decimals));
-  }
-
-  public deselect() {
-    this.transformable = false;
-    this.editable = false;
-  }
-
-  public deselectContent() {
-    if (window.getSelection) {
-      if (window.getSelection().empty) {
-        window.getSelection().empty();
-      } else if (window.getSelection().removeAllRanges) {
-        window.getSelection().removeAllRanges();
-      }
-    }
-  }
-
-  public selectAll(): void {
-    const range = document.createRange();
-    range.selectNodeContents(this.contentEditable.nativeElement);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-  }
-
-  public ngOnDestroy(): void {
-    this._destroy$.next();
-    this._destroy$.complete();
-  }
-
-  private _setTransform(transforms = []): void {
-    transforms = transforms ?? [];
-
-    if (this.block.rotate) {
-      transforms.push(`rotate(${this.block.rotate}deg)`);
-    }
-    this.el.style.transform = transforms.join(' ');
-  }
-
-  private _triggerChanged() {
-    this._blockEditor.blockChange(this.block);
-    this.changed.emit(this.block);
   }
 }

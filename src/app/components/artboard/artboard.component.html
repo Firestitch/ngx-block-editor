@@ -6,8 +6,7 @@
     <fs-block
       *ngFor="let block of blocks"
       [zoompan]="zoompan"
-      [block]="block"
-      (changed)="blockChanged($event)">
+      [block]="block">
     </fs-block>
     <div class="margin margin-top" *ngIf="config.marginTop" [style.top]="config.marginTop + 'in'"></div>
     <div class="margin margin-left" *ngIf="config.marginLeft" [style.left]="config.marginLeft + 'in'"></div>

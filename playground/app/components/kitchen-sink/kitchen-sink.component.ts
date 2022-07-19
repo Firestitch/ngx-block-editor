@@ -46,15 +46,18 @@ export class KitchenSinkComponent implements OnInit {
       blockChanged: (block) => {
         console.log('Block Changed', block);
       },
-      blockAdded: (block) => {
-        console.log('Block Added', block);
+      blockAdd: (block) => {
+        console.log('Block Add', block);
         return of(block);
+      },
+      blockAdded: (block) => {
+        console.log('Block Add', block);
       },
       blocksSelected: (blocks) => {
         this.selectedBlocks = blocks;
         console.log('Blocks Selected', blocks);
       },
-      blocksRemoved: (blocks) => {
+      blocksRemove: (blocks) => {
         console.log('Blocks Removed', blocks);
         return of(true);
       },

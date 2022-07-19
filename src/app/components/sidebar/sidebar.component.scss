@@ -122,13 +122,9 @@
     border-bottom: 1px solid #dadada;
 
     &.info-panel .sidebar-row {
-      justify-content: space-evenly;
+      
       .mat-form-field {
         width: 41px;
-      }
-
-      > {
-        margin: 0;
       }
     }
 
@@ -146,6 +142,12 @@
       font-size: 11px;
       margin-bottom: 3px;
       color: #9e9e9e;
+    }
+
+    .keep-ratio {
+      color: inherit;
+      transform: scale(.85);
+      display: block;
     }
   }
 }

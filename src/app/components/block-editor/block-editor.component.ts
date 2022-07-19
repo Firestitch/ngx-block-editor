@@ -1,7 +1,7 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ContentChildren, ElementRef, EventEmitter, Input,
-  OnDestroy, OnInit, Output, QueryList, ViewChild, ViewChildren,
+  ChangeDetectionStrategy, Component,
+  ContentChildren, ElementRef, Input,
+  OnDestroy, OnInit, QueryList, ViewChild, 
 } from '@angular/core';
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
@@ -10,11 +10,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { BlockEditorConfig } from './../../interfaces/block-editor-config';
-import { FsBlockComponent } from './../block/block.component';
 import { BlockEditorService } from './../../services/block-editor.service';
 import { Block } from './../../interfaces/block';
 import { FsBlockEditorSidebarPanelDirective } from './../../directives/block-editor-sidebar-panel.directive';
-import { FsBlockEditorMarginDirective } from './../../directives/block-editor-margin.directive';
 import { SidebarComponent } from './../sidebar/sidebar.component';
 import { ArtboardComponent } from '../artboard/artboard.component';
 
@@ -47,19 +45,14 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
 
   @Input() public config: BlockEditorConfig;
 
-  @Output() blockAdded = new EventEmitter<FsBlockComponent>();
-  @Output() blockRemoved = new EventEmitter<FsBlockComponent>();
-
   public blocks: Block<any>[];
 
   private _destroy$ = new Subject();
 
   constructor(
     private _el: ElementRef,
-    private _service: BlockEditorService,
-    private _cdRef: ChangeDetectorRef,
-  ) {
-  }
+    private _blockEditor: BlockEditorService,
+  ) {}
 
   public get el(): any {
     return this._el.nativeElement;
@@ -71,28 +64,23 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
       unit: 'in',
     };
 
-    this._service.blocks = this.config.blocks;
-    this._service.config = this.config;
-    this._service.blocks$
+    this._blockEditor.blocks = this.config.blocks;
+    this._blockEditor.config = this.config;
+    this._blockEditor.blocks$
       .pipe(
         takeUntil(this._destroy$),
       )
       .subscribe((blocks) => {
         this.blocks = blocks;
       });
-    
   }
 
   public artboardClick(event): void {
     if (
       event.target.classList.contains('deselectable')
     ) {
-      this._service.selectedBlockComponents.forEach((block) => {
-        block.deselect();
-        this._service.blockChange(block);
-      });
-
-      this._service.selectedBlockComponents = [];
+      this.zoompan.enable();
+      this._blockEditor.selectedBlocks = [];
     }
   }
 
