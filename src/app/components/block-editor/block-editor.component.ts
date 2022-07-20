@@ -85,7 +85,8 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
 
   public artboardClick(event): void {
     if (
-      event.target.classList.contains('deselectable')
+      event.target.classList.contains('deselectable') ||
+      event.target.classList.contains('fs-zoom-pan-container') 
     ) {
       this.zoompan.enable();
       this._blockEditor.selectedBlocks = [];

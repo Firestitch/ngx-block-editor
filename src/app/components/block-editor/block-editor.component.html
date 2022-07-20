@@ -1,10 +1,12 @@
-<div class="editor-container deselectable">
+<div 
+    class="editor-container deselectable"
+    (mousedown)="artboardClick($event)">
   <div
         #artboardContainer
-        class="artboard-container deselectable"
-        (mousedown)="artboardClick($event)">
+        class="artboard-container deselectable">
       <div #zoomPanContaner class="zoom-pan-container deselectable">
         <fs-zoom-pan 
+            class="deselectable"
             [zoomMax]="5"
             [top]="10">
           <ng-template fsZoomPanContent>
