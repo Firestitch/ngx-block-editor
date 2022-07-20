@@ -8,6 +8,7 @@ import { BlockEditorConfig } from '../interfaces/block-editor-config';
 import { takeUntil } from 'rxjs/operators';
 import { FsFile } from '@firestitch/file';
 import { guid } from '@firestitch/common';
+import { BlockType } from '../enums';
 
 @Injectable()
 export class BlockEditorService implements OnDestroy {
@@ -275,14 +276,25 @@ export class BlockEditorService implements OnDestroy {
   }
 
   public sanitizeNewBlock(block) {
-    const width = (this.config.width * .333).toFixed(2);
-    const height = (this.config.height * .333).toFixed(2);
+    let width: any = (this.config.width * .333).toFixed(2);
+    let height: any = width / 2;
+
+    if (block.type === BlockType.Rectangle) {
+      block.borderColor = '#cccccc';
+      block.borderWidth = 1;
+    } else if (block.type === BlockType.Checkbox || block.type === BlockType.RadioButton) {
+      width = .25;
+      height = .25;
+    } else {
+      width = 2;
+      height = .5;
+    }
 
     return this.sanitizeBlock({
       top:  height,
       left:  width,
-      width: height,
-      height: width,
+      width,
+      height,
       ...block,
     });
   }

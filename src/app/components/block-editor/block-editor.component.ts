@@ -83,7 +83,7 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
     this.zoompan.center(this.artboard.nativeElement, { vertical: false });
   }
 
-  public artboardClick(event): void {
+  public editorContainerClick(event): void {
     if (
       event.target.classList.contains('deselectable') ||
       event.target.classList.contains('fs-zoom-pan-container') 

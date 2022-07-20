@@ -3,7 +3,13 @@
   font-size: 14px;
   height: 100%;
   overflow: auto;
-
+  background-color: #fff;
+  padding: 0 10px 10px;
+  box-shadow: -1px 1px 4px 3px #0003;
+  z-index: 1;
+  position: relative;
+  box-sizing: border-box;
+  
   .sidebar-row {
     display: flex;
     flex-direction: row;
@@ -176,8 +182,6 @@
 }
 
 :host {
-  padding: 5px 5px 5px 0;
-  
   ::ng-deep {
     .mat-form-field-prefix {
       color: #9e9e9e;
