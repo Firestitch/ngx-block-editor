@@ -335,7 +335,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       fromEvent(this.el, 'mousedown')
       .pipe(
         takeUntil(this._destroy$),
-        filter(() => !this.block.readonly)
       ).subscribe((event: UIEvent) => {
         this.zoompan.disable();
         if (this.editable) {
@@ -352,7 +351,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       fromEvent(this.el, 'mouseup')
       .pipe(
         takeUntil(this._destroy$),
-        filter(() => !this.block.readonly)
       ).subscribe(() => {
         this.zoompan.enable();
       });
