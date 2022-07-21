@@ -132,9 +132,11 @@
         </mat-form-field>
       </div>
     </div>
-    <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">
-      <div class="sidebar-panel form-field-panel">
-        <div class="sidebar-label">{{blockTypeNames[block.type]}} Field</div>
+    <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date || block.type === BlockType.Signature">
+      <div class="sidebar-panel block-form-panel">
+        <div class="sidebar-label">
+          <mat-icon>{{blockTypeIcons[block.type]}}</mat-icon>
+          {{blockTypeNames[block.type]}}</div>
         <div class="sidebar-row">
 
           <mat-form-field class="form-field-padless-bottom full-width">
@@ -159,16 +161,24 @@
             </mat-form-field>
           </ng-container>
 
-          <ng-container *ngIf="block.type === BlockType.Date">
-            <mat-form-field class="form-field-padless-bottom full-width">
-              <input
-                matInput
-                [ngModel]="block.format"
+          <mat-form-field 
+              *ngIf="formats.length"
+              class="form-field-padless-bottom full-width">
+            <mat-label>Format</mat-label>
+            <mat-select
+                [(ngModel)]="block.format"
                 name="format"
-                placeholder="Format"
                 (ngModelChange)="blockChangeProperty($event, 'format')">
-            </mat-form-field>
-          </ng-container>
+              <mat-option [value]="null">
+                None
+              </mat-option>                
+              <mat-option
+                  *ngFor="let item of formats"
+                  [value]="item.value">
+                {{ item.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
           <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.Date">
             <mat-form-field class="form-field-padless-bottom full-width">

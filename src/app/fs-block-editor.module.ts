@@ -20,6 +20,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ArtboardComponent } from './components/artboard/artboard.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatFormFieldModule,
     MatCheckboxModule,
     MatTooltipModule,
+    MatSelectModule,
 
     FsFileModule,
     FsColorPickerModule,

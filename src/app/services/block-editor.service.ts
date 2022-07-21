@@ -275,7 +275,7 @@ export class BlockEditorService implements OnDestroy {
     this.margin = margin;
   }
 
-  public sanitizeNewBlock(block) {
+  public sanitizeNewBlock(block: Block) {
     let width: any = (this.config.width * .333).toFixed(2);
     let height: any = width / 2;
 
@@ -285,6 +285,7 @@ export class BlockEditorService implements OnDestroy {
     } else if (block.type === BlockType.Checkbox || block.type === BlockType.RadioButton) {
       width = .25;
       height = .25;
+      block.keepRatio = true;
     } else {
       width = 2;
       height = .5;

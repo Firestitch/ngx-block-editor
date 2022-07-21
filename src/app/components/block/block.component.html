@@ -1,7 +1,11 @@
 <div
     #element
     [class]="'block ' + 'block-' + block.type"
-    [ngClass]="{ editable: editable, readonly: block.readonly }">
+    [ngClass]="{ 
+      editable: editable, 
+      readonly: block.readonly,
+      required: block.required
+    }">
   <div
       #contentElement
       class="content"

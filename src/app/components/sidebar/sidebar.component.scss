@@ -124,7 +124,19 @@
       border-top: 1px solid #dadada;
     }
 
-    &.form-field-panel {
+    &.block-form-panel {
+
+      .sidebar-label {
+        display: flex;
+        align-items: center;
+
+        mat-icon {
+          transform: scale(.8);
+          color: inherit;
+          margin-left: -5px;
+        }
+      }
+
       mat-form-field + mat-form-field {
         margin-top: 12px;
       }
@@ -165,7 +177,7 @@
 
     .sidebar-label {
       font-size: 11px;
-      margin-bottom: 3px;
+      margin-bottom: 7px;
       color: #9e9e9e;
     }
 

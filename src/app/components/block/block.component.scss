@@ -39,6 +39,15 @@
     font-size: 12px;
   }
 
+  
+  &.block-radiobutton {
+    border-radius: 50%;
+  }
+
+  &.required {
+    background-color: #F7ADAA;
+  }
+
   .content-editable {
     outline: none;
     position: relative;

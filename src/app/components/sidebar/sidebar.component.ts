@@ -15,7 +15,7 @@ import { BlockEditorService } from '../../services/block-editor.service';
 import { Block } from '../../interfaces/block';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
 import { BlockType } from '../../enums';
-import { BlockTypes } from '../../consts';
+import { BlockTypes, BlockFormats } from '../../consts';
 
 
 @Component({
@@ -37,8 +37,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public block: Block;
   public BlockTypes = BlockTypes;
   public blockTypeNames = index(BlockTypes, 'value', 'name');
+  public blockTypeIcons = index(BlockTypes, 'value', 'icon');
   public clippable;
   public BlockType = BlockType;
+  public formats = [];
 
   private _destroy$ = new Subject();
 
@@ -61,6 +63,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
       .subscribe((blocks: Block[]) => {
         this.clippable = false;
         this.block = blocks[0] ? blocks[0] : null;
+        this.formats = BlockFormats
+          .filter((blockFormat) => (blockFormat.blockTypes.indexOf(this.block?.type) !== -1));
         this._cdRef.markForCheck();
       });
 
