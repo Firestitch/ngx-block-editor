@@ -1,15 +1,15 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ContentChildren, ElementRef, EventEmitter, Input,
+  ContentChildren, ElementRef, Input,
   IterableDiffer,
   IterableDiffers,
-  OnDestroy, OnInit, Output, QueryList, ViewChild, ViewChildren,
+  OnDestroy, OnInit, QueryList, ViewChild, ViewChildren,
 } from '@angular/core';
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 
-import { forkJoin, fromEvent, merge, Subject, zip } from 'rxjs';
-import { delay, filter, takeUntil } from 'rxjs/operators';
+import { fromEvent, Subject } from 'rxjs';
+import { delay, takeUntil } from 'rxjs/operators';
 
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { FsBlockComponent } from '../block/block.component';
@@ -99,30 +99,28 @@ export class ArtboardComponent implements OnInit, AfterViewInit, OnDestroy {
     fromEvent(window, 'keydown')
       .pipe(
         takeUntil(this._destroy$),
-        filter((event: KeyboardEvent) => {
-          return !!event.key.match(/^Arrow/) && !!this._blockEditor.selectedBlocks.length;
-        }),
       )
       .subscribe((event: any) => {
         event.preventDefault();
         const inchPixel = 1 / 100;
+
         this._blockEditor.selectedComponentBlocks
-        .forEach((blockComponent: FsBlockComponent) => {
-          switch (event.key) {
-            case 'ArrowUp':
-              blockComponent.top = blockComponent.block.top - inchPixel;
-              break;
-            case 'ArrowDown':
-              blockComponent.top = blockComponent.block.top + inchPixel;
-              break;
-            case 'ArrowLeft':
-              blockComponent.left = blockComponent.block.left - inchPixel;
-              break;
-            case 'ArrowRight':
-              blockComponent.left = blockComponent.block.left + inchPixel;
-              break;
-          }
-        });
+          .forEach((blockComponent: FsBlockComponent) => {
+            switch (event.key) {
+              case 'ArrowUp':
+                blockComponent.top = blockComponent.block.top - inchPixel;
+                break;
+              case 'ArrowDown':
+                blockComponent.top = blockComponent.block.top + inchPixel;
+                break;
+              case 'ArrowLeft':
+                blockComponent.left = blockComponent.block.left - inchPixel;
+                break;
+              case 'ArrowRight':
+                blockComponent.left = blockComponent.block.left + inchPixel;
+                break;
+            }
+          });
       });
   }
 

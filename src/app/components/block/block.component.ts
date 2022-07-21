@@ -105,12 +105,14 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public set top(value) {
-    this.element.nativeElement.style.top = `${parseFloat(value)}${this.unit}`;
+    this.block.top = parseFloat(value);
+    this.element.nativeElement.style.top = `${this.block.top}${this.unit}`;
     this.moveable.updateRect();
   }
 
   public set left(value) {
-    this.element.nativeElement.style.left = `${parseFloat(value)}${this.unit}`;
+    this.block.left = parseFloat(value);
+    this.element.nativeElement.style.left = `${this.block.left}${this.unit}`;
     this.moveable.updateRect();
   }
 
@@ -299,14 +301,14 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         target.style.top = this.block.top + this.unit;
         target.style.left = this.block.left + this.unit;
         this._setTransform();
-        this._triggerChanged();            
+        this._triggerChanged();
         this.zoompan.enable();
         this.transformating = false;
         this._cdRef.markForCheck();
       })
       .on('rotateStart', () => {
         this.zoompan.disable();
-        this.editable = false;                  
+        this.editable = false;
         this._rotateStart = this.block.rotate || 0;
         this.transformating = true;
         this._cdRef.markForCheck();
