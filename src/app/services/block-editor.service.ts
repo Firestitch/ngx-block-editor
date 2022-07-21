@@ -169,7 +169,7 @@ export class BlockEditorService implements OnDestroy {
   }
 
   public indexOf(block) {
-    return this.blocks.map((e) => e.reference).indexOf(block.reference);
+    return this.blocks.map((e) => e.guid).indexOf(block.guid);
   }
 
   public selectedBlockComponentChangeProperty(value, name) {
