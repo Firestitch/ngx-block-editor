@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ContentChildren, ElementRef, EventEmitter, Input,
+  ContentChildren, ElementRef, EventEmitter, Inject, Input,
   OnDestroy, OnInit, Output, QueryList,
 } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -16,6 +16,7 @@ import { Block } from '../../interfaces/block';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
 import { BlockType } from '../../enums';
 import { BlockTypes, BlockFormats } from '../../consts';
+import { DOCUMENT } from '@angular/common';
 
 
 @Component({
@@ -49,6 +50,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
     private _blockEditor: BlockEditorService,
     private _cdRef: ChangeDetectorRef,
     private _prompt: FsPrompt,
+    @Inject(DOCUMENT)
+    private _document: any,
   ) { }
 
   public get el(): any {
@@ -272,6 +275,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public reorderLayers(): void {
+    this._document.defaultView?.scrollTo(0, 0);
     this._blockEditor.openReorderDialog();
   }
 
