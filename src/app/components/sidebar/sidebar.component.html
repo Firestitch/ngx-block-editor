@@ -8,7 +8,7 @@
             </ng-container>
             <ng-container *ngSwitchCase="BlockType.Image">
               <ng-container *ngTemplateOutlet="addFile"></ng-container>
-            </ng-container>            
+            </ng-container>
             <ng-container *ngSwitchDefault>
               <ng-container *ngTemplateOutlet="addButton"></ng-container>
             </ng-container>
@@ -21,7 +21,7 @@
           </ng-template>
 
           <ng-template #addButton>
-            <button            
+            <button
                 type="button"
                 mat-icon-button
                 [matTooltip]="'Add ' + blockType.name"
@@ -69,10 +69,18 @@
             <mat-icon>arrow_back</mat-icon>
             <mat-icon>layers</mat-icon>
           </button>
+          <button
+            class="reorder-layers"
+            mat-icon-button
+            color="basic"
+            type="button"
+            (click)="reorderLayers()">
+            <mat-icon>swap_vert</mat-icon>
+          </button>
         </ng-container>
       </div>
     </div>
-  <ng-container *ngIf="block">    
+  <ng-container *ngIf="block">
     <div class="sidebar-panel info-panel">
       <div class="sidebar-label">Info</div>
       <div class="sidebar-row">
@@ -161,7 +169,7 @@
             </mat-form-field>
           </ng-container>
 
-          <mat-form-field 
+          <mat-form-field
               *ngIf="formats.length"
               class="form-field-padless-bottom full-width">
             <mat-label>Format</mat-label>
@@ -171,7 +179,7 @@
                 (ngModelChange)="blockChangeProperty($event, 'format')">
               <mat-option [value]="null">
                 None
-              </mat-option>                
+              </mat-option>
               <mat-option
                   *ngFor="let item of formats"
                   [value]="item.value">
@@ -217,7 +225,7 @@
                 (ngModelChange)="blockChangeProperty($event, 'groupLabel')">
               </textarea>
             </mat-form-field>
-            
+
             <mat-form-field class="form-field-padless-bottom full-width">
               <mat-label>Group Description</mat-label>
               <textarea
@@ -239,25 +247,16 @@
               (ngModelChange)="blockChangeProperty($event, 'name')">
           </mat-form-field>
 
-          <mat-form-field class="form-field-padless-bottom full-width">
-            <mat-label>Index</mat-label>
-            <input
-              matInput
-              [(ngModel)]="block.index"
-              name="index"
-              (ngModelChange)="blockChangeProperty($event, 'index')">
-          </mat-form-field>
-
           <div class="form-field-options">
-            <mat-checkbox 
-                name="required" 
+            <mat-checkbox
+                name="required"
                 [(ngModel)]="block.required"
                 (ngModelChange)="blockChangeProperty($event, 'required')">
               Required
             </mat-checkbox>
 
-            <mat-checkbox 
-                name="readonly" 
+            <mat-checkbox
+                name="readonly"
                 [(ngModel)]="block.readonly"
                 (ngModelChange)="blockChangeProperty($event, 'readonly')">
               Readonly

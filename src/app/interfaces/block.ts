@@ -34,6 +34,7 @@ export interface BlockBase {
   content?: string;
   blockComponent?: FsBlockComponent;
   index?: number;
+  tabIndex?: number;
   imageUrl?: string;
   clipPath?: string;
   readonly?: boolean;

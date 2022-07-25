@@ -31,7 +31,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   @Input() public config: BlockEditorConfig;
   @Input() public blocks;
-  
+
   @Output() public zoomCenter = new EventEmitter();
 
   public block: Block;
@@ -219,12 +219,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  public blockUpload(blockType, fsFile: FsFile): void {
-    const block: Block = this._blockEditor.sanitizeNewBlock({
-      type: blockType,
-    });
-
-    this._blockEditor.blockUpload(block, fsFile);
+  public blockUpload(type, fsFile: FsFile): void {
+    this._blockEditor.blockUpload(
+      {
+        type,
+      },
+      fsFile,
+      true
+    );
   }
 
   public blockAdd(type: BlockType): void {
@@ -232,11 +234,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const block: Block = this._blockEditor.sanitizeNewBlock({
+    this._blockEditor.blockAdd(
+      {
       type,
-    });
-
-    this._blockEditor.blockAdd(block);
+    },
+    true
+    );
   }
 
   public layerMove(direction): void {
@@ -266,6 +269,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public layerDown(): void {
     this.layerMove(-1);
+  }
+
+  public reorderLayers(): void {
+    this._blockEditor.openReorderDialog();
   }
 
   public blockChanged(block: Block<any>): void {

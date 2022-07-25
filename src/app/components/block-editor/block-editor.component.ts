@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component,
   ContentChildren, ElementRef, Input,
-  OnDestroy, OnInit, QueryList, ViewChild, 
+  OnDestroy, OnInit, QueryList, ViewChild,
 } from '@angular/core';
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
@@ -15,6 +15,7 @@ import { Block } from './../../interfaces/block';
 import { FsBlockEditorSidebarPanelDirective } from './../../directives/block-editor-sidebar-panel.directive';
 import { SidebarComponent } from './../sidebar/sidebar.component';
 import { ArtboardComponent } from '../artboard/artboard.component';
+import { BlocksStore } from '../../services/blocks-store.service';
 
 
 @Component({
@@ -24,6 +25,7 @@ import { ArtboardComponent } from '../artboard/artboard.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     BlockEditorService,
+    BlocksStore,
   ]
 })
 export class FsBlockEditorComponent implements OnInit, OnDestroy {
@@ -64,8 +66,7 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
       unit: 'in',
     };
 
-    this._blockEditor.blocks = this.config.blocks;
-    this._blockEditor.config = this.config;
+    this._blockEditor.init(this.config);
     this._blockEditor.blocks$
       .pipe(
         takeUntil(this._destroy$),
@@ -86,7 +87,7 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
   public editorContainerClick(event): void {
     if (
       event.target.classList.contains('deselectable') ||
-      event.target.classList.contains('fs-zoom-pan-container') 
+      event.target.classList.contains('fs-zoom-pan-container')
     ) {
       this.zoompan.enable();
       this._blockEditor.selectedBlocks = [];

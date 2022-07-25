@@ -9,7 +9,7 @@ import {
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 
 import { fromEvent, Subject } from 'rxjs';
-import { delay, takeUntil } from 'rxjs/operators';
+import { delay, filter, takeUntil } from 'rxjs/operators';
 
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { FsBlockComponent } from '../block/block.component';
@@ -98,6 +98,9 @@ export class ArtboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     fromEvent(window, 'keydown')
       .pipe(
+        filter((event: any) => {
+          return ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(event.key) !== -1;
+        }),
         takeUntil(this._destroy$),
       )
       .subscribe((event: any) => {

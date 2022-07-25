@@ -1,14 +1,17 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
+import { FsFile } from '@firestitch/file';
+import { FsDialog } from '@firestitch/dialog';
+
+import { BlocksStore } from './blocks-store.service';
+import { LayersReorderDialogComponent } from '../components/layers-reorder-dialog/layers-reorder-dialog.component';
 import { Block } from './../interfaces/block';
 import { FsBlockComponent } from '../components/block/block.component';
 import { BlockEditorConfig } from '../interfaces/block-editor-config';
-import { takeUntil } from 'rxjs/operators';
-import { FsFile } from '@firestitch/file';
-import { guid } from '@firestitch/common';
-import { BlockType } from '../enums';
+
 
 @Injectable()
 export class BlockEditorService implements OnDestroy {
@@ -17,25 +20,16 @@ export class BlockEditorService implements OnDestroy {
   public margin;
   public config: BlockEditorConfig;
 
-  private _blockChanged$ = new Subject<Block<any>>();
-  private _blockRemoved$ = new Subject<Block<any>>();
-  private _blockAdded$ = new Subject<Block<any>>();
-  private _blocks$ = new BehaviorSubject<Block[]>([]);
   private _selectedBlocks$ = new BehaviorSubject<Block<any>[]>([]);
   private _selectionRange;
   private _blockComponents = new Map<Block, FsBlockComponent>();
   private _destroy$ = new Subject();
 
-  public get elementGuidelines() {
-    return [
-      ...Array.from(this._blockComponents.values())
-      .map((block) => {
-        return block.el;
-      }),
-      this.container,
-      this.margin,
-    ];
-  }
+  constructor(
+    private _store: BlocksStore,
+    private _dialog: FsDialog,
+  ) {}
+
 
   public get blockComponents(): FsBlockComponent[] {
     return Array.from(this._blockComponents.values());
@@ -47,52 +41,17 @@ export class BlockEditorService implements OnDestroy {
     .filter((blockComponent) => this.selectedBlocks.indexOf(blockComponent.block) !== -1);
   }
 
-  public blockUpload(block: Block, fsFile: FsFile) {
-    if (this.config.blockUpload) {
-      this.config.blockUpload(block, fsFile.file)
-        .pipe(
-          takeUntil(this._destroy$),
-        )
-        .subscribe((block) => {
-          const blocks = [
-            ...this.blocks,
-            block,
-          ];
-
-          this.blocks = this._updateIndexesFor(blocks);
-
-          this._blockAdded$.next(block);
-
-          if (this.config.blockAdded) {
-            this.config.blockAdded(block);
-          }
-          //this._updateIndexes();
-        });
-    }
+  public init(config: BlockEditorConfig) {
+    this.config = config;
+    this._store.init({...this.config});
   }
 
-  public blockAdd(block: Block<any>) {
-    if (this.config.blockAdd) {
-      this.config.blockAdd(block)
-        .pipe(
-          takeUntil(this._destroy$),
-        )
-        .subscribe((block) => {
-          const blocks = [
-            ...this.blocks,
-            block,
-          ];
+  public blockAdd(block: Block, newBlock = false) {
+    this._store.blockAdd(block, newBlock);
+  }
 
-          this.blocks = this._updateIndexesFor(blocks);
-
-          this._blockAdded$.next(block);
-
-          if (this.config.blockAdded) {
-            this.config.blockAdded(block);
-          }
-          //this._updateIndexes();
-        });
-    }
+  public blockUpload(block: Block, fsFile: FsFile, newBlock = false) {
+    this._store.blockUpload(block, fsFile, false);
   }
 
   private _updateIndexesFor(blocks: Block<unknown>[]) {
@@ -103,65 +62,41 @@ export class BlockEditorService implements OnDestroy {
     return blocks;
   }
 
-  // private _updateIndexes(): void {
-  //   const sort = this.blocks.slice().sort((a, b) => {
-  //     return a.index > b.index ? 1 : -1;
-  //   })
-
-  //   sort.forEach((block, index) => {
-  //     this.blocks.find((item) => {
-  //       return block.reference === item.reference;
-  //     }).index = index;
-  //   });
-  // }
-
-  public removeBlock(block: Block<any>) {
-    const index = this.indexOf(block);
-    if (index !== -1) {
-      const blocks = this.blocks;
-      blocks.splice(index, 1);
-      this.blocks = blocks;
-      this._blockRemoved$.next(block);
-    }
+  public blockRemove(block: Block) {
+    this._store.blockRemove(block);
   }
 
   public removeSelectedBlocks() {
-    this.selectedBlocks.forEach((block) => {
-      this.removeBlock(block);
-    });
+    this.selectedBlocks
+      .forEach((block) => {
+        this.blockRemove(block);
+      });
 
     this.selectedBlocks = [];
   }
 
   public get blocks$(): Observable<Block[]> {
-    return this._blocks$;
+    return this._store.blocks$;
   }
 
   public get blockChanged$() {
-    return this._blockChanged$;
+    return this._store.blockChanged$;
   }
 
-  public get blockRemoved$() {
-    return this._blockRemoved$;
+  public get blockAdded$(): Observable<Block> {
+    return this._store.blockAdded$;
   }
 
-  public get blockAdded$() {
-    return this._blockAdded$;
-  }
-
-  public blockChange(block) {
-    this._blockChanged$.next(block);
-    if(this.config.blockChanged) {
-      this.config.blockChanged(block);
-    }
+  public get blockRemoved$(): Observable<Block> {
+    return this._store.blockRemoved$;
   }
 
   public get blocks(): Block[] {
-    return this._blocks$.getValue();
+    return this._store.blocks;
   }
 
-  public set blocks(blocks) {
-    this._blocks$.next(blocks);
+  public blockChange(block: Block): void {
+    this._store.blockChange(block);
   }
 
   public isSelectedBlock(block: any) {
@@ -173,31 +108,11 @@ export class BlockEditorService implements OnDestroy {
   }
 
   public selectedBlockComponentChangeProperty(value, name) {
-    if (name === 'index') {
-      const blocks = this.blocks;
-      const affectedGUIDs = this.selectedBlocks.map((block) => block.guid);
-
-      blocks.forEach((block, index) => {
-        const guidIndex = affectedGUIDs.indexOf(block.guid);
-
-        if (guidIndex !== -1) {
-          blocks.splice(index, 1);
-          blocks.splice(+value, 0, block);
-          block.index = +value;
-
-          this.blockChange(block);
-        }
+    this.selectedBlocks
+      .forEach((block: Block) => {
+        block[name] = value;
+        this.blockChange(block);
       });
-
-      this._updateIndexesFor(blocks);
-
-    } else {
-      this.selectedBlocks
-        .forEach((block: Block) => {
-          block[name] = value;
-          this.blockChange(block);
-        });
-    }
 
   }
 
@@ -251,16 +166,6 @@ export class BlockEditorService implements OnDestroy {
   public registerBlock(block: Block, blockComponent: FsBlockComponent) {
     this._blockComponents.set(block, blockComponent);
     this.blockComponents.push(block);
-
-    // Disabled for now
-    // this.blockComponents.forEach((blockComponent: FsBlockComponent) => {
-    //   const blocks = this.elementGuidelines
-    //     .filter((el) => {
-    //       return !el.isSameNode(blockComponent.el);
-    //     });
-
-    //     blockComponent.elementGuidelines = blocks;
-    // });
   }
 
   public unregisterBlock(block: Block) {
@@ -275,42 +180,34 @@ export class BlockEditorService implements OnDestroy {
     this.margin = margin;
   }
 
-  public sanitizeNewBlock(block: Block) {
-    let width: any = (this.config.width * .333).toFixed(2);
-    let height: any = width / 2;
+  public openReorderDialog(): void {
+    const reordableFields = this.blockComponents
+      .filter((blockCmp) => {
+        return this._store.isReordableBlock(blockCmp.block);
+      });
 
-    if (block.type === BlockType.Rectangle) {
-      block.borderColor = '#cccccc';
-      block.borderWidth = 1;
-    } else if (block.type === BlockType.Checkbox || block.type === BlockType.RadioButton) {
-      width = .25;
-      height = .25;
-      block.keepRatio = true;
-    } else {
-      width = 2;
-      height = .5;
-    }
+    this._dialog
+      .open(
+        LayersReorderDialogComponent,
+        {
+          data: {
+            fields: reordableFields,
+          }
+        },
+      )
+      .afterClosed()
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe((fields: FsBlockComponent[]) => {
+        fields.forEach((blockCmp, index) => {
+          blockCmp.block.tabIndex = index;
 
-    return this.sanitizeBlock({
-      top:  height,
-      left:  width,
-      width,
-      height,
-      ...block,
-    });
-  }
+          this._store.blockChange(blockCmp.block);
 
-  public sanitizeBlock(block) {
-    return {
-      shapeBottomLeft: 'round',
-      shapeTopLeft: 'round',
-      shapeTopRight: 'round',
-      shapeBottomRight: 'round',
-      verticalAlign: 'top',
-      horizontalAlign: 'left',
-      ...block,
-      guid: block.guid || guid('xxxxxxxxxxxx'),
-    };
+          this._store.updateTabIndex(index);
+        });
+      });
   }
 
   public ngOnDestroy(): void {

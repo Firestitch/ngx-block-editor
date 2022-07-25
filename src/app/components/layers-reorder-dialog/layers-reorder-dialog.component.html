@@ -1,0 +1,23 @@
+<fs-dialog>
+  <h1 mat-dialog-title><mat-icon>swap_vert</mat-icon> Reorder Fields</h1>
+  <mat-dialog-content>
+    <mat-list cdkDropList (cdkDropListDropped)="swapItems($event)">
+      <mat-divider></mat-divider>
+      <ng-container *ngFor="let field of fields">
+        <mat-list-item cdkDrag cdkDragLockAxis="y">
+          <mat-icon cdkDragHandle>drag_handle</mat-icon>
+          <mat-icon>
+            {{ blockTypeIcons[field.block.type] }}
+          </mat-icon>
+          <span class="block-label">
+              {{ field.block.label || 'no label' }}
+            </span>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+      </ng-container>
+    </mat-list>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button color="primary" (click)="done()">Done</button>
+  </mat-dialog-actions>
+</fs-dialog>
