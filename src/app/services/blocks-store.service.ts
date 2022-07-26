@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { debounce, debounceTime, distinct, filter, groupBy, map, mergeAll, takeUntil } from 'rxjs/operators';
 import { FsFile } from '@firestitch/file';
 import { guid } from '@firestitch/common';
 
@@ -22,7 +22,7 @@ export class BlocksStore implements OnDestroy {
   private _config: BlockEditorConfig;
   private _lastTabIndex = -1;
 
-  private _eventBus$ = new Subject<{ type: string; value: Block }>();
+  private _eventBus$ = new Subject<{ type: EventType; value: Block }>();
   private _blocks$ = new BehaviorSubject<Block[]>([]);
   private _destroy$ = new Subject<void>();
 
@@ -68,6 +68,20 @@ export class BlocksStore implements OnDestroy {
   public init(config: BlockEditorConfig): void {
     this._config = config;
     this._setBlocks(this._config.blocks);
+
+    if (this._config.blockChanged) {
+      this.blockChanged$
+      .pipe(
+        groupBy((block) => (block.guid)),
+        map((group) => group.pipe(
+          debounceTime(250),
+        )),
+        mergeAll(),
+      )
+      .subscribe((block) => {
+        this._config.blockChanged(block);
+      });
+    }
   }
 
   public blockExists(block: Block) {
@@ -119,10 +133,6 @@ export class BlocksStore implements OnDestroy {
   }
 
   public blockChange(block: Block): void {
-    if (this._config.blockChanged) {
-      this._config.blockChanged(block);
-    }
-
     this._dispatchEvent(EventType.Change, block);
   }
 

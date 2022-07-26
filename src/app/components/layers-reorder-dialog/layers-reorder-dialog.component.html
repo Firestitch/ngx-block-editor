@@ -3,14 +3,14 @@
   <mat-dialog-content>
     <mat-list cdkDropList (cdkDropListDropped)="swapItems($event)">
       <mat-divider></mat-divider>
-      <ng-container *ngFor="let field of fields">
+      <ng-container *ngFor="let blockComponent of blockComponents">
         <mat-list-item cdkDrag cdkDragLockAxis="y">
           <mat-icon cdkDragHandle>drag_handle</mat-icon>
           <mat-icon>
-            {{ blockTypeIcons[field.block.type] }}
+            {{ blockTypeIcons[blockComponent.block.type] }}
           </mat-icon>
           <span class="block-label">
-              {{ field.block.label || 'no label' }}
+              {{ blockComponent.block.label || 'no label' }}
             </span>
         </mat-list-item>
         <mat-divider></mat-divider>

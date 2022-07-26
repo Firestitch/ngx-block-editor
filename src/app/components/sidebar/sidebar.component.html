@@ -36,13 +36,21 @@
     <div class="sidebar-panel">
       <div class="sidebar-row">
         <button
-              mat-icon-button
-              color="basic"
-              type="button"
-              matTooltip="Reset zoom"
-              (click)="zoomCenter.emit()">
-            <mat-icon>crop_free</mat-icon>
-          </button>
+            mat-icon-button
+            color="basic"
+            type="button"
+            matTooltip="Reset zoom"
+            (click)="zoomCenter.emit()">
+          <mat-icon>crop_free</mat-icon>
+        </button>
+        <button
+          class="reorder-layers"
+          mat-icon-button
+          color="basic"
+          type="button"
+          (click)="reorderLayers()">
+          <mat-icon>swap_vert</mat-icon>
+        </button>
         <ng-container *ngIf="block">
           <button
               mat-icon-button
@@ -68,14 +76,6 @@
               (click)="layerDown()">
             <mat-icon>arrow_back</mat-icon>
             <mat-icon>layers</mat-icon>
-          </button>
-          <button
-            class="reorder-layers"
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="reorderLayers()">
-            <mat-icon>swap_vert</mat-icon>
           </button>
         </ng-container>
       </div>

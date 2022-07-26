@@ -279,12 +279,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this._blockEditor.openReorderDialog();
   }
 
-  public blockChanged(block: Block<any>): void {
-    if (this.config.blockChanged) {
-      this.config.blockChanged(block);
-    }
-  }
-
   public inputFocus(event): void {
     event.target.select();
   }

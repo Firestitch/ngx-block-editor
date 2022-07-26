@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 import { FsFile } from '@firestitch/file';
 import { FsDialog } from '@firestitch/dialog';
@@ -35,7 +35,6 @@ export class BlockEditorService implements OnDestroy {
     return Array.from(this._blockComponents.values());
   }
 
-
   public get selectedComponentBlocks() {
     return this.blockComponents
     .filter((blockComponent) => this.selectedBlocks.indexOf(blockComponent.block) !== -1);
@@ -52,14 +51,6 @@ export class BlockEditorService implements OnDestroy {
 
   public blockUpload(block: Block, fsFile: FsFile, newBlock = false) {
     this._store.blockUpload(block, fsFile, false);
-  }
-
-  private _updateIndexesFor(blocks: Block<unknown>[]) {
-    blocks.forEach((block, index) => {
-      block.index = index;
-    });
-
-    return blocks;
   }
 
   public blockRemove(block: Block) {
@@ -113,7 +104,6 @@ export class BlockEditorService implements OnDestroy {
         block[name] = value;
         this.blockChange(block);
       });
-
   }
 
   public get selectedBlocks$(): Observable<Block<any>[]> {
@@ -181,26 +171,28 @@ export class BlockEditorService implements OnDestroy {
   }
 
   public openReorderDialog(): void {
-    const reordableFields = this.blockComponents
+    const blockComponents = this.blockComponents
       .filter((blockCmp) => {
         return this._store.isReordableBlock(blockCmp.block);
-      });
+      })
+      .sort((blockCmpA, blockCmpB) => (blockCmpA.block.tabIndex - blockCmpB.block.tabIndex));
 
     this._dialog
       .open(
         LayersReorderDialogComponent,
         {
           data: {
-            fields: reordableFields,
+            blockComponents,
           }
         },
       )
       .afterClosed()
       .pipe(
+        filter((blockComponents) => !!blockComponents),
         takeUntil(this._destroy$),
       )
-      .subscribe((fields: FsBlockComponent[]) => {
-        fields.forEach((blockCmp, index) => {
+      .subscribe((blockComponents: FsBlockComponent[]) => {
+        blockComponents.forEach((blockCmp, index) => {
           blockCmp.block.tabIndex = index;
 
           this._store.blockChange(blockCmp.block);

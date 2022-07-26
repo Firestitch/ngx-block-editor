@@ -1,8 +1,6 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
   ContentChildren, ElementRef, Input,
-  IterableDiffer,
-  IterableDiffers,
   OnDestroy, OnInit, QueryList, ViewChild, ViewChildren,
 } from '@angular/core';
 
@@ -26,7 +24,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
   styleUrls: [ 'artboard.component.scss' ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ArtboardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ArtboardComponent implements OnInit, OnDestroy {
 
   @ContentChildren(FsBlockEditorSidebarPanelDirective)
   public sidebarPanels: QueryList<FsBlockEditorSidebarPanelDirective>;
@@ -51,17 +49,13 @@ export class ArtboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public blocks: Block[] = [];
 
-  private _differ: IterableDiffer<FsBlockComponent>;
   private _destroy$ = new Subject();
 
   constructor(
     private _el: ElementRef,
     private _blockEditor: BlockEditorService,
     private _cdRef: ChangeDetectorRef,
-    private _differs: IterableDiffers,
-  ) {
-    this._differ = _differs.find([]).create(null);
-  }
+  ) {}
 
   public get el(): any {
     return this._el.nativeElement;
@@ -107,7 +101,7 @@ export class ArtboardComponent implements OnInit, AfterViewInit, OnDestroy {
         event.preventDefault();
         const inchPixel = 1 / 100;
 
-        this._blockEditor.selectedComponentBlocks
+        this._blockEditor.selectedComponentBlocks          
           .forEach((blockComponent: FsBlockComponent) => {
             switch (event.key) {
               case 'ArrowUp':
@@ -123,33 +117,10 @@ export class ArtboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 blockComponent.left = blockComponent.block.left + inchPixel;
                 break;
             }
-          });
+
+            this._blockEditor.blockChange(blockComponent.block);
+          });        
       });
-  }
-
-  public blockChanged(block: Block<any>): void {
-    if (this.config.blockChanged) {
-      this.config.blockChanged(block);
-    }
-  }
-
-  public ngAfterViewInit(): void {
-    // this.blockComponents.changes
-    // .pipe(
-    //   takeUntil(this._destroy$),
-    // )
-    // .subscribe((changes) => {
-    //   const changeDiff = this._differ.diff(changes);
-    //   if (changeDiff) {
-    //     changeDiff.forEachAddedItem((change) => {
-    //       //this.blockAdded.emit(change.item);
-    //     });
-
-    //     changeDiff.forEachRemovedItem((change) => {
-    //       //this.blockRemoved.emit(change.item);
-    //     });
-    //   }
-    // });
   }
 
   public ngOnDestroy(): void {

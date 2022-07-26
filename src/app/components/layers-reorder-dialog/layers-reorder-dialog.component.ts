@@ -17,7 +17,7 @@ import { BlockTypes } from '../../consts/block-types.const';
 })
 export class LayersReorderDialogComponent {
 
-  public fields: FsBlockComponent[];
+  public blockComponents: FsBlockComponent[];
 
   public blockTypeIcons = index(BlockTypes, 'value', 'icon');
 
@@ -30,14 +30,14 @@ export class LayersReorderDialogComponent {
   }
 
   public swapItems(event: CdkDragDrop<FsBlockComponent>): void {
-    moveItemInArray(this.fields, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.blockComponents, event.previousIndex, event.currentIndex);
   }
 
   public done(): void {
-    this._dialogRef.close(this.fields);
+    this._dialogRef.close(this.blockComponents);
   }
 
   private _init(data: any) {
-    this.fields = data.fields;
+    this.blockComponents = data.blockComponents;
   }
 }
