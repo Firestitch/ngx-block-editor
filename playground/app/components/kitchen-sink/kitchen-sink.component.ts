@@ -30,8 +30,8 @@ export class KitchenSinkComponent implements OnInit {
   public ngOnInit(): void {
 
     const blocks: Block<CustomBlock>[] = [
-      //{ reference: 1, width: 4, height: 3, top: 2, left: 3, borderColor: 'pink', content: 'Block A', padding: .1, readonly: true },
-      { guid: '2', width: 5, height: 2.5, top: 4, left: 1, content: 'Block B', backgroundColor: '#628597' },
+      { width: 4, height: 3, top: 2, left: 3, borderColor: 'pink', content: 'Block A', padding: .1 },
+      { guid: '2', width: 5, height: 2.5, top: 4, left: 1, content: 'Block', backgroundColor: '#628597', fontColor: '#ffffff' },
     ];
 
     this.config = {

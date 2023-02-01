@@ -13,6 +13,8 @@ import { fromEvent, Subject } from 'rxjs';
 import { BlockEditorService } from './../../services';
 import { Block } from './../../interfaces/block';
 import { BlockType } from '../../enums';
+import { ArtboardComponent } from '../artboard/artboard.component';
+
 
 @Component({
   selector: 'fs-block',
@@ -45,13 +47,13 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   private _moveable;
   private _editable = false;
   private _transformable = false;
-  private _rotateStart;
   private _destroy$ = new Subject();
 
   constructor(
     private _blockEditor: BlockEditorService,
     private _elementRef: ElementRef,
     private _cdRef: ChangeDetectorRef,
+    private _artboard: ArtboardComponent,
   ) { }
 
   public get el(): any {
@@ -64,6 +66,14 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public get editable(): any {
     return this._editable;
+  }
+
+  public get boxShadow(): string {
+    if(!this.block.shadowColor) {
+      return null;
+    }
+
+    return  `${this.block.shadowX}px ${(this.block.shadowY || 0)}px ${(this.block.shadowBlur || 0)}px ${(this.block.shadowSpread || 0)}px ${this.block.shadowColor}`;
   }
 
   public set elementGuidelines(value) {
@@ -88,7 +98,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public set transformable(value) {
     this._transformable = value;
-    this.moveable.draggable = value;
     this.moveable.resizable = value;
     this.moveable.roundable = value;
     this.moveable.rotatable = value;
@@ -148,7 +157,10 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       this.height = block.height;
       this.top = block.top;
       this.left = block.left;
+      this.rotate = this.block.rotate;
       this._cdRef.markForCheck();
+
+      this._updateElementGuidelines();
     });
   }
 
@@ -162,6 +174,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       this.height = this.block.height;
       this.top = this.block.top;
       this.left = this.block.left;
+      this.rotate = this.block.rotate;
 
       this._blockEditor.registerBlock(this.block, this);
     });
@@ -177,6 +190,10 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public deselect(): void {
     this.transformable = false;
+    this.disableContentEdit();
+  }
+
+  public disableContentEdit(): void {
     this.editable = false;
   }
 
@@ -218,11 +235,17 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this._blockEditor.blockChange(this.block);
   }
 
+  private _updateElementGuidelines() {
+    this.moveable.elementGuidelines = this._artboard.blockComponents
+      .map((blockComponent) => blockComponent.el)
+      .filter((el) => !el.isSameNode(this.el));
+  }
+
   private _initMoveable(): void {
     this._moveable = new Moveable(this._elementRef.nativeElement, {
       target: this.el,
       container: this._blockEditor.container,
-      draggable: false,
+      draggable: true,
       resizable: false,
       scalable: false,
       rotatable: false,
@@ -230,12 +253,17 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       origin: false,
       keepRatio: this.block.keepRatio,
       snappable: true,
+      snapDirections: { left: true, top: true, right: true, bottom: true, center: true, middle: true },
+      elementSnapDirections: { left: true, top: true, right: true, bottom: true, center: true, middle: true },
       edge: false,
       throttleDrag: 1,
       throttleScale: 0.01,
       throttleRotate: 1,
       throttleResize: 1,
+      snapDistFormat: (v, type) => `${this.round(v/96, 2)}`,
     });
+
+    this._updateElementGuidelines();
 
     this.moveable
     .on('clip', (e) => {
@@ -246,7 +274,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
     this.moveable
       .on('dragStart', () => {
-        this.editable = false;
+        this.disableContentEdit();
         this.transformating = true;
         this._cdRef.markForCheck();
       })
@@ -262,7 +290,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         this._cdRef.markForCheck();
       })
       .on('resizeStart', () => {
-        this.editable = false;
+        this.disableContentEdit();
         this.zoompan.disable();
         this.transformating = true;
         this._cdRef.markForCheck();
@@ -306,22 +334,28 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         this.transformating = false;
         this._cdRef.markForCheck();
       })
-      .on('rotateStart', () => {
-        this.zoompan.disable();
-        this.editable = false;
-        this._rotateStart = this.block.rotate || 0;
-        this.transformating = true;
-        this._cdRef.markForCheck();
+      .on('rotateStart', ({ inputEvent }) => {
+        if(inputEvent) {
+          this.zoompan.disable();
+          this.disableContentEdit();
+          this.transformating = true;
+          this._cdRef.markForCheck();
+        }
       })
-      .on('rotate', ({ rotate, transform }) => {
-        this.block.rotate = this._rotateStart + rotate;
-        this.el.style.transform = transform;
-        this._triggerChanged();
-        this.zoompan.enable();
+      .on('rotate', ({ inputEvent, transform, rotation }) => {
+        this.el.style.transform = transform;        
+        this.block.rotate = rotation % 360;
+
+        if(inputEvent) {
+          this._triggerChanged();
+          this.zoompan.enable();
+        }
       })
-      .on('rotateEnd', () => {
-        this.transformating = false;
-        this._cdRef.markForCheck();
+      .on('rotateEnd', ({ inputEvent }) => {
+        if(inputEvent) {
+          this.transformating = false;
+          this._cdRef.markForCheck();
+        }
       });
   }
 

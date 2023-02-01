@@ -48,4 +48,11 @@ export interface BlockBase {
   groupDescription?: string;
   guid?: string;
   type?: BlockType;
+  shadowX?: number;
+  shadowY?: number;
+  shadowBlur?: number;
+  shadowColor?: string;
+  shadowSpread?: number;
+  shadowOpacity?: number;
+  fontFamily?: string;
 }

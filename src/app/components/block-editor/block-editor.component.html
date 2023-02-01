@@ -2,21 +2,21 @@
     class="editor-container deselectable"
     (mousedown)="editorContainerClick($event)">
   <div
-        #artboardContainer
-        class="artboard-container deselectable">
-      <div #zoomPanContaner class="zoom-pan-container deselectable">
-        <fs-zoom-pan 
-            class="deselectable"
-            [zoomMax]="5"
-            [top]="10">
-          <ng-template fsZoomPanContent>
-            <app-artboard 
-              [zoompan]="zoompan"
-              [config]="config">
-            </app-artboard>
-          </ng-template>
-        </fs-zoom-pan>
-      </div>
+      #artboardContainer
+      class="artboard-container deselectable">
+    <div #zoomPanContaner class="zoom-pan-container deselectable">
+      <fs-zoom-pan 
+          class="deselectable"
+          [zoomMax]="5"
+          [top]="10">
+        <ng-template fsZoomPanContent>
+          <app-artboard 
+            [zoompan]="zoompan"
+            [config]="config">
+          </app-artboard>
+        </ng-template>
+      </fs-zoom-pan>
+    </div>
   </div>
   <sidebar
     [config]="config"

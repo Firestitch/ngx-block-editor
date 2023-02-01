@@ -25,6 +25,9 @@ import { FsBlockEditorMarginDirective } from './directives/block-editor-margin.d
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ArtboardComponent } from './components/artboard/artboard.component';
 import { LayersReorderDialogComponent } from './components/layers-reorder-dialog/layers-reorder-dialog.component';
+import { GoogleFontService } from './services';
+import { FsAutocompleteModule } from '@firestitch/autocomplete';
+import { FontComponent } from './components';
 
 
 @NgModule({
@@ -46,6 +49,7 @@ import { LayersReorderDialogComponent } from './components/layers-reorder-dialog
     FsColorPickerModule,
     FsMenuModule,
     FsZoomPanModule,
+    FsAutocompleteModule,
     FsDialogModule,
   ],
   exports: [
@@ -61,7 +65,11 @@ import { LayersReorderDialogComponent } from './components/layers-reorder-dialog
     SidebarComponent,
     ArtboardComponent,
     LayersReorderDialogComponent,
+    FontComponent,
   ],
+  providers: [
+    GoogleFontService,
+  ]
 })
 export class FsBlockEditorModule {
   static forRoot(): ModuleWithProviders<FsBlockEditorModule> {

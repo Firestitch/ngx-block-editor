@@ -90,7 +90,8 @@
             [ngModel]="block.left"
             name="left"
             (focus)="inputFocus($event)"
-            (ngModelChange)="leftChange($event)">
+            (keydown)="numericInputKeypress($event, 'left', .01)"
+            (ngModelChange)="numberChange($event, 'left')">
             <span matPrefix>X</span>
         </mat-form-field>
         <mat-form-field class="form-field-padless" floatLabel="never">
@@ -99,16 +100,18 @@
             [ngModel]="block.top"
             name="top"
             (focus)="inputFocus($event)"
-            (ngModelChange)="topChange($event)">
+            (keydown)="numericInputKeypress($event, 'top', .01)"
+            (ngModelChange)="numberChange($event, 'top')">
             <span matPrefix>Y</span>
         </mat-form-field>
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
             matInput
-            [ngModel]="block.rotate || 0"
+            [ngModel]="block.rotate"
             name="rotate"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="rotateChange($event)">
+            (focus)="inputFocus($event)"          
+            (keydown)="numericInputKeypress($event, 'rotate')"
+            (ngModelChange)="numberChange($event, 'rotate')">
             <span matPrefix>R</span>
         </mat-form-field>
       </div>
@@ -131,11 +134,11 @@
         </div>
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-            matInput
-            [ngModel]="block.height"
-            name="height"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="heightChange($event)">
+              matInput
+              [ngModel]="block.height"
+              name="height"
+              (focus)="inputFocus($event)"
+              (ngModelChange)="heightChange($event)">
             <span matPrefix>H</span>
         </mat-form-field>
       </div>
@@ -268,6 +271,19 @@
     <div class="sidebar-panel typography-panel">
       <div class="sidebar-label">Typography</div>
       <div class="sidebar-row">
+        <fs-autocomplete
+            [fetch]="fontFetch"
+            [fetchOnFocus]="true"
+            [displayWith]="fontDisplayWith"
+            [ngModel]="block.fontFamily ? { family: block.fontFamily } : null"
+            placeholder="Font"
+            [panelClass]="'font-autocomplete-panel'"
+            (ngModelChange)="fontChanged($event)"
+            name="fontfamily">
+          <ng-template fsAutocompleteTemplate let-data="data">
+            <app-font [font]="data"></app-font>
+          </ng-template>
+        </fs-autocomplete>
         <fs-color-picker-chip
           (changed)="fontColorChange($event)"
           [color]="block.fontColor">
@@ -275,12 +291,13 @@
 
         <mat-form-field class="form-field-padless font-size" floatLabel="never">
           <input
-            matInput
-            [ngModel]="block.fontSize"
-            name="fontSize"
-            (focus)="inputFocus($event)"
-            (ngModelChange)="fontSizeChange($event)"
-            placeholder="Size">
+              matInput
+              [ngModel]="block.fontSize"
+              name="fontSize"
+              (focus)="inputFocus($event)"
+              (keydown)="numericInputKeypress($event, 'fontSize')"
+              (ngModelChange)="numberChange($event, 'fontSize')"
+              placeholder="Size">
             <span matPrefix *ngIf="block.fontSize">S</span>
         </mat-form-field>
 
@@ -290,7 +307,8 @@
             [ngModel]="block.lineHeight"
             name="lineHeight"
             (focus)="inputFocus($event)"
-            (ngModelChange)="lineHeightChange($event)"
+            (keydown)="numericInputKeypress($event, 'lineHeight')"
+            (ngModelChange)="numberChange($event, 'lineHeight')"
             placeholder="Line">
             <span matPrefix *ngIf="block.lineHeight">L</span>
         </mat-form-field>
@@ -344,6 +362,15 @@
             [ngClass]="{ selected: block.horizontalAlign === 'center' }"
             (click)="horizontalAlignClick('center')">
           <mat-icon>format_align_center</mat-icon>
+        </button>
+        <button
+            mat-icon-button
+            class="toggle-button"
+            color="basic"
+            type="button"
+            [ngClass]="{ selected: block.horizontalAlign === 'justify' }"
+            (click)="horizontalAlignClick('justify')">
+          <mat-icon>format_align_justify</mat-icon>
         </button>
         <button
             mat-icon-button
@@ -417,10 +444,11 @@
         <mat-form-field class="form-field-padless shape-radius" floatLabel="never">
           <input
               matInput
-              [(ngModel)]="block.shapeRadius"
+              [ngModel]="block.shapeRadius"
               name="shapeRadius"
               (focus)="inputFocus($event)"
-              (ngModelChange)="shapeRadiusChange($event)"
+              (keydown)="numericInputKeypress($event, 'shapeRadius')"
+              (ngModelChange)="numberChange($event, 'shapeRadius')"
               placeholder="Radius">
             <span matPrefix *ngIf="block.shapeRadius">R</span>
         </mat-form-field>
@@ -445,12 +473,71 @@
         </div>
       </div>
     </div>
+
+    <div class="sidebar-panel shadow-panel">
+      <div class="sidebar-label">Shadow</div>
+
+      <div class="sidebar-row">
+        <fs-color-picker-chip
+          (changed)="shadowColorChange($event)"
+          [color]="block.shadowColor">
+        </fs-color-picker-chip>
+
+        <mat-form-field class="form-field-padless" floatLabel="never">
+          <input
+              matInput
+              [ngModel]="block.shadowX"
+              name="shadowX"
+              (focus)="inputFocus($event)"
+              (keydown)="numericInputKeypress($event, 'shadowX')"
+              (ngModelChange)="numberChange($event, 'shadowX')">
+            <span matPrefix>X</span>
+        </mat-form-field>
+        <mat-form-field class="form-field-padless" floatLabel="never">
+          <input
+              matInput
+              [ngModel]="block.shadowY"
+              name="shadowY"
+              (focus)="inputFocus($event)"
+              (keydown)="numericInputKeypress($event, 'shadowY')"
+              (ngModelChange)="numberChange($event, 'shadowY')">
+            <span matPrefix>Y</span>
+        </mat-form-field>
+        <mat-form-field class="form-field-padless" floatLabel="never">
+          <input
+              matInput
+              [ngModel]="block.shadowBlur"
+              name="shadowBlur"
+              placeholder="Blur"
+              (focus)="inputFocus($event)"
+              (keydown)="numericInputKeypress($event, 'shadowBlur')"
+              (ngModelChange)="numberChange($event, 'shadowBlur')">
+            <span matPrefix *ngIf="block.shadowBlur">B</span>
+        </mat-form-field>
+        <mat-form-field class="form-field-padless" floatLabel="never">
+          <input
+              matInput
+              [ngModel]="block.shadowSpread"
+              name="shadowSpread"
+              placeholder="Spread"
+              (focus)="inputFocus($event)"
+              (keydown)="numericInputKeypress($event, 'shadowSpread')"
+              (ngModelChange)="numberChange($event, 'shadowSpread')">
+            <span matPrefix *ngIf="block.shadowSpread">S</span>
+        </mat-form-field>
+      </div>
+    </div>
+
     <ng-container *ngIf="block.type !== BlockType.Pdf">
       <div class="sidebar-panel">
         <div class="sidebar-label">Image</div>
         <div class="sidebar-row image-row">
           <fs-file (select)="imageSelect($event)">
-            <button type="button" mat-icon-button><mat-icon>cloud_upload</mat-icon></button>
+            <button 
+                type="button" 
+                mat-icon-button>
+              <mat-icon>cloud_upload</mat-icon>
+            </button>
           </fs-file>
           <ng-container *ngIf="block.imageUrl">
             <button

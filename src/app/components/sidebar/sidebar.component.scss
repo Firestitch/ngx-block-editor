@@ -16,6 +16,10 @@
     flex-wrap: wrap;
     align-items: center;
 
+    + .sidebar-row {
+      margin-top: 12px;
+    }
+
     fs-color-picker-chip {
       margin-left: 6px;
     }
@@ -154,11 +158,8 @@
       }
     }
 
-    &.info-panel .sidebar-row {
-      
-      + .sidebar-row {
-        margin-top: 12px;
-      }
+    &.info-panel,
+    &.shadow-panel {
 
       .mat-form-field {
         width: 41px;
@@ -166,12 +167,21 @@
     }
 
     &.typography-panel {
+      fs-autocomplete {
+        width: 100%;
+      }
+      
       .style-row {
         margin-bottom: -10px;
       }
 
       .align-row {
         margin-bottom: -5px;
+        .mat-icon-button {
+          width: 35px;
+          height: 35px;
+          line-height: 35px;
+        }
       }
     }
 

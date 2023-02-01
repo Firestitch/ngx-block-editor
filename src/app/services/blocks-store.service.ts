@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { debounce, debounceTime, distinct, filter, groupBy, map, mergeAll, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, Subject } from 'rxjs';
+import { debounce, debounceTime, distinct, filter, groupBy, map, mergeAll, switchMap, takeUntil } from 'rxjs/operators';
 import { FsFile } from '@firestitch/file';
 import { guid } from '@firestitch/common';
 
@@ -122,9 +122,16 @@ export class BlocksStore implements OnDestroy {
     if (initBlock) {
       block = this._createBlock(block);
     }
-
-    this._config.blockUpload(block, fsFile.file)
+    
+    from(fsFile.imageInfo)
       .pipe(
+        switchMap((imageInfo) => {
+          const ratio = imageInfo.height / imageInfo.width;
+          block.width = this._config.width * .4;
+          block.height = block.width * ratio;
+
+          return this._config.blockUpload(block, fsFile.file);
+        }),
         takeUntil(this._destroy$),
       )
       .subscribe((newBlock: Block) => {
@@ -211,6 +218,13 @@ export class BlocksStore implements OnDestroy {
       horizontalAlign: 'left',
       ...block,
       guid: block.guid || guid('xxxxxxxxxxxx'),
+      keepRatio: [
+          BlockType.Checkbox, 
+          BlockType.RadioButton, 
+          BlockType.Image, 
+          BlockType.Pdf,
+        ]
+        .indexOf(block.type) !== -1
     };
 
     let width: any = (this._config.width * .333).toFixed(2);
@@ -222,7 +236,6 @@ export class BlocksStore implements OnDestroy {
     } else if (newBlock.type === BlockType.Checkbox || newBlock.type === BlockType.RadioButton) {
       width = .25;
       height = .25;
-      newBlock.keepRatio = true;
     } else {
       width = 2;
       height = .5;

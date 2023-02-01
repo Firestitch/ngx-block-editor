@@ -30,14 +30,13 @@ export class BlockEditorService implements OnDestroy {
     private _dialog: FsDialog,
   ) {}
 
-
   public get blockComponents(): FsBlockComponent[] {
     return Array.from(this._blockComponents.values());
   }
 
   public get selectedComponentBlocks() {
     return this.blockComponents
-    .filter((blockComponent) => this.selectedBlocks.indexOf(blockComponent.block) !== -1);
+      .filter((blockComponent) => this.selectedBlocks.indexOf(blockComponent.block) !== -1);
   }
 
   public init(config: BlockEditorConfig) {
@@ -50,7 +49,7 @@ export class BlockEditorService implements OnDestroy {
   }
 
   public blockUpload(block: Block, fsFile: FsFile, newBlock = false) {
-    this._store.blockUpload(block, fsFile, false);
+    this._store.blockUpload(block, fsFile, true);
   }
 
   public blockRemove(block: Block) {

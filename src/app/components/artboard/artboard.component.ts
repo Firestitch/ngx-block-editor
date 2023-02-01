@@ -80,20 +80,24 @@ export class ArtboardComponent implements OnInit, OnDestroy {
     });
 
     this._blockEditor.blockAdded$
-    .pipe(
-      delay(300),
-      takeUntil(this._destroy$),
-    )
-    .subscribe((block) => {
-      this._blockEditor.selectedBlocks = [block];
+      .pipe(
+        delay(300),
+        takeUntil(this._destroy$),
+      )
+      .subscribe((block) => {
+        this._blockEditor.selectedBlocks = [block];
 
-      this._cdRef.markForCheck();
-    });
+        this._cdRef.markForCheck();
+      });
 
     fromEvent(window, 'keydown')
       .pipe(
         filter((event: any) => {
           return ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(event.key) !== -1;
+        }),
+        filter(() => {
+          const el = document.activeElement;
+          return !(el instanceof HTMLInputElement || (el as HTMLDivElement && el.classList.contains('content-editable')));
         }),
         takeUntil(this._destroy$),
       )

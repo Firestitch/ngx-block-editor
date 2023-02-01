@@ -15,6 +15,7 @@
       [style.borderStyle]="block.borderColor ? 'solid' : 'dashed'"
       [style.textAlign]="block.horizontalAlign"
       [style.fontStyle]="block.italic ? 'italic' : ''"
+      [style.fontFamily]="block.fontFamily || ''"
       [style.fontSize]="block.fontSize ? block.fontSize + 'pt' : ''"
       [style.lineHeight]="block.lineHeight ? block.lineHeight + 'pt' : ''"
       [style.color]="block.fontColor"
@@ -31,6 +32,7 @@
       [style.borderBottomRightRadius]="block.shapeRadius && block.shapeBottomRight === 'round' ? block.shapeRadius + unit : ''"
       [style.borderTopRightRadius]="block.shapeRadius && block.shapeTopRight === 'round' ? block.shapeRadius + unit : ''"
       [style.borderTopLeftRadius]="block.shapeRadius && block.shapeTopLeft === 'round' ? block.shapeRadius + unit : ''"
+      [style.boxShadow]="boxShadow"
       [ngClass]="{
         'editable': editable,
         'vertical-align-center': block.verticalAlign === 'center',

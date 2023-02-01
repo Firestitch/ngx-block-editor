@@ -3,15 +3,15 @@ import {
   ContentChildren, ElementRef, EventEmitter, Inject, Input,
   OnDestroy, OnInit, Output, QueryList,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { filter, switchMap, takeUntil } from 'rxjs/operators';
+import { from, Observable, Subject } from 'rxjs';
+import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { FsFile } from '@firestitch/file';
 import { FsPrompt } from '@firestitch/prompt';
 import { index } from '@firestitch/common';
 
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
-import { BlockEditorService } from '../../services/block-editor.service';
+import { BlockEditorService, GoogleFontService } from '../../services';
 import { Block } from '../../interfaces/block';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
 import { BlockType } from '../../enums';
@@ -50,6 +50,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     private _blockEditor: BlockEditorService,
     private _cdRef: ChangeDetectorRef,
     private _prompt: FsPrompt,
+    private _googleFontService: GoogleFontService,
     @Inject(DOCUMENT)
     private _document: any,
   ) { }
@@ -81,6 +82,18 @@ export class SidebarComponent implements OnInit, OnDestroy {
       });
   }
 
+  public fontFetch = (value): Observable<any> => {
+   return this._googleFontService.getItems();
+  }
+
+  public fontDisplayWith = (value): string => {
+   return value?.family;
+  }
+
+  public fontChanged(font) {
+    this._blockEditor.selectedBlockComponentChangeProperty(font?.family, 'fontFamily');
+  }
+
   public verticalAlignClick(value): void {
     this._blockEditor.selectedBlockComponentChangeProperty(value, 'verticalAlign');
   }
@@ -91,16 +104,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public fontColorChange(value): void {
     this._blockEditor.selectedBlockComponentChangeProperty(value, 'fontColor');
-  }
-
-  public lineHeightChange(value): void {
-    value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'lineHeight');
-  }
-
-  public fontSizeChange(value): void {
-    value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'fontSize');
   }
 
   public borderWidthChange(value): void {
@@ -129,20 +132,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
     value = this.validNumeric(value) ? value : null;
     this._blockEditor.selectedBlockComponentChangeProperty(value, 'height');
   }
-
-  public topChange(value): void {
-    value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'top');
-  }
-
-  public leftChange(value): void {
-    value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'left');
-  }
-
-  public rotateChange(value): void {
-    value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'rotate');
+  
+  public shadowColorChange(value): void {
+    this._blockEditor.selectedBlockComponentChangeProperty(value, 'shadowColor');
   }
 
   public paddingChange(name, value): void {
@@ -180,6 +172,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this._blockEditor.selectedBlockComponentChangeProperty(value, name);
   }
 
+  public numberChange(value, name): void {
+    value = this.validNumeric(value) ? Number(value) : null;
+    this._blockEditor.selectedBlockComponentChangeProperty(value, name);
+  }
+
   public imageRemove(): void {
     this._blockEditor.selectedBlockComponentChangeProperty(null, 'imageUrl');
   }
@@ -188,11 +185,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.clippable = !this.clippable;
     this._blockEditor.selectedBlockComponentChangeProperty(this.clippable, 'clippable');
   }
-
-  public shapeRadiusChange(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'shapeRadius');
-  }
-
+  
   public blockChangeProperty(value, name): void {
     this._blockEditor.selectedBlockComponentChangeProperty(value, name);
   }
@@ -224,9 +217,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public blockUpload(type, fsFile: FsFile): void {
     this._blockEditor.blockUpload(
-      {
-        type,
-      },
+      { type },
       fsFile,
       true
     );
@@ -237,12 +228,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this._blockEditor.blockAdd(
-      {
+    const block: Block = {
       type,
-    },
-    true
-    );
+      shadowX: 2,
+      shadowY: 2,
+      shadowBlur: 4,
+    };
+
+    this._blockEditor.blockAdd(block, true);
   }
 
   public layerMove(direction): void {
@@ -281,6 +274,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public inputFocus(event): void {
     event.target.select();
+  }
+
+  public numericInputKeypress(event: KeyboardEvent, name, unit = 1): void {
+    if(event.code === 'ArrowUp' || event.code === 'ArrowDown') {
+      this.block[name] = Number(this.block[name] || 0) + ((event.code === 'ArrowDown' ? -1 : 1) * unit);
+      this._blockEditor.selectedBlockComponentChangeProperty(this.block[name], name);
+    }
   }
 
   public ngOnDestroy(): void {
