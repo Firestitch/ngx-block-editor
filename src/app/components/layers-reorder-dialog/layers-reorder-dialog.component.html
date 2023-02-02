@@ -10,8 +10,8 @@
             {{ blockTypeIcons[blockComponent.block.type] }}
           </mat-icon>
           <span class="block-label">
-              {{ blockComponent.block.label || 'no label' }}
-            </span>
+            {{ blockComponent.block.label || blockComponent.block.content || 'No Content'}}              
+          </span>
         </mat-list-item>
         <mat-divider></mat-divider>
       </ng-container>

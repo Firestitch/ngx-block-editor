@@ -20,10 +20,11 @@ export class BlockEditorService implements OnDestroy {
   public margin;
   public config: BlockEditorConfig;
 
-  private _selectedBlocks$ = new BehaviorSubject<Block<any>[]>([]);
+  private _selectedBlocks$ = new BehaviorSubject<Block[]>([]);
   private _selectionRange;
   private _blockComponents = new Map<Block, FsBlockComponent>();
   private _destroy$ = new Subject();
+  private _blockInited$ = new Subject<Block>();
 
   constructor(
     private _store: BlocksStore,
@@ -77,6 +78,10 @@ export class BlockEditorService implements OnDestroy {
     return this._store.blockAdded$;
   }
 
+  public get blockInited$(): Observable<Block> {
+    return this._blockInited$;
+  }
+
   public get blockRemoved$(): Observable<Block> {
     return this._store.blockRemoved$;
   }
@@ -105,15 +110,15 @@ export class BlockEditorService implements OnDestroy {
       });
   }
 
-  public get selectedBlocks$(): Observable<Block<any>[]> {
+  public get selectedBlocks$(): Observable<Block[]> {
     return this._selectedBlocks$;
   }
 
-  public set selectedBlock(block: Block<any>) {
+  public set selectedBlock(block: Block) {
     this.selectedBlocks = [block];
   }
 
-  public set selectedBlocks(blocks: Block<any>[]) {
+  public set selectedBlocks(blocks: Block[]) {
     this.blockComponents
     .forEach((blockComponent) => {
       blockComponent.editable = false;
@@ -131,7 +136,7 @@ export class BlockEditorService implements OnDestroy {
     }
   }
 
-  public get selectedBlocks(): Block<any>[] {
+  public get selectedBlocks(): Block[] {
     return this._selectedBlocks$.getValue();
   }
 
@@ -152,12 +157,12 @@ export class BlockEditorService implements OnDestroy {
     return this._selectionRange && (this._selectionRange.baseOffset - this._selectionRange.focusOffset) > 0;
   }
 
-  public registerBlock(block: Block, blockComponent: FsBlockComponent) {
+  public initBlock(block: Block, blockComponent: FsBlockComponent) {
     this._blockComponents.set(block, blockComponent);
-    this.blockComponents.push(block);
+    this._blockInited$.next(block);
   }
 
-  public unregisterBlock(block: Block) {
+  public destroyBlock(block: Block) {
     this._blockComponents.delete(block);
   }
 
@@ -171,10 +176,8 @@ export class BlockEditorService implements OnDestroy {
 
   public openReorderDialog(): void {
     const blockComponents = this.blockComponents
-      .filter((blockCmp) => {
-        return this._store.isReordableBlock(blockCmp.block);
-      })
-      .sort((blockCmpA, blockCmpB) => (blockCmpA.block.tabIndex - blockCmpB.block.tabIndex));
+      .sort((blockCmpA: FsBlockComponent, blockCmpB: FsBlockComponent) => (blockCmpA.block.index - blockCmpB.block.index))
+      .reverse();
 
     this._dialog
       .open(
@@ -191,13 +194,13 @@ export class BlockEditorService implements OnDestroy {
         takeUntil(this._destroy$),
       )
       .subscribe((blockComponents: FsBlockComponent[]) => {
-        blockComponents.forEach((blockCmp, index) => {
-          blockCmp.block.tabIndex = index;
-
-          this._store.blockChange(blockCmp.block);
-
-          this._store.updateTabIndex(index);
-        });
+        blockComponents
+          .reverse()
+          .forEach((blockCmp, index) => {
+            blockCmp.block.index = index;
+            this._store.blockChange(blockCmp.block);
+            this._store.updateTabIndex(index);
+          });
       });
   }
 

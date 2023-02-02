@@ -1,16 +1,16 @@
 import { BlockType } from '../enums';
 import { FsBlockComponent } from './../components/block/block.component';
 
-export type Block<T = any> = BlockBase & T;
-
-export interface BlockBase {
+export interface Block {
   width?: number;
   height?: number;
   top?: number;
   left?: number;
   rotate?: number;
-  horizontalAlign?: 'left' | 'right' | 'center';
-  verticalAlign?: 'top' | 'center' | 'bottom';
+  //horizontalAlign?: 'left' | 'right' | 'center' | 'justify';
+  //verticalAlign?: 'top' | 'center' | 'bottom';
+  horizontalAlign?: string;
+  verticalAlign?: string;
   borderColor?: string;
   borderWidth?: number;
   fontColor?: string;
@@ -55,4 +55,7 @@ export interface BlockBase {
   shadowSpread?: number;
   shadowOpacity?: number;
   fontFamily?: string;
+  formula?: string;
+  data?: any;
+  clippable?: boolean;
 }

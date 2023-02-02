@@ -7,13 +7,12 @@ import {
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 
-import Moveable from 'moveable';
+import Moveable, { OnClip, OnClipEnd } from 'moveable';
 import { fromEvent, Subject } from 'rxjs';
 
 import { BlockEditorService } from './../../services';
-import { Block } from './../../interfaces/block';
+import { Block } from './../../interfaces';
 import { BlockType } from '../../enums';
-import { ArtboardComponent } from '../artboard/artboard.component';
 
 
 @Component({
@@ -53,7 +52,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     private _blockEditor: BlockEditorService,
     private _elementRef: ElementRef,
     private _cdRef: ChangeDetectorRef,
-    private _artboard: ArtboardComponent,
   ) { }
 
   public get el(): any {
@@ -73,7 +71,10 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       return null;
     }
 
-    return  `${this.block.shadowX}px ${(this.block.shadowY || 0)}px ${(this.block.shadowBlur || 0)}px ${(this.block.shadowSpread || 0)}px ${this.block.shadowColor}`;
+    //const shadowOpacity = ((Number(this.block.shadowOpacity || 100) / 100) * 255).toString(16).padStart(2, '0');
+    const shadow = `${this.block.shadowX}pt ${(this.block.shadowY || 0)}pt ${(this.block.shadowBlur || 0)}pt ${(this.block.shadowSpread || 0)}pt  ${this.block.shadowColor}`;
+
+    return shadow;
   }
 
   public set elementGuidelines(value) {
@@ -145,23 +146,23 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   public ngOnInit(): void {
     this.unit = this._blockEditor.config.unit;
     this.content = this.block.content;
+    this.block.shadowOpacity = this.block.shadowOpacity || 100;
 
     this._blockEditor.blockChanged$
-    .pipe(
-      filter((block) => block === this.block),
-      takeUntil(this._destroy$),
-    )
-    .subscribe((block) => {
-      this.keepRatio = block.keepRatio;
-      this.width = block.width;
-      this.height = block.height;
-      this.top = block.top;
-      this.left = block.left;
-      this.rotate = this.block.rotate;
-      this._cdRef.markForCheck();
-
-      this._updateElementGuidelines();
-    });
+      .pipe(
+        filter((block) => block === this.block),
+        takeUntil(this._destroy$),
+      )
+      .subscribe((block) => {
+        this.keepRatio = block.keepRatio;
+        this.width = block.width;
+        this.height = block.height;
+        this.top = block.top;
+        this.left = block.left;
+        this.rotate = this.block.rotate;
+        this.clippable = this.block.clippable;
+        this._cdRef.markForCheck();
+      });
   }
 
   public ngAfterContentInit(): void {
@@ -175,8 +176,16 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       this.top = this.block.top;
       this.left = this.block.left;
       this.rotate = this.block.rotate;
+      this._blockEditor.initBlock(this.block, this);
+      
+      this._blockEditor.blockInited$
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        this._updateElementGuidelines();
+      });
 
-      this._blockEditor.registerBlock(this.block, this);
     });
   }
 
@@ -216,7 +225,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public ngOnDestroy(): void {
-    this._blockEditor.unregisterBlock(this.block);
+    this._blockEditor.destroyBlock(this.block);
     this._destroy$.next();
     this._destroy$.complete();
   }
@@ -236,7 +245,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   private _updateElementGuidelines() {
-    this.moveable.elementGuidelines = this._artboard.blockComponents
+    this.moveable.elementGuidelines = this._blockEditor.blockComponents
       .map((blockComponent) => blockComponent.el)
       .filter((el) => !el.isSameNode(this.el));
   }
@@ -266,13 +275,11 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this._updateElementGuidelines();
 
     this.moveable
-    .on('clip', (e) => {
-        this.block.clipPath = e.clipStyle;
-      e.target.style.clipPath = e.clipStyle;
-      this._triggerChanged();
-    });
-
-    this.moveable
+      .on('clip', (e: OnClip) => {
+          this.block.clipPath = e.clipStyle;
+        e.target.style.clipPath = e.clipStyle;
+        this._triggerChanged();
+      })
       .on('dragStart', () => {
         this.disableContentEdit();
         this.transformating = true;

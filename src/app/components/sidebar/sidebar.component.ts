@@ -3,12 +3,14 @@ import {
   ContentChildren, ElementRef, EventEmitter, Inject, Input,
   OnDestroy, OnInit, Output, QueryList,
 } from '@angular/core';
-import { from, Observable, Subject } from 'rxjs';
+import { DOCUMENT } from '@angular/common';
+
+import { Observable, Subject } from 'rxjs';
 import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { FsFile } from '@firestitch/file';
 import { FsPrompt } from '@firestitch/prompt';
-import { index } from '@firestitch/common';
+import { index, round } from '@firestitch/common';
 
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { BlockEditorService, GoogleFontService } from '../../services';
@@ -16,7 +18,6 @@ import { Block } from '../../interfaces/block';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
 import { BlockType } from '../../enums';
 import { BlockTypes, BlockFormats } from '../../consts';
-import { DOCUMENT } from '@angular/common';
 
 
 @Component({
@@ -39,7 +40,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public BlockTypes = BlockTypes;
   public blockTypeNames = index(BlockTypes, 'value', 'name');
   public blockTypeIcons = index(BlockTypes, 'value', 'icon');
-  public clippable;
+  public clippable = false;
   public BlockType = BlockType;
   public formats = [];
 
@@ -65,10 +66,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
         takeUntil(this._destroy$),
       )
       .subscribe((blocks: Block[]) => {
-        this.clippable = false;
         this.block = blocks[0] ? blocks[0] : null;
         this.formats = BlockFormats
           .filter((blockFormat) => (blockFormat.blockTypes.indexOf(this.block?.type) !== -1));
+
         this._cdRef.markForCheck();
       });
 
@@ -105,12 +106,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public fontColorChange(value): void {
     this._blockEditor.selectedBlockComponentChangeProperty(value, 'fontColor');
   }
-
-  public borderWidthChange(value): void {
-    value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'borderWidth');
-  }
-
+  
   public italicClick(): void {
     this._blockEditor.selectedBlockComponentChangeProperty(!this.block.italic, 'italic');
   }
@@ -122,24 +118,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public backgroundColorChange(value): void {
     this._blockEditor.selectedBlockComponentChangeProperty(value, 'backgroundColor');
   }
-
-  public widthChange(value): void {
-    value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'width');
-  }
-
-  public heightChange(value): void {
-    value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'height');
-  }
   
   public shadowColorChange(value): void {
     this._blockEditor.selectedBlockComponentChangeProperty(value, 'shadowColor');
-  }
-
-  public paddingChange(name, value): void {
-    value = this.validNumeric(value) ? value : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'padding');
   }
 
   public paddingAllChange(value): void {
@@ -149,10 +130,23 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.block.paddingBottom = value;
     this.block.paddingRight = value;
 
-    this.paddingChange('top', value);
-    this.paddingChange('left', value);
-    this.paddingChange('right', value);
-    this.paddingChange('bottom', value);
+    this._blockEditor.selectedBlocks
+      .forEach((block: Block) => {
+        this._blockEditor.blockChange(block);
+      });
+  }
+  
+  public paddingKeypress(event: KeyboardEvent, name): void {
+    this.block.padding = null;
+    this.numericInputKeypress(event, name, 1);
+  }
+
+  public paddingAllKeypress(event: KeyboardEvent, unit = 1): void {
+    if(event.code === 'ArrowUp' || event.code === 'ArrowDown') {
+      this.block.padding = round(Number(this.block.padding || 0) + ((event.code === 'ArrowDown' ? -1 : 1) * unit), 3);
+
+      this.paddingAllChange(this.block.padding);
+    }
   }
 
   public borderColorChange(value): void {
@@ -278,7 +272,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public numericInputKeypress(event: KeyboardEvent, name, unit = 1): void {
     if(event.code === 'ArrowUp' || event.code === 'ArrowDown') {
-      this.block[name] = Number(this.block[name] || 0) + ((event.code === 'ArrowDown' ? -1 : 1) * unit);
+      this.block[name] = round(Number(this.block[name] || 0) + ((event.code === 'ArrowDown' ? -1 : 1) * unit), 3);
+
       this._blockEditor.selectedBlockComponentChangeProperty(this.block[name], name);
     }
   }

@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, Component,
   ElementRef, Input,
   OnInit,
 } from '@angular/core';
-import { GoogleFontService } from 'src/app/services';
+import { GoogleFontService } from '../../services/google-font.service';
 
 
 @Component({
@@ -18,14 +18,11 @@ export class FontComponent implements OnInit {
 
   constructor(
     private _el: ElementRef,
-    private _cdRef: ChangeDetectorRef,
     private _googleFontService: GoogleFontService,
   ) {}
 
   public ngOnInit(): void {
     var observer = new IntersectionObserver((entries) => {
-      // isIntersecting is true when element and viewport are overlapping
-      // isIntersecting is false when element and viewport don't overlap
       if(entries[0].isIntersecting === true) {
         this._googleFontService.loadFont(this.font);
       }

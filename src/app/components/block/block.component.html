@@ -5,11 +5,11 @@
       editable: editable, 
       readonly: block.readonly,
       required: block.required
-    }">
+    }"
+    [style.zIndex]="block.index">
   <div
       #contentElement
       class="content"
-      [style.zIndex]="block.index"
       [style.borderColor]="block.borderColor"
       [style.borderWidth]="block.borderWidth ? block.borderWidth + 'pt' : ''"
       [style.borderStyle]="block.borderColor ? 'solid' : 'dashed'"
@@ -21,17 +21,16 @@
       [style.color]="block.fontColor"
       [style.fontWeight]="block.bold ? 'bold' : ''"
       [style.textDecoration]="block.underline ? 'underline' : ''"
-      [style.paddingTop]="block.paddingTop ? block.paddingTop + unit : ''"
-      [style.paddingBottom]="block.paddingBottom ? block.paddingBottom + unit : ''"
-      [style.paddingLeft]="block.paddingLeft ? block.paddingLeft + unit : ''"
-      [style.paddingRight]="block.paddingRight ? block.paddingRight + unit : ''"
-      [style.padding]="block.padding ? block.padding + unit : ''"
+      [style.paddingTop]="block.paddingTop ? block.paddingTop + 'pt' : ''"
+      [style.paddingBottom]="block.paddingBottom ? block.paddingBottom + 'pt' : ''"
+      [style.paddingLeft]="block.paddingLeft ? block.paddingLeft + 'pt' : ''"
+      [style.paddingRight]="block.paddingRight ? block.paddingRight + 'pt' : ''"
       [style.clipPath]="block.clipPath"
       [style.backgroundColor]="block.backgroundColor"
-      [style.borderBottomLeftRadius]="block.shapeRadius && block.shapeBottomLeft === 'round' ? block.shapeRadius + unit : ''"
-      [style.borderBottomRightRadius]="block.shapeRadius && block.shapeBottomRight === 'round' ? block.shapeRadius + unit : ''"
-      [style.borderTopRightRadius]="block.shapeRadius && block.shapeTopRight === 'round' ? block.shapeRadius + unit : ''"
-      [style.borderTopLeftRadius]="block.shapeRadius && block.shapeTopLeft === 'round' ? block.shapeRadius + unit : ''"
+      [style.borderBottomLeftRadius]="block.shapeRadius && block.shapeBottomLeft === 'round' ? block.shapeRadius + 'pt' : ''"
+      [style.borderBottomRightRadius]="block.shapeRadius && block.shapeBottomRight === 'round' ? block.shapeRadius + 'pt' : ''"
+      [style.borderTopRightRadius]="block.shapeRadius && block.shapeTopRight === 'round' ? block.shapeRadius + 'pt' : ''"
+      [style.borderTopLeftRadius]="block.shapeRadius && block.shapeTopLeft === 'round' ? block.shapeRadius + 'pt' : ''"
       [style.boxShadow]="boxShadow"
       [ngClass]="{
         'editable': editable,

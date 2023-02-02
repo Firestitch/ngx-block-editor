@@ -158,11 +158,21 @@
       }
     }
 
-    &.info-panel,
-    &.shadow-panel {
-
+    &.info-panel {
       .mat-form-field {
         width: 41px;
+      }
+    }
+
+    &.shadow-panel {
+      .mat-form-field {
+        width: 41px;
+
+        &.shadow-x,
+        &.shadow-y,
+        &.shadow-blur {
+          width: 26px;
+        }
       }
     }
 

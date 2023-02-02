@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -11,9 +11,8 @@ import { BlockTypes } from '../../consts/block-types.const';
 
 @Component({
   templateUrl: './layers-reorder-dialog.component.html',
-  styleUrls: [
-    './layers-reorder-dialog.component.scss',
-  ]
+  styleUrls: ['./layers-reorder-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayersReorderDialogComponent {
 

@@ -123,7 +123,8 @@
               [ngModel]="block.width"
               name="width"
               (focus)="inputFocus($event)"
-              (ngModelChange)="widthChange($event)">
+              (keydown)="numericInputKeypress($event, 'width', .01)"
+              (ngModelChange)="numberChange($event, 'width')">
             <span matPrefix>W</span>
         </mat-form-field>
 
@@ -138,7 +139,8 @@
               [ngModel]="block.height"
               name="height"
               (focus)="inputFocus($event)"
-              (ngModelChange)="heightChange($event)">
+              (keydown)="numericInputKeypress($event, 'height', .01)"
+              (ngModelChange)="numberChange($event, 'height')">
             <span matPrefix>H</span>
         </mat-form-field>
       </div>
@@ -425,7 +427,8 @@
               [(ngModel)]="block.borderWidth"
               name="borderWidth"
               (focus)="inputFocus($event)"
-              (ngModelChange)="borderWidthChange($event)"
+              (keydown)="numericInputKeypress($event, 'borderWidth')"
+              (ngModelChange)="numberChange($event, 'borderWidth')"
               placeholder="Width">
             <span matPrefix *ngIf="block.borderWidth">W</span>
         </mat-form-field>
@@ -447,7 +450,7 @@
               [ngModel]="block.shapeRadius"
               name="shapeRadius"
               (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'shapeRadius')"
+              (keydown)="numericInputKeypress($event, 'shapeRadius', 1)"
               (ngModelChange)="numberChange($event, 'shapeRadius')"
               placeholder="Radius">
             <span matPrefix *ngIf="block.shapeRadius">R</span>
@@ -483,7 +486,7 @@
           [color]="block.shadowColor">
         </fs-color-picker-chip>
 
-        <mat-form-field class="form-field-padless" floatLabel="never">
+        <mat-form-field class="form-field-padless shadow-x" floatLabel="never">
           <input
               matInput
               [ngModel]="block.shadowX"
@@ -493,7 +496,7 @@
               (ngModelChange)="numberChange($event, 'shadowX')">
             <span matPrefix>X</span>
         </mat-form-field>
-        <mat-form-field class="form-field-padless" floatLabel="never">
+        <mat-form-field class="form-field-padless shadow-y" floatLabel="never">
           <input
               matInput
               [ngModel]="block.shadowY"
@@ -503,7 +506,7 @@
               (ngModelChange)="numberChange($event, 'shadowY')">
             <span matPrefix>Y</span>
         </mat-form-field>
-        <mat-form-field class="form-field-padless" floatLabel="never">
+        <mat-form-field class="form-field-padless shadow-blur" floatLabel="never">
           <input
               matInput
               [ngModel]="block.shadowBlur"
@@ -525,6 +528,17 @@
               (ngModelChange)="numberChange($event, 'shadowSpread')">
             <span matPrefix *ngIf="block.shadowSpread">S</span>
         </mat-form-field>
+        <!-- <mat-form-field class="form-field-padless" floatLabel="never">
+          <input
+              matInput
+              [ngModel]="block.shadowOpacity"
+              name="shadowOpacity"
+              placeholder="Opacity"
+              (focus)="inputFocus($event)"
+              (keydown)="numericInputKeypress($event, 'shadowOpacity')"
+              (ngModelChange)="numberChange($event, 'shadowOpacity')">
+            <span matPrefix *ngIf="block.shadowOpacity">O</span>
+        </mat-form-field> -->
       </div>
     </div>
 
@@ -567,10 +581,11 @@
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
               matInput
-              [ngModel]="block.padding"
+              [(ngModel)]="block.padding"
               name="padding"
               (focus)="inputFocus($event)"
               (ngModelChange)="paddingAllChange($event)"
+              (keydown)="paddingAllKeypress($event, 1)"
               placeholder="All">
             <span matPrefix *ngIf="block.padding">A</span>
         </mat-form-field>
@@ -581,7 +596,8 @@
               [ngModel]="block.paddingTop"
               name="paddingTop"
               (focus)="inputFocus($event)"
-              (ngModelChange)="paddingChange('paddingTop',$event)"
+              (keydown)="paddingKeypress($event, 'paddingTop')"
+              (ngModelChange)="numberChange($event, 'paddingTop')"
               placeholder="Top">
             <span matPrefix *ngIf="block.paddingTop">T</span>
         </mat-form-field>
@@ -592,7 +608,8 @@
               [ngModel]="block.paddingBottom"
               name="paddingBottom"
               (focus)="inputFocus($event)"
-              (ngModelChange)="paddingChange('paddingBottom',$event)"
+              (keydown)="paddingKeypress($event, 'paddingBottom')"
+              (ngModelChange)="numberChange($event, 'paddingBottom')"
               placeholder="Bottom">
             <span matPrefix *ngIf="block.paddingBottom">B</span>
         </mat-form-field>
@@ -603,7 +620,8 @@
               [ngModel]="block.paddingLeft"
               name="paddingLeft"
               (focus)="inputFocus($event)"
-              (ngModelChange)="paddingChange('paddingLeft',$event)"
+              (keydown)="paddingKeypress($event, 'paddingLeft')"
+              (ngModelChange)="numberChange($event, 'paddingLeft')"
               placeholder="Left">
             <span matPrefix *ngIf="block.paddingLeft">L</span>
         </mat-form-field>
@@ -614,7 +632,8 @@
               [ngModel]="block.paddingRight"
               name="paddingRight"
               (focus)="inputFocus($event)"
-              (ngModelChange)="paddingChange('paddingRight',$event)"
+              (keydown)="paddingKeypress($event, 'paddingRight')"
+              (ngModelChange)="numberChange($event, 'paddingRight')"
               placeholder="Right">
             <span matPrefix *ngIf="block.paddingRight">R</span>
         </mat-form-field>

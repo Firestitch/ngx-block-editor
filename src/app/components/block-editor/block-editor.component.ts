@@ -47,7 +47,7 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
 
   @Input() public config: BlockEditorConfig;
 
-  public blocks: Block<any>[];
+  public blocks: Block[];
 
   private _destroy$ = new Subject();
 

@@ -6,6 +6,7 @@ import { FsExampleComponent } from '@firestitch/example';
 import { FsMessage } from '@firestitch/message';
 import { Block } from 'src/app/interfaces/block';
 import { Observable, of } from 'rxjs';
+import { BlockType } from '@firestitch/package';
 
 @Component({
   selector: 'kitchen-sink',
@@ -18,7 +19,7 @@ export class KitchenSinkComponent implements OnInit {
   public blockEditor: FsBlockEditorComponent;
 
   public config: BlockEditorConfig = {};
-  public selectedBlocks: Block<any>[] = [];
+  public selectedBlocks: Block[] = [];
 
   constructor(
     private exampleComponent: FsExampleComponent,
@@ -29,9 +30,9 @@ export class KitchenSinkComponent implements OnInit {
 
   public ngOnInit(): void {
 
-    const blocks: Block<CustomBlock>[] = [
-      { width: 4, height: 3, top: 2, left: 3, borderColor: 'pink', content: 'Block A', padding: .1 },
-      { guid: '2', width: 5, height: 2.5, top: 4, left: 1, content: 'Block', backgroundColor: '#628597', fontColor: '#ffffff' },
+    const blocks: Block[] = [
+      { width: 4, height: 2, top: 2, left: 3, borderColor: 'pink', content: 'Block A', padding: .1, borderWidth: 5, type: BlockType.Rectangle },
+      { width: 5, height: 2.5, top: 4, left: 1, content: 'Block', backgroundColor: '#628597', fontColor: '#ffffff', paddingLeft: .2, paddingRight: .2, paddingTop: .2, paddingBottom: .2, type: BlockType.Rectangle  },
     ];
 
     this.config = {
@@ -50,16 +51,13 @@ export class KitchenSinkComponent implements OnInit {
         console.log('Block Add', block);
         return of(block);
       },
-      blockAdded: (block) => {
-        console.log('Block Add', block);
-      },
       blocksSelected: (blocks) => {
         this.selectedBlocks = blocks;
         console.log('Blocks Selected', blocks);
       },
       blocksRemove: (blocks) => {
         console.log('Blocks Removed', blocks);
-        return of(true);
+        return of(blocks);
       },
       imageUpload: (file: Blob): Observable<string> => {
         return new Observable((observer) => {

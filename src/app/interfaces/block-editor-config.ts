@@ -11,10 +11,9 @@ export interface BlockEditorConfig {
   marginLeft?: number;
   blocks?: Block[],
   blockChanged?: (block: Block) => void;
-  blockAdded?: (block: Block) => void;
   blockAdd?: (block: Block) => Observable<Block>;
   blockUpload?: (block: Block, file: Blob) => Observable<Block>;
-  blocksRemove?: (block: Block[]) => Observable<Block>;
+  blocksRemove?: (block: Block[]) => Observable<any>;
   blocksLevelChanged?: (blocks: Block[]) => void;
   blocksSelected?: (blocks: Block[]) => void;
   imageUpload?: (file: Blob) => Observable<string>;

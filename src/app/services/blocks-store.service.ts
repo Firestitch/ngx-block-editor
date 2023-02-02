@@ -164,7 +164,7 @@ export class BlocksStore implements OnDestroy {
     this._setBlocks(blocks);
   }
 
-  public isReordableBlock(block: Block) {
+  public isReordableBlock(block: Block): boolean {
     return [
       BlockType.LongText,
       BlockType.ShortText,
@@ -208,7 +208,7 @@ export class BlocksStore implements OnDestroy {
     });
   }
 
-  private _createBlock(block: Block) {
+  private _createBlock(block: Block): Block {
     const newBlock = {
       shapeBottomLeft: 'round',
       shapeTopLeft: 'round',
@@ -256,7 +256,7 @@ export class BlocksStore implements OnDestroy {
     };
   }
 
-  private _deduplicateIndexesFor(blocks: Block<unknown>[]): void {
+  private _deduplicateIndexesFor(blocks: Block[]): void {
     blocks.forEach((block, index) => {
       block.index = index;
     });
