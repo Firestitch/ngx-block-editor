@@ -36,7 +36,10 @@ export interface Block {
   index?: number;
   tabIndex?: number;
   imageUrl?: string;
-  clipPath?: string;
+  clipPath?: {
+    type: string,
+    values: number[],
+  };
   readonly?: boolean;
   name?: string;
   format?: string;

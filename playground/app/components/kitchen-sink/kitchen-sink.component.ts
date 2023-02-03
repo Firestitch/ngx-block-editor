@@ -31,8 +31,9 @@ export class KitchenSinkComponent implements OnInit {
   public ngOnInit(): void {
 
     const blocks: Block[] = [
-      { width: 4, height: 2, top: 2, left: 3, borderColor: 'pink', content: 'Block A', padding: .1, borderWidth: 5, type: BlockType.Rectangle },
-      { width: 5, height: 2.5, top: 4, left: 1, content: 'Block', backgroundColor: '#628597', fontColor: '#ffffff', paddingLeft: .2, paddingRight: .2, paddingTop: .2, paddingBottom: .2, type: BlockType.Rectangle  },
+      { width: 3, height: 2, top: .5, left: 4, keepRatio: true, imageUrl: 'http://cdn.shopify.com/s/files/1/0535/2738/0144/articles/shutterstock_1290320698.jpg?v=1651099282', type: BlockType.Rectangle },
+      { width: 4, height: 2, top: 3, left: 3, borderColor: 'pink', content: 'Block A', padding: .1, borderWidth: 5, type: BlockType.Rectangle },
+      { width: 5, height: 2.5, top: 6, left: 1, content: 'Block', backgroundColor: '#628597', fontColor: '#ffffff', paddingLeft: .2, paddingRight: .2, paddingTop: .2, paddingBottom: .2, type: BlockType.Rectangle  },
     ];
 
     this.config = {

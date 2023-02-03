@@ -1,4 +1,4 @@
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, skip, takeUntil } from 'rxjs/operators';
 import {
   AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
   HostBinding,
@@ -13,6 +13,7 @@ import { fromEvent, Subject } from 'rxjs';
 import { BlockEditorService } from './../../services';
 import { Block } from './../../interfaces';
 import { BlockType } from '../../enums';
+import { ThrowStmt } from '@angular/compiler';
 
 
 @Component({
@@ -66,14 +67,84 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     return this._editable;
   }
 
-  public get boxShadow(): string {
+  public get styleTop(): string {
+    let top = this.block.top;
+    // if(this.block.clipPath) {
+    //   top += (this.block.clipPath.values[0]/100) * top;
+    // }
+
+    return `${top}${this.unit}`;
+  }
+
+  public get styleLeft(): string {
+    let left = this.block.left;
+    // if(this.block.clipPath) {
+    //   left += (this.block.clipPath.values[3]/100) * left;
+    // }
+
+    return `${left}${this.unit}`;
+  }
+
+  public get styleWidth(): string {
+    let width = this.block.width;
+    // if(this.block.clipPath) {
+    //   width -= (this.block.width * this.block.clipPath.values[1]/100) + (this.block.width * this.block.clipPath.values[3]/100);
+    // }
+
+    return `${width}${this.unit}`;
+  }
+
+  public get styleHeight(): string {
+    let height = this.block.height;
+    // if(this.block.clipPath) {
+    //   height -= (this.block.height * this.block.clipPath.values[0]/100) + (this.block.height * this.block.clipPath.values[2]/100);
+    // }
+
+    return `${height}${this.unit}`;
+  }
+
+  public get styleImageHeight(): string {
+    let height = this.block.height;
+    if(this.block.clipPath) {
+      const values = this.block.clipPath.values || {};
+      //height += (values[0]/100 * height) + (values[2]/100 * height);
+    }
+
+    return `${height}${this.unit}`;
+  }
+
+  public get styleImageWidth(): string {
+    let width = this.block.width;
+    if(this.block.clipPath) {
+      const values = this.block.clipPath.values || {};
+      //width += (values[1]/100 * width) + (values[3]/100 * width);
+    }
+
+    return `${width}${this.unit}`;
+  }
+
+  public get styleClipPath(): string {
+    if(!this.block.clipPath) {
+      return null;
+    }
+
+    const values = this.block.clipPath.values || {};
+    const top = values[0]/100 * this.block.height;
+    const right = (values[1])/100 * this.block.width;
+    const bottom = (values[2])/100 * this.block.height;
+    const left = values[3]/100 * this.block.width;
+
+    const clipPath = `inset(${top}${this.unit} ${right}${this.unit} ${bottom}${this.unit} ${left}${this.unit})`;
+
+    return clipPath;
+  }
+
+  public get styleBoxShadow(): string {
     if(!this.block.shadowColor) {
       return null;
     }
 
-    //const shadowOpacity = ((Number(this.block.shadowOpacity || 100) / 100) * 255).toString(16).padStart(2, '0');
     const shadow = `${this.block.shadowX}pt ${(this.block.shadowY || 0)}pt ${(this.block.shadowBlur || 0)}pt ${(this.block.shadowSpread || 0)}pt  ${this.block.shadowColor}`;
-
     return shadow;
   }
 
@@ -89,8 +160,21 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     }
   }
 
-  public set clippable(value) {
+  public get isSelected() {
+    return this._blockEditor.selectedBlocks.includes(this.block);
+  }
+
+  public get clippable(): boolean {
+    return !!this.moveable.clippable;
+  }
+
+  public set clippable(value: boolean) {
     this.moveable.clippable = value;
+    if(this.isSelected) {
+      this.moveable.resizable = !value;
+      this.moveable.rotatable = !value;
+      this.moveable.scalable = !value;
+    }
   }
 
   public get transformable() {
@@ -100,30 +184,8 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   public set transformable(value) {
     this._transformable = value;
     this.moveable.resizable = value;
-    this.moveable.roundable = value;
     this.moveable.rotatable = value;
-  }
-
-  public set width(value) {
-    this.element.nativeElement.style.width = `${parseFloat(value)}${this.unit}`;
-    this.moveable.updateRect();
-  }
-
-  public set height(value) {
-    this.element.nativeElement.style.height = `${parseFloat(value)}${this.unit}`;
-    this.moveable.updateRect();
-  }
-
-  public set top(value) {
-    this.block.top = parseFloat(value);
-    this.element.nativeElement.style.top = `${this.block.top}${this.unit}`;
-    this.moveable.updateRect();
-  }
-
-  public set left(value) {
-    this.block.left = parseFloat(value);
-    this.element.nativeElement.style.left = `${this.block.left}${this.unit}`;
-    this.moveable.updateRect();
+    this.moveable.scalable = value;
   }
 
   public set rotate(value) {
@@ -148,6 +210,16 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.content = this.block.content;
     this.block.shadowOpacity = this.block.shadowOpacity || 100;
 
+    this._blockEditor.blockClippable$
+      .pipe(
+        filter(() => this.isSelected),
+        takeUntil(this._destroy$),
+      )
+      .subscribe((clippable) => {
+        this.clippable = clippable;
+        this._cdRef.markForCheck();
+      });
+      
     this._blockEditor.blockChanged$
       .pipe(
         filter((block) => block === this.block),
@@ -155,12 +227,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       )
       .subscribe((block) => {
         this.keepRatio = block.keepRatio;
-        this.width = block.width;
-        this.height = block.height;
-        this.top = block.top;
-        this.left = block.left;
         this.rotate = this.block.rotate;
-        this.clippable = this.block.clippable;
         this._cdRef.markForCheck();
       });
   }
@@ -170,11 +237,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       this._initEvents();
       this._initMoveable();
       this._setTransform();
-
-      this.width = this.block.width;
-      this.height = this.block.height;
-      this.top = this.block.top;
-      this.left = this.block.left;
       this.rotate = this.block.rotate;
       this._blockEditor.initBlock(this.block, this);
       
@@ -185,7 +247,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       .subscribe(() => {
         this._updateElementGuidelines();
       });
-
     });
   }
 
@@ -197,7 +258,13 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     return parseFloat(value.toFixed(decimals));
   }
 
+  public select(): void {
+    this.transformable = true;
+  }
+
   public deselect(): void {
+    this.editable = false;
+    this.clippable = false;
     this.transformable = false;
     this.disableContentEdit();
   }
@@ -260,6 +327,8 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       rotatable: false,
       warpable: false,
       origin: false,
+      clipRelative: true,
+      clipArea: true,
       keepRatio: this.block.keepRatio,
       snappable: true,
       snapDirections: { left: true, top: true, right: true, bottom: true, center: true, middle: true },
@@ -276,9 +345,17 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
     this.moveable
       .on('clip', (e: OnClip) => {
-          this.block.clipPath = e.clipStyle;
-        e.target.style.clipPath = e.clipStyle;
-        this._triggerChanged();
+        console.log(e.clipStyles, e.clipStyle);
+          e.target.style.clipPath = e.clipStyle;
+          this.block.clipPath = {
+            type: 'inset',
+            values: e.clipStyles
+              .map((value) => Number(value.replace('%', ''))),
+          };
+      })
+      .on('clipEnd', (e: OnClipEnd) => {
+        e.target.style.clipPath = null;
+        this._triggerChanged();     
       })
       .on('dragStart', () => {
         this.disableContentEdit();
@@ -290,10 +367,10 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         target!.style.top = this.pxToIn(top) + this.unit;
         this.block.top = this.pxToIn(top);
         this.block.left = this.pxToIn(left);
-        this._triggerChanged();
       })
       .on('dragEnd', () => {
         this.transformating = false;
+        this._triggerChanged();
         this._cdRef.markForCheck();
       })
       .on('resizeStart', () => {
@@ -326,20 +403,22 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         }
 
         this._setTransform([`translate(${transform[0]}px, ${transform[1]}px)`]);
-        this._triggerChanged();
       })
       .on('resizeEnd', ({ target }) => {
         const matrix = new WebKitCSSMatrix(target.style.transform);
         this.block.top = parseFloat(target.style.top) + this.pxToIn(matrix.m42);
         this.block.left = parseFloat(target.style.left) + this.pxToIn(matrix.m41);
-
-        target.style.top = this.block.top + this.unit;
-        target.style.left = this.block.left + this.unit;
         this._setTransform();
         this._triggerChanged();
         this.zoompan.enable();
         this.transformating = false;
         this._cdRef.markForCheck();
+        
+        target.style.top = `${this.block.top}in`;
+        target.style.left = `${this.block.left}in`;
+        target.style.width = `${this.block.width}in`;
+        target.style.height = `${this.block.height}in`;
+        this.moveable.updateRect();
       })
       .on('rotateStart', ({ inputEvent }) => {
         if(inputEvent) {
@@ -354,7 +433,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         this.block.rotate = rotation % 360;
 
         if(inputEvent) {
-          this._triggerChanged();
           this.zoompan.enable();
         }
       })
@@ -362,6 +440,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         if(inputEvent) {
           this.transformating = false;
           this._cdRef.markForCheck();
+          this._triggerChanged();
         }
       });
   }
@@ -380,14 +459,17 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         takeUntil(this._destroy$),
       ).subscribe((event: UIEvent) => {
         this.zoompan.disable();
-        if (this.editable) {
-          if (this.contentElement.nativeElement.isSameNode(event.target)) {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            event.stopPropagation();
+        
+        if(!this.moveable.clippable) {
+          if (this.editable) {
+            if (this.contentElement.nativeElement.isSameNode(event.target)) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              event.stopPropagation();
+            }
+          } else {
+            this._blockEditor.selectedBlock = this.block;
           }
-        } else {
-          this._blockEditor.selectedBlock = this.block;
         }
       });
 

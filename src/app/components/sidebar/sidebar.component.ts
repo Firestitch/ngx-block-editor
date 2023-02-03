@@ -177,7 +177,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public imageClip(): void {
     this.clippable = !this.clippable;
-    this._blockEditor.selectedBlockComponentChangeProperty(this.clippable, 'clippable');
+    this._blockEditor.blockClippable = true;
   }
   
   public blockChangeProperty(value, name): void {

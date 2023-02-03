@@ -51,7 +51,7 @@ export class BlocksStore implements OnDestroy {
         map(({value}) => value),
       );
   }
-
+  
   public get blockRemoved$(): Observable<Block> {
     return this._eventBus$
       .pipe(

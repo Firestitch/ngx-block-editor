@@ -23,6 +23,7 @@ export class BlockEditorService implements OnDestroy {
   private _selectedBlocks$ = new BehaviorSubject<Block[]>([]);
   private _selectionRange;
   private _blockComponents = new Map<Block, FsBlockComponent>();
+  private _blockClippable$ = new BehaviorSubject<boolean>(null);
   private _destroy$ = new Subject();
   private _blockInited$ = new Subject<Block>();
 
@@ -74,6 +75,14 @@ export class BlockEditorService implements OnDestroy {
     return this._store.blockChanged$;
   }
 
+  public get blockClippable$() {
+    return this._blockClippable$;
+  }
+
+  public set blockClippable(value) {
+    this._blockClippable$.next(value);
+  }
+
   public get blockAdded$(): Observable<Block> {
     return this._store.blockAdded$;
   }
@@ -121,9 +130,9 @@ export class BlockEditorService implements OnDestroy {
   public set selectedBlocks(blocks: Block[]) {
     this.blockComponents
     .forEach((blockComponent) => {
-      blockComponent.editable = false;
+      
       if(blocks.indexOf(blockComponent.block) !== -1) {
-        blockComponent.transformable = true;
+        blockComponent.select();
       } else {
         blockComponent.deselect();
       }

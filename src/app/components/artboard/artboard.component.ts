@@ -109,16 +109,16 @@ export class ArtboardComponent implements OnInit, OnDestroy {
           .forEach((blockComponent: FsBlockComponent) => {
             switch (event.key) {
               case 'ArrowUp':
-                blockComponent.top = blockComponent.block.top - inchPixel;
+                blockComponent.block.top = blockComponent.block.top - inchPixel;
                 break;
               case 'ArrowDown':
-                blockComponent.top = blockComponent.block.top + inchPixel;
+                blockComponent.block.top = blockComponent.block.top + inchPixel;
                 break;
               case 'ArrowLeft':
-                blockComponent.left = blockComponent.block.left - inchPixel;
+                blockComponent.block.left = blockComponent.block.left - inchPixel;
                 break;
               case 'ArrowRight':
-                blockComponent.left = blockComponent.block.left + inchPixel;
+                blockComponent.block.left = blockComponent.block.left + inchPixel;
                 break;
             }
 

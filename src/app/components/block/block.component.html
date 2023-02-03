@@ -1,6 +1,10 @@
 <div
     #element
     [class]="'block ' + 'block-' + block.type"
+    [style.top]="styleTop"
+    [style.left]="styleLeft"
+    [style.width]="styleWidth"
+    [style.height]="styleHeight"
     [ngClass]="{ 
       editable: editable, 
       readonly: block.readonly,
@@ -25,13 +29,12 @@
       [style.paddingBottom]="block.paddingBottom ? block.paddingBottom + 'pt' : ''"
       [style.paddingLeft]="block.paddingLeft ? block.paddingLeft + 'pt' : ''"
       [style.paddingRight]="block.paddingRight ? block.paddingRight + 'pt' : ''"
-      [style.clipPath]="block.clipPath"
       [style.backgroundColor]="block.backgroundColor"
       [style.borderBottomLeftRadius]="block.shapeRadius && block.shapeBottomLeft === 'round' ? block.shapeRadius + 'pt' : ''"
       [style.borderBottomRightRadius]="block.shapeRadius && block.shapeBottomRight === 'round' ? block.shapeRadius + 'pt' : ''"
       [style.borderTopRightRadius]="block.shapeRadius && block.shapeTopRight === 'round' ? block.shapeRadius + 'pt' : ''"
       [style.borderTopLeftRadius]="block.shapeRadius && block.shapeTopLeft === 'round' ? block.shapeRadius + 'pt' : ''"
-      [style.boxShadow]="boxShadow"
+      [style.boxShadow]="styleBoxShadow"
       [ngClass]="{
         'editable': editable,
         'vertical-align-center': block.verticalAlign === 'center',
@@ -39,9 +42,14 @@
       }">
     <ng-container [ngSwitch]="block.type">
       <ng-container *ngSwitchCase="BlockType.Pdf">
-        <img [src]="block.imageUrl">
+         <img [src]="block.imageUrl">
       </ng-container>
-      <img [src]="block.imageUrl" *ngIf="block.imageUrl">
+      <img        
+        *ngIf="block.imageUrl"  
+        [style.clipPath]="styleClipPath" 
+        [style.height]="styleImageHeight" 
+        [style.width]="styleImageWidth" 
+        [src]="block.imageUrl">
     </ng-container>
     <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">
       {{block.label || block.name}}
