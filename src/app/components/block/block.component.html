@@ -49,6 +49,8 @@
         [style.clipPath]="styleClipPath" 
         [style.height]="styleImageHeight" 
         [style.width]="styleImageWidth" 
+        [style.top]="styleImageTop" 
+        [style.left]="styleImageLeft" 
         [src]="block.imageUrl">
     </ng-container>
     <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">

@@ -13,7 +13,6 @@ import { fromEvent, Subject } from 'rxjs';
 import { BlockEditorService } from './../../services';
 import { Block } from './../../interfaces';
 import { BlockType } from '../../enums';
-import { ThrowStmt } from '@angular/compiler';
 
 
 @Component({
@@ -69,36 +68,28 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public get styleTop(): string {
     let top = this.block.top;
-    // if(this.block.clipPath) {
-    //   top += (this.block.clipPath.values[0]/100) * top;
-    // }
-
     return `${top}${this.unit}`;
   }
 
   public get styleLeft(): string {
     let left = this.block.left;
-    // if(this.block.clipPath) {
-    //   left += (this.block.clipPath.values[3]/100) * left;
-    // }
-
     return `${left}${this.unit}`;
   }
 
   public get styleWidth(): string {
     let width = this.block.width;
-    // if(this.block.clipPath) {
-    //   width -= (this.block.width * this.block.clipPath.values[1]/100) + (this.block.width * this.block.clipPath.values[3]/100);
-    // }
+    if(this.block.clipPath) {
+      width -= (this.block.width * this.block.clipPath.values[1]/100) + (this.block.width * this.block.clipPath.values[3]/100);
+    }
 
     return `${width}${this.unit}`;
   }
 
   public get styleHeight(): string {
     let height = this.block.height;
-    // if(this.block.clipPath) {
-    //   height -= (this.block.height * this.block.clipPath.values[0]/100) + (this.block.height * this.block.clipPath.values[2]/100);
-    // }
+    if(this.block.clipPath) {
+      height -= (this.block.height * this.block.clipPath.values[0]/100) + (this.block.height * this.block.clipPath.values[2]/100);
+    }
 
     return `${height}${this.unit}`;
   }
@@ -121,6 +112,26 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     }
 
     return `${width}${this.unit}`;
+  }
+
+  public get styleImageTop(): string {
+    let top = 0;
+    if(this.block.clipPath) {
+      const values = this.block.clipPath.values || {};
+      top = (values[0]/100) * this.block.width * -1;
+    }
+
+    return `${top}${this.unit}`;
+  }
+
+  public get styleImageLeft(): string {
+    let left = 0;
+    if(this.block.clipPath) {
+      const values = this.block.clipPath.values || {};
+      left = (values[3]/100) * this.block.width * -1;
+    }
+
+    return `${left}${this.unit}`;
   }
 
   public get styleClipPath(): string {
@@ -345,17 +356,30 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
     this.moveable
       .on('clip', (e: OnClip) => {
-        console.log(e.clipStyles, e.clipStyle);
+        this.moveable.keepRatio = false;
+          console.log(e.clipStyles, e.clipStyle, e);
+
+
           e.target.style.clipPath = e.clipStyle;
+
           this.block.clipPath = {
             type: 'inset',
             values: e.clipStyles
-              .map((value) => Number(value.replace('%', ''))),
+              .map((value) => {
+                const number = Number(value.replace('%', ''));
+                return number > 0 ? number : 0;
+              }),
           };
       })
       .on('clipEnd', (e: OnClipEnd) => {
+        this.moveable.keepRatio = true;
         e.target.style.clipPath = null;
-        this._triggerChanged();     
+
+        this._triggerChanged();
+
+        setTimeout(() => {
+          this.moveable.updateRect();
+        }, 100);
       })
       .on('dragStart', () => {
         this.disableContentEdit();
