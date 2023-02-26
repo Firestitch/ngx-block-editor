@@ -57,6 +57,7 @@ export interface Block {
   shadowColor?: string;
   shadowSpread?: number;
   shadowOpacity?: number;
+  imageOpacity?: number;
   fontFamily?: string;
   formula?: string;
   data?: any;

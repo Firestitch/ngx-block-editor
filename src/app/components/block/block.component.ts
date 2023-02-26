@@ -1,4 +1,4 @@
-import { filter, skip, takeUntil } from 'rxjs/operators';
+import { delay, filter, skip, takeUntil } from 'rxjs/operators';
 import {
   AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
   HostBinding,
@@ -10,7 +10,7 @@ import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 import Moveable, { OnClip, OnClipEnd } from 'moveable';
 import { fromEvent, Subject } from 'rxjs';
 
-import { BlockEditorService } from './../../services';
+import { BlockEditorService, GoogleFontService } from './../../services';
 import { Block } from './../../interfaces';
 import { BlockType } from '../../enums';
 
@@ -40,7 +40,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   public transformating = false;
 
   public unit;
-  public content: string;
+  public content;
   public BlockType = BlockType;
 
   private _moveable;
@@ -52,6 +52,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     private _blockEditor: BlockEditorService,
     private _elementRef: ElementRef,
     private _cdRef: ChangeDetectorRef,
+    private _googleFontService: GoogleFontService,
   ) { }
 
   public get el(): any {
@@ -220,6 +221,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.unit = this._blockEditor.config.unit;
     this.content = this.block.content;
     this.block.shadowOpacity = this.block.shadowOpacity || 100;
+    this._initFonts();
 
     this._blockEditor.blockClippable$
       .pipe(
@@ -310,11 +312,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   private _setTransform(transforms = []): void {
     transforms = transforms ?? [];
-
-    if (this.block.rotate) {
-      transforms.push(`rotate(${this.block.rotate}deg)`);
-    }
-
     this.el.style.transform = transforms.join(' ');
   }
 
@@ -357,9 +354,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.moveable
       .on('clip', (e: OnClip) => {
         this.moveable.keepRatio = false;
-          console.log(e.clipStyles, e.clipStyle, e);
-
-
           e.target.style.clipPath = e.clipStyle;
 
           this.block.clipPath = {
@@ -470,6 +464,29 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   private _initEvents(): void {
+    fromEvent(this.contentEditable.nativeElement, 'paste')
+    .pipe(
+      takeUntil(this._destroy$),
+  ).subscribe((e: any) => {
+      e.preventDefault();
+      const clipboardData = e.clipboardData;
+      const text = clipboardData.getData('Text');;
+      const range = document.getSelection().getRangeAt(0);
+      range.deleteContents();
+
+      const textNode = document.createTextNode(text);
+      range.insertNode(textNode);
+      range.selectNodeContents(textNode);
+      range.collapse(false);
+
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      this.block.content = this.contentEditable.nativeElement.innerHTML;
+      this._triggerChanged();
+    });
+
     fromEvent(this.contentEditable.nativeElement, 'input')
       .pipe(
         takeUntil(this._destroy$),
@@ -521,6 +538,11 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
           });
         }
     });
+  }
 
+  private _initFonts(): void {
+    if(this.block.fontFamily) {
+      this._googleFontService.loadFont({ family: this.block.fontFamily });    
+    }
   }
 }

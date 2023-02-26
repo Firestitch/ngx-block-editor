@@ -36,6 +36,11 @@
 
     &.image-row {
       margin-bottom: -5px;
+
+      .opacity {
+        width: 55px;
+        margin-left: 10px;
+      }
     }
 
     ::ng-deep {

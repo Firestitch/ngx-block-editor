@@ -570,6 +570,18 @@
                 (click)="imageClip()">
               <mat-icon>crop</mat-icon>
             </button>
+
+            <mat-form-field class="form-field-padless opacity" floatLabel="never">
+              <input
+                  matInput
+                  [ngModel]="block.imageOpacity"
+                  name="imageOpacity"
+                  placeholder="Opacity"
+                  (focus)="inputFocus($event)"
+                  (keydown)="numericInputKeypress($event, 'imageOpacity')"
+                  (ngModelChange)="numberChange($event, 'imageOpacity')">
+                <span matPrefix *ngIf="block.imageOpacity">O</span>
+            </mat-form-field>            
           </ng-container>
         </div>
       </div>
