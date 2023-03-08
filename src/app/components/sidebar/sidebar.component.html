@@ -165,7 +165,7 @@
             <mat-form-field class="form-field-padless-bottom full-width">
               <textarea
                 matInput
-                [matTextareaAutosize]="true"
+                [cdkTextareaAutosize]="true"
                 [ngModel]="block.description"
                 name="description"
                 placeholder="Description"
@@ -197,7 +197,7 @@
             <mat-form-field class="form-field-padless-bottom full-width">
               <textarea
                 matInput
-                [matTextareaAutosize]="true"
+                [cdkTextareaAutosize]="true"
                 [ngModel]="block.default"
                 name="default"
                 placeholder="Default"
@@ -210,7 +210,7 @@
             <mat-form-field class="form-field-padless-bottom full-width">
               <textarea
                 matInput
-                [matTextareaAutosize]="true"
+                [cdkTextareaAutosize]="true"
                 [ngModel]="block.formula"
                 name="formula"
                 placeholder="Formula"
@@ -223,7 +223,7 @@
             <mat-form-field class="form-field-padless-bottom full-width">
               <textarea
                 matInput
-                [matTextareaAutosize]="true"
+                [cdkTextareaAutosize]="true"
                 [ngModel]="block.groupLabel"
                 name="groupLabel"
                 placeholder="Group Label"
@@ -235,7 +235,7 @@
               <mat-label>Group Description</mat-label>
               <textarea
                 matInput
-                [matTextareaAutosize]="true"
+                [cdkTextareaAutosize]="true"
                 [ngModel]="block.groupDescription"
                 name="groupDescription"
                 (ngModelChange)="blockChangeProperty($event, 'groupDescription')">
