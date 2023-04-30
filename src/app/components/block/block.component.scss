@@ -32,6 +32,10 @@
     border-style: dashed;
   }
 
+  &.selected {
+    border-color: #31a2ff95;
+  }
+
   &.block-shorttext,
   &.block-longtext,
   &.block-date,

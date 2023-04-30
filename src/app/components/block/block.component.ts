@@ -41,6 +41,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public unit;
   public content;
+  public selected;
   public BlockType = BlockType;
 
   private _moveable;
@@ -172,17 +173,13 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     }
   }
 
-  public get isSelected() {
-    return this._blockEditor.selectedBlocks.includes(this.block);
-  }
-
   public get clippable(): boolean {
     return !!this.moveable.clippable;
   }
 
   public set clippable(value: boolean) {
     this.moveable.clippable = value;
-    if(this.isSelected) {
+    if(this.selected) {
       this.moveable.resizable = !value;
       this.moveable.rotatable = !value;
       this.moveable.scalable = !value;
@@ -227,9 +224,18 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.block.shadowOpacity = this.block.shadowOpacity || 100;
     this._initFonts();
 
+    this._blockEditor.selectedBlocks$
+    .pipe(
+        takeUntil(this._destroy$)
+      )
+      .subscribe((blocks) => {
+        this.selected = blocks.includes(this.block);
+        this._cdRef.markForCheck();
+      });
+
     this._blockEditor.blockClippable$
       .pipe(
-        filter(() => this.isSelected),
+        filter(() => this.selected),
         takeUntil(this._destroy$),
       )
       .subscribe((clippable) => {
@@ -332,7 +338,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   
   private _updateMoveable(): void {
     this._moveable.draggable = !this.block.lock;
-    if(this.isSelected) {
+    if(this.selected) {
       this._moveable.resizable = !this.block.lock;
       this._moveable.rotatable = !this.block.lock;
     }

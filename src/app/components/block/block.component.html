@@ -9,7 +9,8 @@
       editable: editable, 
       readonly: block.readonly,
       required: block.required,
-      lock: block.lock
+      lock: block.lock,
+      selected: selected
     }"
     [style.zIndex]="block.index">
   <div
@@ -42,9 +43,6 @@
         'vertical-align-bottom': block.verticalAlign === 'bottom'
       }">
     <ng-container [ngSwitch]="block.type">
-      <ng-container *ngSwitchCase="BlockType.Pdf">
-         <img [src]="block.imageUrl">
-      </ng-container>
       <img        
         *ngIf="block.imageUrl"  
         [style.clipPath]="styleClipPath" 
