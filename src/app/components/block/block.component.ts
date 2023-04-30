@@ -194,7 +194,11 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public set transformable(value) {
-    this._transformable = value;
+    if(this.block.lock) {
+      value = false;
+    }
+
+    this._transformable = value;    
     this.moveable.resizable = value;
     this.moveable.rotatable = value;
     this.moveable.scalable = value;
@@ -241,6 +245,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       .subscribe((block) => {
         this.keepRatio = block.keepRatio;
         this.rotate = this.block.rotate;
+        this._updateMoveable();
         this._cdRef.markForCheck();
       });
   }
@@ -323,6 +328,14 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.moveable.elementGuidelines = this._blockEditor.blockComponents
       .map((blockComponent) => blockComponent.el)
       .filter((el) => !el.isSameNode(this.el));
+  }  
+  
+  private _updateMoveable(): void {
+    this._moveable.draggable = !this.block.lock;
+    if(this.isSelected) {
+      this._moveable.resizable = !this.block.lock;
+      this._moveable.rotatable = !this.block.lock;
+    }
   }
 
   private _initMoveable(): void {
@@ -350,6 +363,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     });
 
     this._updateElementGuidelines();
+    this._updateMoveable();
 
     this.moveable
       .on('clip', (e: OnClip) => {
@@ -465,9 +479,10 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   private _initEvents(): void {
     fromEvent(this.contentEditable.nativeElement, 'paste')
-    .pipe(
-      takeUntil(this._destroy$),
-  ).subscribe((e: any) => {
+      .pipe(
+        takeUntil(this._destroy$),
+    )
+    .subscribe((e: any) => {
       e.preventDefault();
       const clipboardData = e.clipboardData;
       const text = clipboardData.getData('Text');;
@@ -499,7 +514,9 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       .pipe(
         takeUntil(this._destroy$),
       ).subscribe((event: UIEvent) => {
-        this.zoompan.disable();
+        if(!this.block.lock) {
+          this.zoompan.disable();
+        }
         
         if(!this.moveable.clippable) {
           if (this.editable) {

@@ -24,6 +24,13 @@
   outline: none;
   user-select: none;
   cursor: pointer;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+
+  &.lock {
+    border-color:rgba(228, 24, 24, 0.525);
+    border-style: dashed;
+  }
 
   &.block-shorttext,
   &.block-longtext,
@@ -47,6 +54,7 @@
   .content-editable {
     outline: none;
     position: relative;
+    margin: -1px;
   }
 
   &.editable {

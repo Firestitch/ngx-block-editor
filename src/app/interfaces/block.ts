@@ -62,4 +62,5 @@ export interface Block {
   formula?: string;
   data?: any;
   clippable?: boolean;
+  lock?: boolean;
 }

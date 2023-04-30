@@ -103,6 +103,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this._blockEditor.selectedBlockComponentChangeProperty(!this.block.bold, 'bold');
   }
 
+  public toggleLock(): void {
+    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.lock, 'lock');
+  }
+
   public fontColorChange(value): void {
     this._blockEditor.selectedBlockComponentChangeProperty(value, 'fontColor');
   }
