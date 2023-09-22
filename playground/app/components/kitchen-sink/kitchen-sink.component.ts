@@ -1,12 +1,11 @@
-import { FsBlockEditorComponent } from './../../../../src/app/components/block-editor/block-editor.component';
-import { BlockEditorConfig } from './../../../../src/app/interfaces/block-editor-config';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { KitchenSinkConfigureComponent } from '../kitchen-sink-configure';
 import { FsExampleComponent } from '@firestitch/example';
 import { FsMessage } from '@firestitch/message';
-import { Block } from 'src/app/interfaces/block';
-import { Observable, of } from 'rxjs';
 import { BlockType } from '@firestitch/package';
+import { Observable, of } from 'rxjs';
+import { Block } from 'src/app/interfaces/block';
+import { FsBlockEditorComponent } from './../../../../src/app/components/block-editor/block-editor.component';
+import { BlockEditorConfig } from './../../../../src/app/interfaces/block-editor-config';
 
 @Component({
   selector: 'kitchen-sink',
@@ -25,7 +24,6 @@ export class KitchenSinkComponent implements OnInit {
     private exampleComponent: FsExampleComponent,
     private message: FsMessage,
   ) {
-    exampleComponent.setConfigureComponent(KitchenSinkConfigureComponent, { config: this.config });
   }
 
   public ngOnInit(): void {
@@ -33,7 +31,7 @@ export class KitchenSinkComponent implements OnInit {
     const blocks: Block[] = [
       { width: 3, height: 2, top: .5, left: 4, keepRatio: true, imageUrl: 'http://cdn.shopify.com/s/files/1/0535/2738/0144/articles/shutterstock_1290320698.jpg?v=1651099282', type: BlockType.Rectangle },
       { width: 4, height: 2, top: 3, left: 3, borderColor: 'pink', content: 'Block A', padding: .1, borderWidth: 5, type: BlockType.Rectangle, fontFamily: 'Alfa Slab One', fontSize: 17, rotate: 45 },
-      { width: 5, height: 2.5, top: 6, left: 1, content: 'Block', backgroundColor: '#628597', fontColor: '#ffffff', paddingLeft: .2, paddingRight: .2, paddingTop: .2, paddingBottom: .2, type: BlockType.Rectangle  },
+      { width: 5, height: 2.5, top: 6, left: 1, content: 'Block', backgroundColor: '#628597', fontColor: '#ffffff', paddingLeft: .2, paddingRight: .2, paddingTop: .2, paddingBottom: .2, type: BlockType.Rectangle },
     ];
 
     this.config = {
@@ -70,7 +68,7 @@ export class KitchenSinkComponent implements OnInit {
           }
         });
       },
-      blockUpload: (block, file: Blob): Observable<Block> =>  {
+      blockUpload: (block, file: Blob): Observable<Block> => {
         return new Observable((observer) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
