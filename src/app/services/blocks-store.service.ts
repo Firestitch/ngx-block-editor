@@ -126,7 +126,7 @@ export class BlocksStore implements OnDestroy {
     from(fsFile.imageInfo)
       .pipe(
         switchMap((imageInfo) => {
-          if (imageInfo) {
+          if (imageInfo?.height && imageInfo?.width) {
             const ratio = imageInfo.height / imageInfo.width;
             block.width = this._config.width * .4;
             block.height = block.width * ratio;
