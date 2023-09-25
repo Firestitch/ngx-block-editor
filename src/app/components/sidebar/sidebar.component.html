@@ -1,7 +1,8 @@
 <div class="sidebar">
   <div class="sidebar-panel">
     <div class="sidebar-row">
-        <ng-container *ngFor="let blockType of BlockTypes">
+      <ng-container *ngFor="let blockType of BlockTypes">
+        <ng-container *ngIf="blockType.type === 'draw'">
           <ng-container [ngSwitch]="blockType.value">
             <ng-container *ngSwitchCase="BlockType.Pdf">
               <ng-container *ngTemplateOutlet="addFile"></ng-container>
@@ -10,86 +11,93 @@
               <ng-container *ngTemplateOutlet="addFile"></ng-container>
             </ng-container>
             <ng-container *ngSwitchDefault>
-              <ng-container *ngTemplateOutlet="addButton"></ng-container>
+              <ng-container 
+                [ngTemplateOutlet]="addButton" 
+                [ngTemplateOutletContext]="{ blockType: blockType }">
+              </ng-container>
             </ng-container>
           </ng-container>
 
           <ng-template #addFile>
             <fs-file (select)="blockUpload(blockType.value, $event)" [accept]="blockType.accept">
-              <ng-container *ngTemplateOutlet="addButton"></ng-container>
+              <ng-container [ngTemplateOutlet]="addButton" [ngTemplateOutletContext]="{ blockType: blockType }"></ng-container>
             </fs-file>
           </ng-template>
-
-          <ng-template #addButton>
-            <button
-                type="button"
-                mat-icon-button
-                [matTooltip]="'Add ' + blockType.name"
-                (click)="blockAdd(blockType.value)">
-              <mat-icon>{{blockType.icon}}</mat-icon>
-            </button>
-          </ng-template>
         </ng-container>
+      </ng-container>
     </div>
   </div>
 
-    <div class="sidebar-panel">
-      <div class="sidebar-row">
-        <button
-            mat-icon-button
-            color="basic"
-            type="button"
-            matTooltip="Reset zoom"
-            (click)="zoomCenter.emit()">
-          <mat-icon>crop_free</mat-icon>
-        </button>
-        <button
-            class="reorder-layers"
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="reorderLayers()">
-          <mat-icon>swap_vert</mat-icon>
-        </button>
-        <ng-container *ngIf="block">
-          <button
-              mat-icon-button
-              color="basic"
-              type="button"
-              (click)="blockRemoveClick()">
-            <mat-icon>delete_outline</mat-icon>
-          </button>
-          <button
-              class="layer-up"
-              mat-icon-button
-              color="basic"
-              type="button"
-              (click)="layerUp()">
-            <mat-icon>arrow_back</mat-icon>
-            <mat-icon>layers</mat-icon>
-          </button>
-          <button
-              class="layer-down"
-              mat-icon-button
-              color="basic"
-              type="button"
-              (click)="layerDown()">
-            <mat-icon>arrow_back</mat-icon>
-            <mat-icon>layers</mat-icon>
-          </button>
-          
-          <button
-              mat-icon-button
-              color="basic"
-              type="button"
-              (click)="toggleLock()"
-              [matTooltip]="block.lock ? 'Unlock' : 'Lock'">
-            <mat-icon>{{block.lock ? 'lock_outline' : 'lock_open'}}</mat-icon>
-          </button>
-          
+  <div class="sidebar-panel">
+    <div class="sidebar-row">
+      <ng-container *ngFor="let blockType of BlockTypes">
+        <ng-container *ngIf="blockType.type === 'form'">
+          <ng-container 
+            [ngTemplateOutlet]="addButton" 
+            [ngTemplateOutletContext]="{ blockType: blockType }">
+          </ng-container>
         </ng-container>
-      </div>
+      </ng-container>
     </div>
+  </div>  
+
+  <div class="sidebar-panel">
+    <div class="sidebar-row">
+      <button
+        mat-icon-button
+        color="basic"
+        type="button"
+        matTooltip="Reset zoom"
+        (click)="zoomCenter.emit()">
+        <mat-icon>crop_free</mat-icon>
+      </button>
+      <button
+        class="reorder-layers"
+        mat-icon-button
+        color="basic"
+        type="button"
+        (click)="reorderLayers()">
+        <mat-icon>swap_vert</mat-icon>
+      </button>
+      <ng-container *ngIf="block">
+        <button
+          mat-icon-button
+          color="basic"
+          type="button"
+          (click)="blockRemoveClick()">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+        <button
+          class="layer-up"
+          mat-icon-button
+          color="basic"
+          type="button"
+          (click)="layerUp()">
+          <mat-icon>arrow_back</mat-icon>
+          <mat-icon>layers</mat-icon>
+        </button>
+        <button
+          class="layer-down"
+          mat-icon-button
+          color="basic"
+          type="button"
+          (click)="layerDown()">
+          <mat-icon>arrow_back</mat-icon>
+          <mat-icon>layers</mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          color="basic"
+          type="button"
+          (click)="toggleLock()"
+          [matTooltip]="block.lock ? 'Unlock' : 'Lock'">
+          <mat-icon>{{block.lock ? 'lock_outline' : 'lock_open'}}</mat-icon>
+        </button>
+
+      </ng-container>
+    </div>
+  </div>
   <ng-container *ngIf="block">
     <div class="sidebar-panel info-panel">
       <div class="sidebar-label">Info</div>
@@ -102,7 +110,7 @@
             (focus)="inputFocus($event)"
             (keydown)="numericInputKeypress($event, 'left', .01)"
             (ngModelChange)="numberChange($event, 'left')">
-            <span matPrefix>X</span>
+          <span matPrefix>X</span>
         </mat-form-field>
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
@@ -112,30 +120,30 @@
             (focus)="inputFocus($event)"
             (keydown)="numericInputKeypress($event, 'top', .01)"
             (ngModelChange)="numberChange($event, 'top')">
-            <span matPrefix>Y</span>
+          <span matPrefix>Y</span>
         </mat-form-field>
-        <mat-form-field class="form-field-padless" floatLabel="never">
+        <mat-form-field class="form-field-padless rotate" floatLabel="never">
           <input
             matInput
             [ngModel]="block.rotate"
             name="rotate"
-            (focus)="inputFocus($event)"          
+            (focus)="inputFocus($event)"
             (keydown)="numericInputKeypress($event, 'rotate')"
             (ngModelChange)="numberChange($event, 'rotate')">
-            <span matPrefix>R</span>
+          <span matPrefix>R</span>
         </mat-form-field>
       </div>
 
       <div class="sidebar-row">
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.width"
-              name="width"
-              (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'width', .01)"
-              (ngModelChange)="numberChange($event, 'width')">
-            <span matPrefix>W</span>
+            matInput
+            [ngModel]="block.width"
+            name="width"
+            (focus)="inputFocus($event)"
+            (keydown)="numericInputKeypress($event, 'width', .01)"
+            (ngModelChange)="numberChange($event, 'width')">
+          <span matPrefix>W</span>
         </mat-form-field>
 
         <div>
@@ -145,21 +153,23 @@
         </div>
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.height"
-              name="height"
-              (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'height', .01)"
-              (ngModelChange)="numberChange($event, 'height')">
-            <span matPrefix>H</span>
+            matInput
+            [ngModel]="block.height"
+            name="height"
+            (focus)="inputFocus($event)"
+            (keydown)="numericInputKeypress($event, 'height', .01)"
+            (ngModelChange)="numberChange($event, 'height')">
+          <span matPrefix>H</span>
         </mat-form-field>
       </div>
     </div>
-    <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date || block.type === BlockType.Signature">
+    <ng-container
+      *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date || block.type === BlockType.Signature">
       <div class="sidebar-panel block-form-panel">
         <div class="sidebar-label">
           <mat-icon>{{blockTypeIcons[block.type]}}</mat-icon>
-          {{blockTypeNames[block.type]}}</div>
+          {{blockTypeNames[block.type]}}
+        </div>
         <div class="sidebar-row">
 
           <mat-form-field class="form-field-padless-bottom full-width">
@@ -185,25 +195,26 @@
           </ng-container>
 
           <mat-form-field
-              *ngIf="formats.length"
-              class="form-field-padless-bottom full-width">
+            *ngIf="formats.length"
+            class="form-field-padless-bottom full-width">
             <mat-label>Format</mat-label>
             <mat-select
-                [(ngModel)]="block.format"
-                name="format"
-                (ngModelChange)="blockChangeProperty($event, 'format')">
+              [(ngModel)]="block.format"
+              name="format"
+              (ngModelChange)="blockChangeProperty($event, 'format')">
               <mat-option [value]="null">
                 None
               </mat-option>
               <mat-option
-                  *ngFor="let item of formats"
-                  [value]="item.value">
+                *ngFor="let item of formats"
+                [value]="item.value">
                 {{ item.name }}
               </mat-option>
             </mat-select>
           </mat-form-field>
 
-          <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.Date">
+          <ng-container
+            *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.Date">
             <mat-form-field class="form-field-padless-bottom full-width">
               <textarea
                 matInput
@@ -264,16 +275,16 @@
 
           <div class="form-field-options">
             <mat-checkbox
-                name="required"
-                [(ngModel)]="block.required"
-                (ngModelChange)="blockChangeProperty($event, 'required')">
+              name="required"
+              [(ngModel)]="block.required"
+              (ngModelChange)="blockChangeProperty($event, 'required')">
               Required
             </mat-checkbox>
 
             <mat-checkbox
-                name="readonly"
-                [(ngModel)]="block.readonly"
-                (ngModelChange)="blockChangeProperty($event, 'readonly')">
+              name="readonly"
+              [(ngModel)]="block.readonly"
+              (ngModelChange)="blockChangeProperty($event, 'readonly')">
               Readonly
             </mat-checkbox>
           </div>
@@ -284,14 +295,14 @@
       <div class="sidebar-label">Typography</div>
       <div class="sidebar-row">
         <fs-autocomplete
-            [fetch]="fontFetch"
-            [fetchOnFocus]="true"
-            [displayWith]="fontDisplayWith"
-            [ngModel]="block.fontFamily ? { family: block.fontFamily } : null"
-            placeholder="Font"
-            [panelClass]="'font-autocomplete-panel'"
-            (ngModelChange)="fontChanged($event)"
-            name="fontfamily">
+          [fetch]="fontFetch"
+          [fetchOnFocus]="true"
+          [displayWith]="fontDisplayWith"
+          [ngModel]="block.fontFamily ? { family: block.fontFamily } : null"
+          placeholder="Font"
+          [panelClass]="'font-autocomplete-panel'"
+          (ngModelChange)="fontChanged($event)"
+          name="fontfamily">
           <ng-template fsAutocompleteTemplate let-data="data">
             <app-font [font]="data"></app-font>
           </ng-template>
@@ -303,14 +314,14 @@
 
         <mat-form-field class="form-field-padless font-size" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.fontSize"
-              name="fontSize"
-              (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'fontSize')"
-              (ngModelChange)="numberChange($event, 'fontSize')"
-              placeholder="Size">
-            <span matPrefix *ngIf="block.fontSize">S</span>
+            matInput
+            [ngModel]="block.fontSize"
+            name="fontSize"
+            (focus)="inputFocus($event)"
+            (keydown)="numericInputKeypress($event, 'fontSize')"
+            (ngModelChange)="numberChange($event, 'fontSize')"
+            placeholder="Size">
+          <span matPrefix *ngIf="block.fontSize">S</span>
         </mat-form-field>
 
         <mat-form-field class="form-field-padless line-height" floatLabel="never">
@@ -322,102 +333,102 @@
             (keydown)="numericInputKeypress($event, 'lineHeight')"
             (ngModelChange)="numberChange($event, 'lineHeight')"
             placeholder="Line">
-            <span matPrefix *ngIf="block.lineHeight">L</span>
+          <span matPrefix *ngIf="block.lineHeight">L</span>
         </mat-form-field>
       </div>
 
       <div class="sidebar-row style-row">
         <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: block.bold }"
-            (click)="boldClick()">
+          mat-icon-button
+          class="toggle-button"
+          color="basic"
+          type="button"
+          [ngClass]="{ selected: block.bold }"
+          (click)="boldClick()">
           <mat-icon>format_bold</mat-icon>
         </button>
         <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: block.italic }"
-            (click)="italicClick()">
+          mat-icon-button
+          class="toggle-button"
+          color="basic"
+          type="button"
+          [ngClass]="{ selected: block.italic }"
+          (click)="italicClick()">
           <mat-icon>format_italic</mat-icon>
         </button>
         <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: block.underline }"
-            (click)="underlineClick()">
+          mat-icon-button
+          class="toggle-button"
+          color="basic"
+          type="button"
+          [ngClass]="{ selected: block.underline }"
+          (click)="underlineClick()">
           <mat-icon>format_underline</mat-icon>
         </button>
       </div>
 
       <div class="sidebar-row align-row">
         <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: block.horizontalAlign === 'left' }"
-            (click)="horizontalAlignClick('left')">
+          mat-icon-button
+          class="toggle-button"
+          color="basic"
+          type="button"
+          [ngClass]="{ selected: block.horizontalAlign === 'left' }"
+          (click)="horizontalAlignClick('left')">
           <mat-icon>format_align_left</mat-icon>
         </button>
         <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: block.horizontalAlign === 'center' }"
-            (click)="horizontalAlignClick('center')">
+          mat-icon-button
+          class="toggle-button"
+          color="basic"
+          type="button"
+          [ngClass]="{ selected: block.horizontalAlign === 'center' }"
+          (click)="horizontalAlignClick('center')">
           <mat-icon>format_align_center</mat-icon>
         </button>
         <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: block.horizontalAlign === 'justify' }"
-            (click)="horizontalAlignClick('justify')">
+          mat-icon-button
+          class="toggle-button"
+          color="basic"
+          type="button"
+          [ngClass]="{ selected: block.horizontalAlign === 'justify' }"
+          (click)="horizontalAlignClick('justify')">
           <mat-icon>format_align_justify</mat-icon>
         </button>
         <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: block.horizontalAlign === 'right' }"
-            (click)="horizontalAlignClick('right')">
+          mat-icon-button
+          class="toggle-button"
+          color="basic"
+          type="button"
+          [ngClass]="{ selected: block.horizontalAlign === 'right' }"
+          (click)="horizontalAlignClick('right')">
           <mat-icon>format_align_right</mat-icon>
         </button>
         <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: block.verticalAlign === 'top' }"
-            (click)="verticalAlignClick('top')">
+          mat-icon-button
+          class="toggle-button"
+          color="basic"
+          type="button"
+          [ngClass]="{ selected: block.verticalAlign === 'top' }"
+          (click)="verticalAlignClick('top')">
           <mat-icon>vertical_align_top</mat-icon>
         </button>
         <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: block.verticalAlign === 'center' }"
-            (click)="verticalAlignClick('center')">
+          mat-icon-button
+          class="toggle-button"
+          color="basic"
+          type="button"
+          [ngClass]="{ selected: block.verticalAlign === 'center' }"
+          (click)="verticalAlignClick('center')">
           <mat-icon>vertical_align_center</mat-icon>
         </button>
         <button
-            mat-icon-button
-            class="toggle-button"
-            color="basic"
-            type="button"
-            [ngClass]="{ selected: block.verticalAlign === 'bottom' }"
-            (click)="verticalAlignClick('bottom')">
+          mat-icon-button
+          class="toggle-button"
+          color="basic"
+          type="button"
+          [ngClass]="{ selected: block.verticalAlign === 'bottom' }"
+          (click)="verticalAlignClick('bottom')">
           <mat-icon>vertical_align_bottom</mat-icon>
         </button>
       </div>
@@ -433,14 +444,14 @@
 
         <mat-form-field class="form-field-padless border-width" floatLabel="never">
           <input
-              matInput
-              [(ngModel)]="block.borderWidth"
-              name="borderWidth"
-              (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'borderWidth')"
-              (ngModelChange)="numberChange($event, 'borderWidth')"
-              placeholder="Width">
-            <span matPrefix *ngIf="block.borderWidth">W</span>
+            matInput
+            [(ngModel)]="block.borderWidth"
+            name="borderWidth"
+            (focus)="inputFocus($event)"
+            (keydown)="numericInputKeypress($event, 'borderWidth')"
+            (ngModelChange)="numberChange($event, 'borderWidth')"
+            placeholder="Width">
+          <span matPrefix *ngIf="block.borderWidth">W</span>
         </mat-form-field>
       </div>
     </div>
@@ -456,14 +467,14 @@
 
         <mat-form-field class="form-field-padless shape-radius" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.shapeRadius"
-              name="shapeRadius"
-              (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'shapeRadius', 1)"
-              (ngModelChange)="numberChange($event, 'shapeRadius')"
-              placeholder="Radius">
-            <span matPrefix *ngIf="block.shapeRadius">R</span>
+            matInput
+            [ngModel]="block.shapeRadius"
+            name="shapeRadius"
+            (focus)="inputFocus($event)"
+            (keydown)="numericInputKeypress($event, 'shapeRadius', 1)"
+            (ngModelChange)="numberChange($event, 'shapeRadius')"
+            placeholder="Radius">
+          <span matPrefix *ngIf="block.shapeRadius">R</span>
         </mat-form-field>
 
         <div class="shape-corners">
@@ -498,45 +509,45 @@
 
         <mat-form-field class="form-field-padless shadow-x" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.shadowX"
-              name="shadowX"
-              (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'shadowX')"
-              (ngModelChange)="numberChange($event, 'shadowX')">
-            <span matPrefix>X</span>
+            matInput
+            [ngModel]="block.shadowX"
+            name="shadowX"
+            (focus)="inputFocus($event)"
+            (keydown)="numericInputKeypress($event, 'shadowX')"
+            (ngModelChange)="numberChange($event, 'shadowX')">
+          <span matPrefix>X</span>
         </mat-form-field>
         <mat-form-field class="form-field-padless shadow-y" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.shadowY"
-              name="shadowY"
-              (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'shadowY')"
-              (ngModelChange)="numberChange($event, 'shadowY')">
-            <span matPrefix>Y</span>
+            matInput
+            [ngModel]="block.shadowY"
+            name="shadowY"
+            (focus)="inputFocus($event)"
+            (keydown)="numericInputKeypress($event, 'shadowY')"
+            (ngModelChange)="numberChange($event, 'shadowY')">
+          <span matPrefix>Y</span>
         </mat-form-field>
         <mat-form-field class="form-field-padless shadow-blur" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.shadowBlur"
-              name="shadowBlur"
-              placeholder="Blur"
-              (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'shadowBlur')"
-              (ngModelChange)="numberChange($event, 'shadowBlur')">
-            <span matPrefix *ngIf="block.shadowBlur">B</span>
+            matInput
+            [ngModel]="block.shadowBlur"
+            name="shadowBlur"
+            placeholder="Blur"
+            (focus)="inputFocus($event)"
+            (keydown)="numericInputKeypress($event, 'shadowBlur')"
+            (ngModelChange)="numberChange($event, 'shadowBlur')">
+          <span matPrefix *ngIf="block.shadowBlur">B</span>
         </mat-form-field>
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.shadowSpread"
-              name="shadowSpread"
-              placeholder="Spread"
-              (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'shadowSpread')"
-              (ngModelChange)="numberChange($event, 'shadowSpread')">
-            <span matPrefix *ngIf="block.shadowSpread">S</span>
+            matInput
+            [ngModel]="block.shadowSpread"
+            name="shadowSpread"
+            placeholder="Spread"
+            (focus)="inputFocus($event)"
+            (keydown)="numericInputKeypress($event, 'shadowSpread')"
+            (ngModelChange)="numberChange($event, 'shadowSpread')">
+          <span matPrefix *ngIf="block.shadowSpread">S</span>
         </mat-form-field>
         <!-- <mat-form-field class="form-field-padless" floatLabel="never">
           <input
@@ -552,46 +563,46 @@
       </div>
     </div>
 
-    <ng-container *ngIf="block.type !== BlockType.Pdf">
+    <ng-container *ngIf="block.type === BlockType.Rectangle">
       <div class="sidebar-panel">
         <div class="sidebar-label">Image</div>
         <div class="sidebar-row image-row">
           <fs-file (select)="imageSelect($event)">
-            <button 
-                type="button" 
-                mat-icon-button>
+            <button
+              type="button"
+              mat-icon-button>
               <mat-icon>cloud_upload</mat-icon>
             </button>
           </fs-file>
           <ng-container *ngIf="block.imageUrl">
             <button
-                mat-icon-button
-                color="basic"
-                type="button"
-                (click)="imageRemove()">
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="imageRemove()">
               <mat-icon>clear</mat-icon>
             </button>
             <button
-                mat-icon-button
-                class="toggle-button"
-                color="basic"
-                type="button"
-                [ngClass]="{ selected: clippable }"
-                (click)="imageClip()">
+              mat-icon-button
+              class="toggle-button"
+              color="basic"
+              type="button"
+              [ngClass]="{ selected: clippable }"
+              (click)="imageClip()">
               <mat-icon>crop</mat-icon>
             </button>
 
             <mat-form-field class="form-field-padless opacity" floatLabel="never">
               <input
-                  matInput
-                  [ngModel]="block.imageOpacity"
-                  name="imageOpacity"
-                  placeholder="Opacity"
-                  (focus)="inputFocus($event)"
-                  (keydown)="numericInputKeypress($event, 'imageOpacity')"
-                  (ngModelChange)="numberChange($event, 'imageOpacity')">
-                <span matPrefix *ngIf="block.imageOpacity">O</span>
-            </mat-form-field>            
+                matInput
+                [ngModel]="block.imageOpacity"
+                name="imageOpacity"
+                placeholder="Opacity"
+                (focus)="inputFocus($event)"
+                (keydown)="numericInputKeypress($event, 'imageOpacity')"
+                (ngModelChange)="numberChange($event, 'imageOpacity')">
+              <span matPrefix *ngIf="block.imageOpacity">O</span>
+            </mat-form-field>
           </ng-container>
         </div>
       </div>
@@ -602,62 +613,62 @@
 
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-              matInput
-              [(ngModel)]="block.padding"
-              name="padding"
-              (focus)="inputFocus($event)"
-              (ngModelChange)="paddingAllChange($event)"
-              (keydown)="paddingAllKeypress($event, 1)"
-              placeholder="All">
-            <span matPrefix *ngIf="block.padding">A</span>
+            matInput
+            [(ngModel)]="block.padding"
+            name="padding"
+            (focus)="inputFocus($event)"
+            (ngModelChange)="paddingAllChange($event)"
+            (keydown)="paddingAllKeypress($event, 1)"
+            placeholder="All">
+          <span matPrefix *ngIf="block.padding">A</span>
         </mat-form-field>
 
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.paddingTop"
-              name="paddingTop"
-              (focus)="inputFocus($event)"
-              (keydown)="paddingKeypress($event, 'paddingTop')"
-              (ngModelChange)="numberChange($event, 'paddingTop')"
-              placeholder="Top">
-            <span matPrefix *ngIf="block.paddingTop">T</span>
+            matInput
+            [ngModel]="block.paddingTop"
+            name="paddingTop"
+            (focus)="inputFocus($event)"
+            (keydown)="paddingKeypress($event, 'paddingTop')"
+            (ngModelChange)="numberChange($event, 'paddingTop')"
+            placeholder="Top">
+          <span matPrefix *ngIf="block.paddingTop">T</span>
         </mat-form-field>
 
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.paddingBottom"
-              name="paddingBottom"
-              (focus)="inputFocus($event)"
-              (keydown)="paddingKeypress($event, 'paddingBottom')"
-              (ngModelChange)="numberChange($event, 'paddingBottom')"
-              placeholder="Bottom">
-            <span matPrefix *ngIf="block.paddingBottom">B</span>
+            matInput
+            [ngModel]="block.paddingBottom"
+            name="paddingBottom"
+            (focus)="inputFocus($event)"
+            (keydown)="paddingKeypress($event, 'paddingBottom')"
+            (ngModelChange)="numberChange($event, 'paddingBottom')"
+            placeholder="Bottom">
+          <span matPrefix *ngIf="block.paddingBottom">B</span>
         </mat-form-field>
 
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.paddingLeft"
-              name="paddingLeft"
-              (focus)="inputFocus($event)"
-              (keydown)="paddingKeypress($event, 'paddingLeft')"
-              (ngModelChange)="numberChange($event, 'paddingLeft')"
-              placeholder="Left">
-            <span matPrefix *ngIf="block.paddingLeft">L</span>
+            matInput
+            [ngModel]="block.paddingLeft"
+            name="paddingLeft"
+            (focus)="inputFocus($event)"
+            (keydown)="paddingKeypress($event, 'paddingLeft')"
+            (ngModelChange)="numberChange($event, 'paddingLeft')"
+            placeholder="Left">
+          <span matPrefix *ngIf="block.paddingLeft">L</span>
         </mat-form-field>
 
         <mat-form-field class="form-field-padless" floatLabel="never">
           <input
-              matInput
-              [ngModel]="block.paddingRight"
-              name="paddingRight"
-              (focus)="inputFocus($event)"
-              (keydown)="paddingKeypress($event, 'paddingRight')"
-              (ngModelChange)="numberChange($event, 'paddingRight')"
-              placeholder="Right">
-            <span matPrefix *ngIf="block.paddingRight">R</span>
+            matInput
+            [ngModel]="block.paddingRight"
+            name="paddingRight"
+            (focus)="inputFocus($event)"
+            (keydown)="paddingKeypress($event, 'paddingRight')"
+            (ngModelChange)="numberChange($event, 'paddingRight')"
+            placeholder="Right">
+          <span matPrefix *ngIf="block.paddingRight">R</span>
         </mat-form-field>
       </div>
     </div>
@@ -673,3 +684,15 @@
   </ng-container>
 </div>
 
+
+
+
+<ng-template #addButton let-blockType="blockType">
+  <button
+    type="button"
+    mat-icon-button
+    [matTooltip]="'Add ' + blockType.name"
+    (click)="blockAdd(blockType.value)">
+    <mat-icon>{{blockType.icon}}</mat-icon>
+  </button>
+</ng-template>

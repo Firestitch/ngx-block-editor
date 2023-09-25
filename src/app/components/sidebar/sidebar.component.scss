@@ -165,7 +165,11 @@
 
     &.info-panel {
       .mat-form-field {
-        width: 41px;
+        width: 60px;
+
+        &.rotate {
+          width: 40px;
+        }
       }
     }
 

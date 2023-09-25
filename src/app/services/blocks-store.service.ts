@@ -1,9 +1,9 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { BehaviorSubject, from, Observable, Subject } from 'rxjs';
-import { debounce, debounceTime, distinct, filter, groupBy, map, mergeAll, switchMap, takeUntil } from 'rxjs/operators';
-import { FsFile } from '@firestitch/file';
 import { guid } from '@firestitch/common';
+import { FsFile } from '@firestitch/file';
+import { BehaviorSubject, from, Observable, Subject } from 'rxjs';
+import { debounceTime, filter, groupBy, map, mergeAll, switchMap, takeUntil } from 'rxjs/operators';
 
 import { BlockType } from '../enums/block-type.enum';
 import { Block } from '../interfaces/block';
@@ -39,24 +39,24 @@ export class BlocksStore implements OnDestroy {
   public get blockAdded$(): Observable<Block> {
     return this._eventBus$
       .pipe(
-        filter(({type}) => type === EventType.Add),
-        map(({value}) => value),
+        filter(({ type }) => type === EventType.Add),
+        map(({ value }) => value),
       );
   }
 
   public get blockChanged$(): Observable<Block> {
     return this._eventBus$
       .pipe(
-        filter(({type}) => type === EventType.Change),
-        map(({value}) => value),
+        filter(({ type }) => type === EventType.Change),
+        map(({ value }) => value),
       );
   }
-  
+
   public get blockRemoved$(): Observable<Block> {
     return this._eventBus$
       .pipe(
-        filter(({type}) => type === EventType.Remove),
-        map(({value}) => value),
+        filter(({ type }) => type === EventType.Remove),
+        map(({ value }) => value),
       );
   }
 
@@ -71,16 +71,16 @@ export class BlocksStore implements OnDestroy {
 
     if (this._config.blockChanged) {
       this.blockChanged$
-      .pipe(
-        groupBy((block) => (block.guid)),
-        map((group) => group.pipe(
-          debounceTime(250),
-        )),
-        mergeAll(),
-      )
-      .subscribe((block) => {
-        this._config.blockChanged(block);
-      });
+        .pipe(
+          groupBy((block) => (block.guid)),
+          map((group) => group.pipe(
+            debounceTime(250),
+          )),
+          mergeAll(),
+        )
+        .subscribe((block) => {
+          this._config.blockChanged(block);
+        });
     }
   }
 
@@ -122,13 +122,15 @@ export class BlocksStore implements OnDestroy {
     if (initBlock) {
       block = this._createBlock(block);
     }
-    
+
     from(fsFile.imageInfo)
       .pipe(
         switchMap((imageInfo) => {
-          const ratio = imageInfo.height / imageInfo.width;
-          block.width = this._config.width * .4;
-          block.height = block.width * ratio;
+          if (imageInfo) {
+            const ratio = imageInfo.height / imageInfo.width;
+            block.width = this._config.width * .4;
+            block.height = block.width * ratio;
+          }
 
           return this._config.blockUpload(block, fsFile.file);
         }),
@@ -191,9 +193,9 @@ export class BlocksStore implements OnDestroy {
 
   private _appendBlock(block: Block) {
     const blocks = [
-        ...this.blocks,
-        block,
-      ];
+      ...this.blocks,
+      block,
+    ];
 
     this._deduplicateIndexesFor(blocks);
     this._setBlocks(blocks);
@@ -219,11 +221,11 @@ export class BlocksStore implements OnDestroy {
       ...block,
       guid: block.guid || guid('xxxxxxxxxxxx'),
       keepRatio: [
-          BlockType.Checkbox, 
-          BlockType.RadioButton, 
-          BlockType.Image, 
-          BlockType.Pdf,
-        ]
+        BlockType.Checkbox,
+        BlockType.RadioButton,
+        BlockType.Image,
+        BlockType.Pdf,
+      ]
         .indexOf(block.type) !== -1
     };
 
@@ -248,8 +250,8 @@ export class BlocksStore implements OnDestroy {
     }
 
     return {
-      top:  height,
-      left:  width,
+      top: height,
+      left: width,
       width,
       height,
       ...newBlock,
