@@ -1,24 +1,24 @@
-import { delay, filter, skip, takeUntil } from 'rxjs/operators';
 import {
   AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
   HostBinding,
   Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
+import { filter, takeUntil } from 'rxjs/operators';
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 
 import Moveable, { OnClip, OnClipEnd } from 'moveable';
-import { fromEvent, Subject } from 'rxjs';
+import { Subject, fromEvent } from 'rxjs';
 
-import { BlockEditorService, GoogleFontService } from './../../services';
-import { Block } from './../../interfaces';
 import { BlockType } from '../../enums';
+import { Block } from './../../interfaces';
+import { BlockEditorService, GoogleFontService } from './../../services';
 
 
 @Component({
   selector: 'fs-block',
   templateUrl: 'block.component.html',
-  styleUrls: [ 'block.component.scss' ],
+  styleUrls: ['block.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
@@ -80,8 +80,8 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public get styleWidth(): string {
     let width = this.block.width;
-    if(this.block.clipPath) {
-      width -= (this.block.width * this.block.clipPath.values[1]/100) + (this.block.width * this.block.clipPath.values[3]/100);
+    if (this.block.clipPath) {
+      width -= (this.block.width * this.block.clipPath.values[1] / 100) + (this.block.width * this.block.clipPath.values[3] / 100);
     }
 
     return `${width}${this.unit}`;
@@ -89,8 +89,8 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public get styleHeight(): string {
     let height = this.block.height;
-    if(this.block.clipPath) {
-      height -= (this.block.height * this.block.clipPath.values[0]/100) + (this.block.height * this.block.clipPath.values[2]/100);
+    if (this.block.clipPath) {
+      height -= (this.block.height * this.block.clipPath.values[0] / 100) + (this.block.height * this.block.clipPath.values[2] / 100);
     }
 
     return `${height}${this.unit}`;
@@ -98,7 +98,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public get styleImageHeight(): string {
     let height = this.block.height;
-    if(this.block.clipPath) {
+    if (this.block.clipPath) {
       const values = this.block.clipPath.values || {};
       //height += (values[0]/100 * height) + (values[2]/100 * height);
     }
@@ -108,7 +108,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public get styleImageWidth(): string {
     let width = this.block.width;
-    if(this.block.clipPath) {
+    if (this.block.clipPath) {
       const values = this.block.clipPath.values || {};
       //width += (values[1]/100 * width) + (values[3]/100 * width);
     }
@@ -118,9 +118,9 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public get styleImageTop(): string {
     let top = 0;
-    if(this.block.clipPath) {
+    if (this.block.clipPath) {
       const values = this.block.clipPath.values || {};
-      top = (values[0]/100) * this.block.width * -1;
+      top = (values[0] / 100) * this.block.width * -1;
     }
 
     return `${top}${this.unit}`;
@@ -128,24 +128,24 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public get styleImageLeft(): string {
     let left = 0;
-    if(this.block.clipPath) {
+    if (this.block.clipPath) {
       const values = this.block.clipPath.values || {};
-      left = (values[3]/100) * this.block.width * -1;
+      left = (values[3] / 100) * this.block.width * -1;
     }
 
     return `${left}${this.unit}`;
   }
 
   public get styleClipPath(): string {
-    if(!this.block.clipPath) {
+    if (!this.block.clipPath) {
       return null;
     }
 
     const values = this.block.clipPath.values || {};
-    const top = values[0]/100 * this.block.height;
-    const right = (values[1])/100 * this.block.width;
-    const bottom = (values[2])/100 * this.block.height;
-    const left = values[3]/100 * this.block.width;
+    const top = values[0] / 100 * this.block.height;
+    const right = (values[1]) / 100 * this.block.width;
+    const bottom = (values[2]) / 100 * this.block.height;
+    const left = values[3] / 100 * this.block.width;
 
     const clipPath = `inset(${top}${this.unit} ${right}${this.unit} ${bottom}${this.unit} ${left}${this.unit})`;
 
@@ -153,7 +153,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public get styleBoxShadow(): string {
-    if(!this.block.shadowColor) {
+    if (!this.block.shadowColor) {
       return null;
     }
 
@@ -179,7 +179,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   public set clippable(value: boolean) {
     this.moveable.clippable = value;
-    if(this.selected) {
+    if (this.selected) {
       this.moveable.resizable = !value;
       this.moveable.rotatable = !value;
       this.moveable.scalable = !value;
@@ -191,11 +191,11 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public set transformable(value) {
-    if(this.block.lock) {
+    if (this.block.lock) {
       value = false;
     }
 
-    this._transformable = value;    
+    this._transformable = value;
     this.moveable.resizable = value;
     this.moveable.rotatable = value;
     this.moveable.scalable = value;
@@ -225,7 +225,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this._initFonts();
 
     this._blockEditor.selectedBlocks$
-    .pipe(
+      .pipe(
         takeUntil(this._destroy$)
       )
       .subscribe((blocks) => {
@@ -242,7 +242,15 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         this.clippable = clippable;
         this._cdRef.markForCheck();
       });
-      
+
+    this._blockEditor.blockAdded$
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        this._cdRef.markForCheck();
+      });
+
     this._blockEditor.blockChanged$
       .pipe(
         filter((block) => block === this.block),
@@ -263,14 +271,13 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       this._setTransform();
       this.rotate = this.block.rotate;
       this._blockEditor.initBlock(this.block, this);
-      
       this._blockEditor.blockInited$
-      .pipe(
-        takeUntil(this._destroy$),
-      )
-      .subscribe(() => {
-        this._updateElementGuidelines();
-      });
+        .pipe(
+          takeUntil(this._destroy$),
+        )
+        .subscribe(() => {
+          this._updateElementGuidelines();
+        });
     });
   }
 
@@ -334,11 +341,11 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.moveable.elementGuidelines = this._blockEditor.blockComponents
       .map((blockComponent) => blockComponent.el)
       .filter((el) => !el.isSameNode(this.el));
-  }  
-  
+  }
+
   private _updateMoveable(): void {
     this._moveable.draggable = !this.block.lock;
-    if(this.selected) {
+    if (this.selected) {
       this._moveable.resizable = !this.block.lock;
       this._moveable.rotatable = !this.block.lock;
     }
@@ -365,7 +372,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       throttleScale: 0.01,
       throttleRotate: 1,
       throttleResize: 1,
-      snapDistFormat: (v, type) => `${this.round(v/96, 2)}`,
+      snapDistFormat: (v, type) => `${this.round(v / 96, 2)}`,
     });
 
     this._updateElementGuidelines();
@@ -374,16 +381,16 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.moveable
       .on('clip', (e: OnClip) => {
         this.moveable.keepRatio = false;
-          e.target.style.clipPath = e.clipStyle;
+        e.target.style.clipPath = e.clipStyle;
 
-          this.block.clipPath = {
-            type: 'inset',
-            values: e.clipStyles
-              .map((value) => {
-                const number = Number(value.replace('%', ''));
-                return number > 0 ? number : 0;
-              }),
-          };
+        this.block.clipPath = {
+          type: 'inset',
+          values: e.clipStyles
+            .map((value) => {
+              const number = Number(value.replace('%', ''));
+              return number > 0 ? number : 0;
+            }),
+        };
       })
       .on('clipEnd', (e: OnClipEnd) => {
         this.moveable.keepRatio = true;
@@ -451,7 +458,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         this.zoompan.enable();
         this.transformating = false;
         this._cdRef.markForCheck();
-        
+
         target.style.top = `${this.block.top}in`;
         target.style.left = `${this.block.left}in`;
         target.style.width = `${this.block.width}in`;
@@ -459,7 +466,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         this.moveable.updateRect();
       })
       .on('rotateStart', ({ inputEvent }) => {
-        if(inputEvent) {
+        if (inputEvent) {
           this.zoompan.disable();
           this.disableContentEdit();
           this.transformating = true;
@@ -467,15 +474,15 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         }
       })
       .on('rotate', ({ inputEvent, transform, rotation }) => {
-        this.el.style.transform = transform;        
+        this.el.style.transform = transform;
         this.block.rotate = rotation % 360;
 
-        if(inputEvent) {
+        if (inputEvent) {
           this.zoompan.enable();
         }
       })
       .on('rotateEnd', ({ inputEvent }) => {
-        if(inputEvent) {
+        if (inputEvent) {
           this.transformating = false;
           this._cdRef.markForCheck();
           this._triggerChanged();
@@ -487,44 +494,44 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     fromEvent(this.contentEditable.nativeElement, 'paste')
       .pipe(
         takeUntil(this._destroy$),
-    )
-    .subscribe((e: any) => {
-      e.preventDefault();
-      const clipboardData = e.clipboardData;
-      const text = clipboardData.getData('Text');;
-      const range = document.getSelection().getRangeAt(0);
-      range.deleteContents();
+      )
+      .subscribe((e: any) => {
+        e.preventDefault();
+        const clipboardData = e.clipboardData;
+        const text = clipboardData.getData('Text');;
+        const range = document.getSelection().getRangeAt(0);
+        range.deleteContents();
 
-      const textNode = document.createTextNode(text);
-      range.insertNode(textNode);
-      range.selectNodeContents(textNode);
-      range.collapse(false);
+        const textNode = document.createTextNode(text);
+        range.insertNode(textNode);
+        range.selectNodeContents(textNode);
+        range.collapse(false);
 
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
 
-      this.block.content = this.contentEditable.nativeElement.innerHTML;
-      this._triggerChanged();
-    });
+        this.block.content = this.contentEditable.nativeElement.innerHTML;
+        this._triggerChanged();
+      });
 
     fromEvent(this.contentEditable.nativeElement, 'input')
       .pipe(
         takeUntil(this._destroy$),
-    ).subscribe((event: any) => {
+      ).subscribe((event: any) => {
         this.block.content = event.target.innerHTML;
         this._triggerChanged();
       });
 
-      fromEvent(this.el, 'mousedown')
+    fromEvent(this.el, 'mousedown')
       .pipe(
         takeUntil(this._destroy$),
       ).subscribe((event: UIEvent) => {
-        if(!this.block.lock) {
+        if (!this.block.lock) {
           this.zoompan.disable();
         }
-        
-        if(!this.moveable.clippable) {
+
+        if (!this.moveable.clippable) {
           if (this.editable) {
             if (this.contentElement.nativeElement.isSameNode(event.target)) {
               event.preventDefault();
@@ -537,7 +544,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         }
       });
 
-      fromEvent(this.el, 'mouseup')
+    fromEvent(this.el, 'mouseup')
       .pipe(
         takeUntil(this._destroy$),
       ).subscribe(() => {
@@ -560,12 +567,12 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
             this.selectAll();
           });
         }
-    });
+      });
   }
 
   private _initFonts(): void {
-    if(this.block.fontFamily) {
-      this._googleFontService.loadFont({ family: this.block.fontFamily });    
+    if (this.block.fontFamily) {
+      this._googleFontService.loadFont({ family: this.block.fontFamily });
     }
   }
 }

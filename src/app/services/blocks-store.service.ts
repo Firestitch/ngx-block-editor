@@ -199,7 +199,6 @@ export class BlocksStore implements OnDestroy {
 
     this._deduplicateIndexesFor(blocks);
     this._setBlocks(blocks);
-
     this._dispatchEvent(EventType.Add, block);
   }
 
