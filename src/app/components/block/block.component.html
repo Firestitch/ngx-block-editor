@@ -27,15 +27,15 @@
       [style.color]="block.fontColor"
       [style.fontWeight]="block.bold ? 'bold' : ''"
       [style.textDecoration]="block.underline ? 'underline' : ''"
-      [style.paddingTop]="block.paddingTop ? block.paddingTop + 'pt' : ''"
-      [style.paddingBottom]="block.paddingBottom ? block.paddingBottom + 'pt' : ''"
-      [style.paddingLeft]="block.paddingLeft ? block.paddingLeft + 'pt' : ''"
-      [style.paddingRight]="block.paddingRight ? block.paddingRight + 'pt' : ''"
+      [style.paddingTop]="block.paddingTop ? block.paddingTop + 'in' : ''"
+      [style.paddingBottom]="block.paddingBottom ? block.paddingBottom + 'in' : ''"
+      [style.paddingLeft]="block.paddingLeft ? block.paddingLeft + 'in' : ''"
+      [style.paddingRight]="block.paddingRight ? block.paddingRight + 'in' : ''"
       [style.backgroundColor]="block.backgroundColor"
-      [style.borderBottomLeftRadius]="block.shapeRadius && block.shapeBottomLeft === 'round' ? block.shapeRadius + 'pt' : ''"
-      [style.borderBottomRightRadius]="block.shapeRadius && block.shapeBottomRight === 'round' ? block.shapeRadius + 'pt' : ''"
-      [style.borderTopRightRadius]="block.shapeRadius && block.shapeTopRight === 'round' ? block.shapeRadius + 'pt' : ''"
-      [style.borderTopLeftRadius]="block.shapeRadius && block.shapeTopLeft === 'round' ? block.shapeRadius + 'pt' : ''"
+      [style.borderBottomLeftRadius]="block.shapeRadius && block.shapeBottomLeft === 'round' ? block.shapeRadius + '%' : ''"
+      [style.borderBottomRightRadius]="block.shapeRadius && block.shapeBottomRight === 'round' ? block.shapeRadius + '%' : ''"
+      [style.borderTopRightRadius]="block.shapeRadius && block.shapeTopRight === 'round' ? block.shapeRadius + '%' : ''"
+      [style.borderTopLeftRadius]="block.shapeRadius && block.shapeTopLeft === 'round' ? block.shapeRadius + '%' : ''"
       [style.boxShadow]="styleBoxShadow"
       [ngClass]="{
         'editable': editable,
@@ -59,4 +59,5 @@
       [innerHTML]="content">
     </div>
   </div>
+  <div class="outline"></div>
 </div>

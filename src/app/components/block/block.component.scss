@@ -24,7 +24,6 @@
   outline: none;
   user-select: none;
   cursor: pointer;
-  border: 1px solid transparent;
   box-sizing: border-box;
 
   &.lock {
@@ -92,6 +91,18 @@
       width: 100%;
       height: 100%;
       position: absolute;
+    }
+  }
+
+  &.selected,
+  &:hover {
+    .outline {
+      border: 1px solid rgba(68, 170, 255, .7);
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
     }
   }
 }
