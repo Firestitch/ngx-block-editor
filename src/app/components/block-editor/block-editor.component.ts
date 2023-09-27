@@ -1,6 +1,8 @@
 import {
   ChangeDetectionStrategy, Component,
-  ContentChildren, ElementRef, Input,
+  ContentChildren, ElementRef,
+  HostListener,
+  Input,
   OnDestroy, OnInit, QueryList, ViewChild,
 } from '@angular/core';
 
@@ -9,19 +11,19 @@ import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { BlocksStore } from '../../services/blocks-store.service';
+import { ArtboardComponent } from '../artboard/artboard.component';
+import { FsBlockEditorSidebarPanelDirective } from './../../directives/block-editor-sidebar-panel.directive';
+import { Block } from './../../interfaces/block';
 import { BlockEditorConfig } from './../../interfaces/block-editor-config';
 import { BlockEditorService } from './../../services/block-editor.service';
-import { Block } from './../../interfaces/block';
-import { FsBlockEditorSidebarPanelDirective } from './../../directives/block-editor-sidebar-panel.directive';
 import { SidebarComponent } from './../sidebar/sidebar.component';
-import { ArtboardComponent } from '../artboard/artboard.component';
-import { BlocksStore } from '../../services/blocks-store.service';
 
 
 @Component({
   selector: 'fs-block-editor',
   templateUrl: 'block-editor.component.html',
-  styleUrls: [ 'block-editor.component.scss' ],
+  styleUrls: ['block-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     BlockEditorService,
@@ -54,7 +56,7 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
   constructor(
     private _el: ElementRef,
     private _blockEditor: BlockEditorService,
-  ) {}
+  ) { }
 
   public get el(): any {
     return this._el.nativeElement;
@@ -82,6 +84,14 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
 
   public zoomCenter(): void {
     this.zoompan.center(this.artboard.nativeElement, { vertical: false });
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  public editorContainerKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      this.sidebar.blockRemoveClick();
+      event.preventDefault();
+    }
   }
 
   public editorContainerClick(event): void {
