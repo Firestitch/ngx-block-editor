@@ -26,11 +26,6 @@
   cursor: pointer;
   box-sizing: border-box;
 
-  &.lock {
-    border-color:rgba(228, 24, 24, 0.525);
-    border-style: dashed;
-  }
-
   &.selected {
     border-color: #31a2ff95;
   }
@@ -103,6 +98,13 @@
       left: 0;
       bottom: 0;
       right: 0;
+    }
+
+    &.lock {
+      .outline {
+        border-color:rgba(228, 24, 24, 0.4);
+        border-style: dashed;
+      }
     }
   }
 }
