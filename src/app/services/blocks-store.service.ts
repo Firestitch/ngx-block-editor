@@ -135,7 +135,9 @@ export class BlocksStore implements OnDestroy {
         takeUntil(this._destroy$),
       )
       .subscribe((newBlock: Block) => {
-        if (!existing) {
+        if (existing) {
+          this.blockChange(newBlock);
+        } else {
           this._appendBlock(newBlock);
         }
       });
