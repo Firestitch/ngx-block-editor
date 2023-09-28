@@ -2,7 +2,7 @@
   "name": "@firestitch/block-editor",
   "title": "Block Editor",
   "description": "@firestitch/block-editor",
-  "version": "12.3.19",
+  "version": "12.3.20",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/ngx-block-editor"
@@ -40,6 +40,7 @@
     "@angular/platform-browser": "^12.2.16",
     "@angular/platform-browser-dynamic": "^12.2.16",
     "@angular/router": "^12.2.16",
+    "@firestitch/api": "^12.3.10",
     "@firestitch/autocomplete": "^12.1.2",
     "@firestitch/autocomplete-chips": "^12.0.0",
     "@firestitch/clear": "^12.0.0",

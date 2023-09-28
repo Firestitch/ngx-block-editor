@@ -43,11 +43,12 @@
         'vertical-align-bottom': block.verticalAlign === 'bottom'
       }">
     <ng-container [ngSwitch]="block.type">
-      <ng-container *ngIf="block.imageUrl">
+      <ng-container *ngIf="block.imageUrl && ((block.imageUrl | createImageUrl) | async) as src">
         <img                
           [style.opacity]="block.imageOpacity ? block.imageOpacity/100 : 1"
-          [src]="block.imageUrl">
+          [src]="src">
       </ng-container>
+
     </ng-container>
     <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date">
       {{block.label || block.name}}

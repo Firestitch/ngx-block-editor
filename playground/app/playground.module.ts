@@ -10,6 +10,7 @@ import { FsLabelModule } from '@firestitch/label';
 import { FsMessageModule } from '@firestitch/message';
 import { FsBlockEditorModule } from '@firestitch/package';
 
+import { FsApiModule } from '@firestitch/api';
 import { AppComponent } from './app.component';
 import {
   ExamplesComponent,
@@ -27,6 +28,7 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     FsBlockEditorModule,
+    FsApiModule.forRoot(),
     BrowserAnimationsModule,
     AppMaterialModule,
     FormsModule,
