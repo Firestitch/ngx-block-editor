@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component,
   ContentChildren, ElementRef,
+  HostListener,
   Input,
   OnDestroy, OnInit, QueryList, ViewChild
 } from '@angular/core';
