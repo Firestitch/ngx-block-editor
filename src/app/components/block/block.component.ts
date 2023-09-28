@@ -253,10 +253,15 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
     this._blockEditor.blockChanged$
       .pipe(
-        filter((block) => block === this.block),
+        filter((block) => block.guid === this.block.guid),
         takeUntil(this._destroy$),
       )
       .subscribe((block) => {
+        this.block = {
+          ...this.block,
+          ...block,
+        };
+
         this.keepRatio = block.keepRatio;
         this.rotate = this.block.rotate;
         this._updateMoveable();

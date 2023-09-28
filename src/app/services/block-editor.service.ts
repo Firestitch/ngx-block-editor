@@ -50,8 +50,8 @@ export class BlockEditorService implements OnDestroy {
     this._store.blockAdd(block);
   }
 
-  public blockUpload(block: Block, fsFile: FsFile) {
-    this._store.blockUpload(block, fsFile);
+  public blockUpload(block: Block, fsFile: FsFile): Observable<Block> {
+    return this._store.blockUpload(block, fsFile);
   }
 
   public blockRemove(block: Block) {

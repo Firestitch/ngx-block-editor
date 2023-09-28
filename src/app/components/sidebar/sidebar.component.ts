@@ -205,11 +205,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public blockUpload(block: Block, fsFile: FsFile): void {
-    this._blockEditor
-      .blockUpload(
-        block,
-        fsFile,
-      );
+    this._blockEditor.blockUpload(
+      block,
+      fsFile,
+    )
+      .subscribe((newBlock) => {
+
+      });
   }
 
   public blockAdd(type: BlockType): void {

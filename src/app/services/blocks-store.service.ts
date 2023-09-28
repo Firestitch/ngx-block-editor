@@ -2,8 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 
 import { guid } from '@firestitch/common';
 import { FsFile } from '@firestitch/file';
-import { BehaviorSubject, from, Observable, Subject } from 'rxjs';
-import { debounceTime, filter, groupBy, map, mergeAll, switchMap, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, Subject, throwError } from 'rxjs';
+import { debounceTime, filter, groupBy, map, mergeAll, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { BlockType } from '../enums/block-type.enum';
 import { Block } from '../interfaces/block';
@@ -110,18 +110,18 @@ export class BlocksStore implements OnDestroy {
       });
   }
 
-  public blockUpload(block: Block, fsFile: FsFile): void {
+  public blockUpload(block: Block, fsFile: FsFile): Observable<Block> {
     if (!this._config.blockUpload) {
-      console.warn('[BlockEditor] Config "blockUpload" is not defined');
-
-      return;
+      return throwError('[BlockEditor] Config "blockUpload" is not defined');
     }
 
     const existing = this.blockExists(block);
 
-    block = this._createBlock(block);
+    if (!existing) {
+      block = this._createBlock(block);
+    }
 
-    from(fsFile.imageInfo)
+    return from(fsFile.imageInfo)
       .pipe(
         switchMap((imageInfo) => {
           if (!existing && imageInfo?.height && imageInfo?.width) {
@@ -132,15 +132,17 @@ export class BlocksStore implements OnDestroy {
 
           return this._config.blockUpload(block, fsFile.file);
         }),
+        tap((newBlock) => {
+          if (existing) {
+            let blocks = this._blocks$.getValue();
+            blocks[blocks.indexOf(block)] = newBlock
+            this._setBlocks(blocks);
+          } else {
+            this._appendBlock(newBlock);
+          }
+        }),
         takeUntil(this._destroy$),
-      )
-      .subscribe((newBlock: Block) => {
-        if (existing) {
-          this.blockChange(newBlock);
-        } else {
-          this._appendBlock(newBlock);
-        }
-      });
+      );
   }
 
   public blockChange(block: Block): void {
