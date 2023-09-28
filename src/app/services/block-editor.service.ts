@@ -36,11 +36,6 @@ export class BlockEditorService implements OnDestroy {
     return Array.from(this._blockComponents.values());
   }
 
-  public get selectedComponentBlocks() {
-    return this.blockComponents
-      .filter((blockComponent) => this.selectedBlocks.indexOf(blockComponent.block) !== -1);
-  }
-
   public init(config: BlockEditorConfig) {
     this.config = config;
     this._store.init({ ...this.config });
@@ -75,6 +70,10 @@ export class BlockEditorService implements OnDestroy {
     return this._store.blockChanged$;
   }
 
+  public get blockUpdated$() {
+    return this._store.blockUpdated$;
+  }
+
   public get blockClippable$() {
     return this._blockClippable$;
   }
@@ -103,8 +102,8 @@ export class BlockEditorService implements OnDestroy {
     this._store.blockChange(block);
   }
 
-  public isSelectedBlock(block: any) {
-    return this.selectedBlocks.indexOf(block.block) !== -1;
+  public isSelectedBlock(block: Block) {
+    return this.selectedBlocks.indexOf(block) !== -1;
   }
 
   public indexOf(block) {
@@ -128,16 +127,6 @@ export class BlockEditorService implements OnDestroy {
   }
 
   public set selectedBlocks(blocks: Block[]) {
-    this.blockComponents
-      .forEach((blockComponent) => {
-
-        if (blocks.indexOf(blockComponent.block) !== -1) {
-          blockComponent.select();
-        } else {
-          blockComponent.deselect();
-        }
-      });
-
     this._selectedBlocks$.next(blocks);
 
     if (this.config.blocksSelected) {
@@ -184,8 +173,8 @@ export class BlockEditorService implements OnDestroy {
   }
 
   public openReorderDialog(): void {
-    const blockComponents = this.blockComponents
-      .sort((blockCmpA: FsBlockComponent, blockCmpB: FsBlockComponent) => (blockCmpA.block.index - blockCmpB.block.index))
+    const blocks = this.blocks
+      .sort((blockA: Block, blockB: Block) => (blockA.index - blockB.index))
       .reverse();
 
     this._dialog
@@ -193,21 +182,21 @@ export class BlockEditorService implements OnDestroy {
         LayersReorderDialogComponent,
         {
           data: {
-            blockComponents,
+            blocks,
           }
         },
       )
       .afterClosed()
       .pipe(
-        filter((blockComponents) => !!blockComponents),
+        filter((blocks) => !!blocks),
         takeUntil(this._destroy$),
       )
-      .subscribe((blockComponents: FsBlockComponent[]) => {
-        blockComponents
+      .subscribe((blocks: Block[]) => {
+        blocks
           .reverse()
-          .forEach((blockCmp, index) => {
-            blockCmp.block.index = index;
-            this._store.blockChange(blockCmp.block);
+          .forEach((block, index) => {
+            block.index = index;
+            this._store.blockChange(block);
             this._store.updateTabIndex(index);
           });
       });

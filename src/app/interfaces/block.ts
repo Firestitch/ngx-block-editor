@@ -63,4 +63,7 @@ export interface Block {
   data?: any;
   clippable?: boolean;
   lock?: boolean;
+  resizable?: boolean;
+  rotatable?: boolean;
+  scalable?: boolean;
 }

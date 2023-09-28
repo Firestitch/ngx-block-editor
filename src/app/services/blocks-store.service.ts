@@ -14,6 +14,7 @@ enum EventType {
   Add = 'add',
   Change = 'change',
   Remove = 'remove',
+  Update = 'update',
 }
 
 @Injectable()
@@ -48,6 +49,14 @@ export class BlocksStore implements OnDestroy {
     return this._eventBus$
       .pipe(
         filter(({ type }) => type === EventType.Change),
+        map(({ value }) => value),
+      );
+  }
+
+  public get blockUpdated$(): Observable<Block> {
+    return this._eventBus$
+      .pipe(
+        filter(({ type }) => type === EventType.Update),
         map(({ value }) => value),
       );
   }
@@ -134,9 +143,11 @@ export class BlocksStore implements OnDestroy {
         }),
         tap((newBlock) => {
           if (existing) {
-            let blocks = this._blocks$.getValue();
-            blocks[blocks.indexOf(block)] = newBlock
-            this._setBlocks(blocks);
+            this.blockUpdate({
+              ...block,
+              ...newBlock,
+            });
+
           } else {
             this._appendBlock(newBlock);
           }
@@ -147,6 +158,10 @@ export class BlocksStore implements OnDestroy {
 
   public blockChange(block: Block): void {
     this._dispatchEvent(EventType.Change, block);
+  }
+
+  public blockUpdate(block: Block): void {
+    this._dispatchEvent(EventType.Update, block);
   }
 
   public blockRemove(targetBlocks: Block | Block[]): void {

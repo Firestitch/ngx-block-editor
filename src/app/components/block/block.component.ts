@@ -3,7 +3,7 @@ import {
   HostBinding,
   Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, skip, takeUntil } from 'rxjs/operators';
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 
@@ -32,7 +32,17 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   @ViewChild('contentEditable', { static: true })
   public contentEditable: ElementRef;
 
-  @Input() public block: Block;
+  @Input('block')
+  public set block(block: Block) {
+    this._block = block;
+    this._block.resizable = !this.hasType([BlockType.Checkbox, BlockType.RadioButton]);
+    this._block.rotatable = !this.hasType([BlockType.Checkbox, BlockType.RadioButton]);
+    this._block.scalable = !this.hasType([BlockType.Checkbox, BlockType.RadioButton]);
+    if (this.moveable) {
+      this._updateMoveable();
+    }
+  };
+
   @Input() public html: string;
   @Input() public zoompan: FsZoomPanComponent;
 
@@ -45,6 +55,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   public BlockType = BlockType;
 
   private _moveable;
+  private _block: Block;
   private _editable = false;
   private _transformable = false;
   private _destroy$ = new Subject();
@@ -56,12 +67,20 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     private _googleFontService: GoogleFontService,
   ) { }
 
+  public get block(): Block {
+    return this._block;
+  }
+
   public get el(): any {
     return this.element.nativeElement;
   }
 
   public get moveable(): Moveable {
     return this._moveable;
+  }
+
+  public hasType(types) {
+    return types.includes(this.block.type);
   }
 
   public get editable(): any {
@@ -191,14 +210,8 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public set transformable(value) {
-    if (this.block.lock) {
-      value = false;
-    }
-
     this._transformable = value;
-    this.moveable.resizable = value;
-    this.moveable.rotatable = value;
-    this.moveable.scalable = value;
+    this._updateMoveable();
   }
 
   public set rotate(value) {
@@ -226,10 +239,12 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
     this._blockEditor.selectedBlocks$
       .pipe(
+        skip(1),
         takeUntil(this._destroy$)
       )
       .subscribe((blocks) => {
         this.selected = blocks.includes(this.block);
+        this.transformable = true;
         this._cdRef.markForCheck();
       });
 
@@ -251,20 +266,23 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
         this._cdRef.markForCheck();
       });
 
+    this._blockEditor.blockUpdated$
+      .pipe(
+        filter((block) => block.guid === this.block.guid),
+        takeUntil(this._destroy$),
+      )
+      .subscribe((block) => {
+        this.block = block;
+        this._cdRef.markForCheck();
+      });
+
     this._blockEditor.blockChanged$
       .pipe(
         filter((block) => block.guid === this.block.guid),
         takeUntil(this._destroy$),
       )
       .subscribe((block) => {
-        this.block = {
-          ...this.block,
-          ...block,
-        };
-
-        this.keepRatio = block.keepRatio;
-        this.rotate = this.block.rotate;
-        this._updateMoveable();
+        this.block = block;
         this._cdRef.markForCheck();
       });
   }
@@ -294,10 +312,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     return parseFloat(value.toFixed(decimals));
   }
 
-  public select(): void {
-    this.transformable = true;
-  }
-
   public deselect(): void {
     this.editable = false;
     this.clippable = false;
@@ -319,7 +333,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     }
   }
 
-  public selectAll(): void {
+  public selectTextAll(): void {
     const range = document.createRange();
     range.selectNodeContents(this.contentEditable.nativeElement);
     const sel = window.getSelection();
@@ -349,11 +363,13 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   private _updateMoveable(): void {
-    this._moveable.draggable = !this.block.lock;
-    if (this.selected) {
-      this._moveable.resizable = !this.block.lock;
-      this._moveable.rotatable = !this.block.lock;
-    }
+    const value = !this.block.lock && this.selected;
+    this.keepRatio = this.block.keepRatio;
+    this.rotate = this.block.rotate;
+
+    this.moveable.resizable = this.block.resizable && value;
+    this.moveable.rotatable = this.block.rotatable && value;
+    this.moveable.scalable = this.block.scalable && value;
   }
 
   private _initMoveable(): void {
@@ -531,8 +547,13 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     fromEvent(this.el, 'mousedown')
       .pipe(
         takeUntil(this._destroy$),
-      ).subscribe((event: UIEvent) => {
-        if (!this.block.lock) {
+      )
+      .subscribe((event: UIEvent) => {
+        if (this.block.lock) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          event.stopPropagation();
+        } else {
           this.zoompan.disable();
         }
 
@@ -569,7 +590,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
           this._cdRef.markForCheck();
 
           setTimeout(() => {
-            this.selectAll();
+            this.selectTextAll();
           });
         }
       });

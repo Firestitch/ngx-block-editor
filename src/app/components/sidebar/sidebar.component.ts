@@ -230,23 +230,23 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public layerMove(direction): void {
-    this._blockEditor.blockComponents.forEach((blockComponent) => {
-      if (this._blockEditor.isSelectedBlock(blockComponent)) {
-        blockComponent.block.index += (999 * direction);
+    this._blockEditor.blocks.forEach((block) => {
+      if (this._blockEditor.isSelectedBlock(block)) {
+        block.index += (999 * direction);
       }
     });
 
-    const sorted = this._blockEditor.blockComponents.sort((a, b) => {
-      return a.block.index > b.block.index ? 1 : -1;
+    const sorted = this._blockEditor.blocks.sort((a, b) => {
+      return a.index > b.index ? 1 : -1;
     });
 
-    sorted.forEach((item, index) => {
-      item.block.index = index;
-      item.markForCheck();
+    sorted.forEach((block, index) => {
+      block.index = index;
+      this._blockEditor.blockChange(block);
     });
 
     if (this.config.blocksLevelChanged) {
-      this.config.blocksLevelChanged(sorted.map((item) => item.block));
+      this.config.blocksLevelChanged(sorted.map((block) => block));
     }
   }
 

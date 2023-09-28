@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { index } from '@firestitch/common';
 
-import { FsBlockComponent } from '../block/block.component';
 import { BlockTypes } from '../../consts/block-types.const';
+import { Block } from '../../interfaces';
+import { FsBlockComponent } from '../block/block.component';
 
 
 @Component({
@@ -16,7 +17,7 @@ import { BlockTypes } from '../../consts/block-types.const';
 })
 export class LayersReorderDialogComponent {
 
-  public blockComponents: FsBlockComponent[];
+  public blocks: Block[];
 
   public blockTypeIcons = index(BlockTypes, 'value', 'icon');
 
@@ -29,14 +30,14 @@ export class LayersReorderDialogComponent {
   }
 
   public swapItems(event: CdkDragDrop<FsBlockComponent>): void {
-    moveItemInArray(this.blockComponents, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.blocks, event.previousIndex, event.currentIndex);
   }
 
   public done(): void {
-    this._dialogRef.close(this.blockComponents);
+    this._dialogRef.close(this.blocks);
   }
 
   private _init(data: any) {
-    this.blockComponents = data.blockComponents;
+    this.blocks = data.blocks;
   }
 }

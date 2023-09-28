@@ -9,19 +9,20 @@ import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 import { fromEvent, Subject } from 'rxjs';
 import { delay, filter, takeUntil } from 'rxjs/operators';
 
-import { BlockEditorConfig } from '../../interfaces/block-editor-config';
-import { FsBlockComponent } from '../block/block.component';
-import { BlockEditorService } from '../../services/block-editor.service';
-import { Block } from '../../interfaces/block';
-import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
+import { round } from '@firestitch/common';
 import { FsBlockEditorMarginDirective } from '../../directives/block-editor-margin.directive';
+import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
+import { Block } from '../../interfaces/block';
+import { BlockEditorConfig } from '../../interfaces/block-editor-config';
+import { BlockEditorService } from '../../services/block-editor.service';
+import { FsBlockComponent } from '../block/block.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 
 
 @Component({
   selector: 'app-artboard',
   templateUrl: 'artboard.component.html',
-  styleUrls: [ 'artboard.component.scss' ],
+  styleUrls: ['artboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArtboardComponent implements OnInit, OnDestroy {
@@ -55,7 +56,7 @@ export class ArtboardComponent implements OnInit, OnDestroy {
     private _el: ElementRef,
     private _blockEditor: BlockEditorService,
     private _cdRef: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   public get el(): any {
     return this._el.nativeElement;
@@ -71,13 +72,13 @@ export class ArtboardComponent implements OnInit, OnDestroy {
     this._blockEditor.registerMargin(this.marginContainer.nativeElement);
 
     this._blockEditor.blocks$
-    .pipe(
-      takeUntil(this._destroy$),
-    )
-    .subscribe((blocks) => {
-      this.blocks = blocks;
-      this._cdRef.markForCheck();
-    });
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe((blocks) => {
+        this.blocks = blocks;
+        this._cdRef.markForCheck();
+      });
 
     this._blockEditor.blockAdded$
       .pipe(
@@ -105,25 +106,25 @@ export class ArtboardComponent implements OnInit, OnDestroy {
         event.preventDefault();
         const inchPixel = 1 / 100;
 
-        this._blockEditor.selectedComponentBlocks          
-          .forEach((blockComponent: FsBlockComponent) => {
+        this._blockEditor.selectedBlocks
+          .forEach((block: Block) => {
             switch (event.key) {
               case 'ArrowUp':
-                blockComponent.block.top = blockComponent.block.top - inchPixel;
+                block.top = round(block.top - inchPixel, 2);
                 break;
               case 'ArrowDown':
-                blockComponent.block.top = blockComponent.block.top + inchPixel;
+                block.top = round(block.top + inchPixel, 2);
                 break;
               case 'ArrowLeft':
-                blockComponent.block.left = blockComponent.block.left - inchPixel;
+                block.left = round(block.left - inchPixel, 2);
                 break;
               case 'ArrowRight':
-                blockComponent.block.left = blockComponent.block.left + inchPixel;
+                block.left = round(block.left + inchPixel, 2);
                 break;
             }
 
-            this._blockEditor.blockChange(blockComponent.block);
-          });        
+            this._blockEditor.blockChange(block);
+          });
       });
   }
 
