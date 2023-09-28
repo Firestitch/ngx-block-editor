@@ -5,13 +5,14 @@ import {
   OnDestroy, OnInit, Output, QueryList,
 } from '@angular/core';
 
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
 
 import { index, round } from '@firestitch/common';
 import { FsFile } from '@firestitch/file';
 import { FsPrompt } from '@firestitch/prompt';
 
+import { FormControl } from '@angular/forms';
 import { BlockFormats, BlockTypes } from '../../consts';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
 import { BlockType } from '../../enums';
@@ -204,14 +205,21 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   }
 
+  public validate = (formControl: FormControl) => {
+    if (this._blockEditor.config.defaultValidation) {
+      return this._blockEditor.config.defaultValidation(this.block, formControl.value);
+    }
+
+    return of(true);
+  };
+
+
   public blockUpload(block: Block, fsFile: FsFile): void {
     this._blockEditor.blockUpload(
       block,
       fsFile,
     )
-      .subscribe((newBlock) => {
-
-      });
+      .subscribe();
   }
 
   public blockAdd(type: BlockType): void {

@@ -10,6 +10,7 @@ export interface BlockEditorConfig {
   marginBottom?: number;
   marginLeft?: number;
   blocks?: Block[],
+  defaultValidation?: (block: Block, value: any) => Observable<any>;
   blockChanged?: (block: Block) => void;
   blockAdd?: (block: Block) => Observable<Block>;
   blockUpload?: (block: Block, file: Blob) => Observable<Block>;

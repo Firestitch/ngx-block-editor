@@ -9,6 +9,10 @@
   z-index: 1;
   position: relative;
   box-sizing: border-box;
+
+  form {
+    height: 100%;
+  }
   
   .sidebar-row {
     display: flex;
@@ -144,10 +148,6 @@
           color: inherit;
           margin-left: -5px;
         }
-      }
-
-      mat-form-field + mat-form-field {
-        margin-top: 12px;
       }
 
       .form-field-options {

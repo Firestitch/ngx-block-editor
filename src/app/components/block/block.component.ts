@@ -366,7 +366,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     const value = !this.block.lock && this.selected;
     this.keepRatio = this.block.keepRatio;
     this.rotate = this.block.rotate;
-
     this.moveable.resizable = this.block.resizable && value;
     this.moveable.rotatable = this.block.rotatable && value;
     this.moveable.scalable = this.block.scalable && value;

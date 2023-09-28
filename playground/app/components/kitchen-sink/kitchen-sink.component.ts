@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FsExampleComponent } from '@firestitch/example';
 import { FsMessage } from '@firestitch/message';
 import { BlockType } from '@firestitch/package';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { Block } from 'src/app/interfaces/block';
 import { FsBlockEditorComponent } from './../../../../src/app/components/block-editor/block-editor.component';
 import { BlockEditorConfig } from './../../../../src/app/interfaces/block-editor-config';
@@ -41,6 +41,15 @@ export class KitchenSinkComponent implements OnInit {
       marginRight: 1,
       marginBottom: 1,
       marginLeft: 1,
+      defaultValidation: (block: Block, value) => {
+        if (block.type === BlockType.Date) {
+          if (value && value !== 'today') {
+            return throwError('Invalid default value');
+          }
+        }
+
+        return of(true);
+      },
       blocks: blocks,
       blockChanged: (block) => {
         console.log('Block Changed', block);

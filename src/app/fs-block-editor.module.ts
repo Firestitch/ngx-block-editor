@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { FsColorPickerModule } from '@firestitch/colorpicker';
 import { FsDialogModule } from '@firestitch/dialog';
 import { FsFileModule } from '@firestitch/file';
+import { FsFormModule } from '@firestitch/form';
 import { FsMenuModule } from '@firestitch/menu';
 import { FsZoomPanModule } from '@firestitch/zoom-pan';
 
@@ -50,6 +51,8 @@ import { GoogleFontService } from './services';
     FsColorPickerModule,
     FsMenuModule,
     FsZoomPanModule,
+    FsFormModule,
+
     FsAutocompleteModule,
     FsDialogModule,
   ],
