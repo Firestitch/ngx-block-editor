@@ -5,10 +5,10 @@
         <ng-container *ngIf="blockType.type === 'draw'">
           <ng-container [ngSwitch]="blockType.value">
             <ng-container *ngSwitchCase="BlockType.Pdf">
-              <ng-container *ngTemplateOutlet="addFile"></ng-container>
+              <ng-container [ngTemplateOutlet]="addFile" [ngTemplateOutletContext]="{ type: BlockType.Pdf }"></ng-container>
             </ng-container>
             <ng-container *ngSwitchCase="BlockType.Image">
-              <ng-container *ngTemplateOutlet="addFile"></ng-container>
+              <ng-container [ngTemplateOutlet]="addFile" [ngTemplateOutletContext]="{ type: BlockType.Rectangle }"></ng-container>
             </ng-container>
             <ng-container *ngSwitchDefault>
               <ng-container 
@@ -18,8 +18,10 @@
             </ng-container>
           </ng-container>
 
-          <ng-template #addFile>
-            <fs-file (select)="blockUpload(blockType.value, $event)" [accept]="blockType.accept">
+          <ng-template #addFile let-type="type">
+            <fs-file 
+                (select)="blockUpload({ type: type, keepRatio: true, borderWidth: 0 }, $event)" 
+                [accept]="blockType.accept">
               <ng-container [ngTemplateOutlet]="addButton" [ngTemplateOutletContext]="{ blockType: blockType }"></ng-container>
             </fs-file>
           </ng-template>
@@ -567,7 +569,7 @@
       <div class="sidebar-panel">
         <div class="sidebar-label">Image</div>
         <div class="sidebar-row image-row">
-          <fs-file (select)="imageSelect($event)">
+          <fs-file (select)="blockUpload(block, $event)">
             <button
               type="button"
               mat-icon-button>
@@ -684,15 +686,12 @@
   </ng-container>
 </div>
 
-
-
-
 <ng-template #addButton let-blockType="blockType">
   <button
-    type="button"
-    mat-icon-button
-    [matTooltip]="'Add ' + blockType.name"
-    (click)="blockAdd(blockType.value)">
+      type="button"
+      mat-icon-button
+      [matTooltip]="'Add ' + blockType.name"
+      (click)="blockAdd(blockType.value)">
     <mat-icon>{{blockType.icon}}</mat-icon>
   </button>
 </ng-template>

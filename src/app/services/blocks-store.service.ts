@@ -92,16 +92,14 @@ export class BlocksStore implements OnDestroy {
     return index !== -1;
   }
 
-  public blockAdd(block: Block, initBlock = false): void {
+  public blockAdd(block: Block): void {
     if (!this._config.blockAdd) {
       console.warn('[BlockEditor] Config "blockAdd" is not defined');
 
       return;
     }
 
-    if (initBlock) {
-      block = this._createBlock(block);
-    }
+    block = this._createBlock(block);
 
     this._config.blockAdd(block)
       .pipe(
@@ -112,21 +110,21 @@ export class BlocksStore implements OnDestroy {
       });
   }
 
-  public blockUpload(block: Block, fsFile: FsFile, initBlock = false): void {
+  public blockUpload(block: Block, fsFile: FsFile): void {
     if (!this._config.blockUpload) {
       console.warn('[BlockEditor] Config "blockUpload" is not defined');
 
       return;
     }
 
-    if (initBlock) {
-      block = this._createBlock(block);
-    }
+    const existing = this.blockExists(block);
+
+    block = this._createBlock(block);
 
     from(fsFile.imageInfo)
       .pipe(
         switchMap((imageInfo) => {
-          if (imageInfo?.height && imageInfo?.width) {
+          if (!existing && imageInfo?.height && imageInfo?.width) {
             const ratio = imageInfo.height / imageInfo.width;
             block.width = this._config.width * .4;
             block.height = block.width * ratio;
@@ -137,7 +135,9 @@ export class BlocksStore implements OnDestroy {
         takeUntil(this._destroy$),
       )
       .subscribe((newBlock: Block) => {
-        this._appendBlock(newBlock);
+        if (!existing) {
+          this._appendBlock(newBlock);
+        }
       });
   }
 
@@ -210,19 +210,18 @@ export class BlocksStore implements OnDestroy {
   }
 
   private _createBlock(block: Block): Block {
-    const newBlock = {
-      shapeBottomLeft: 'round',
-      shapeTopLeft: 'round',
-      shapeTopRight: 'round',
-      shapeBottomRight: 'round',
-      verticalAlign: 'top',
-      horizontalAlign: 'left',
+    let newBlock = {
       ...block,
+      shapeBottomLeft: block.shapeBottomLeft ?? 'round',
+      shapeTopLeft: block.shapeTopLeft ?? 'round',
+      shapeTopRight: block.shapeTopRight ?? 'round',
+      shapeBottomRight: block.shapeBottomRight ?? 'round',
+      verticalAlign: block.verticalAlign ?? 'top',
+      horizontalAlign: block.horizontalAlign ?? 'left',
       guid: block.guid || guid('xxxxxxxxxxxx'),
-      keepRatio: [
+      keepRatio: block.keepRatio ?? [
         BlockType.Checkbox,
         BlockType.RadioButton,
-        BlockType.Image,
         BlockType.Pdf,
       ]
         .indexOf(block.type) !== -1
@@ -232,8 +231,11 @@ export class BlocksStore implements OnDestroy {
     let height: any = width / 2;
 
     if (newBlock.type === BlockType.Rectangle) {
-      newBlock.borderColor = '#cccccc';
-      newBlock.borderWidth = 1;
+      newBlock = {
+        ...newBlock,
+        borderColor: newBlock.borderColor ?? '#cccccc',
+        borderWidth: newBlock.borderWidth ?? 1,
+      };
     } else if (newBlock.type === BlockType.Checkbox || newBlock.type === BlockType.RadioButton) {
       width = .25;
       height = .25;
@@ -244,7 +246,6 @@ export class BlocksStore implements OnDestroy {
 
     if (this.isReordableBlock(newBlock)) {
       newBlock.tabIndex = this._lastTabIndex + 1;
-
       this.updateTabIndex(newBlock.tabIndex);
     }
 

@@ -16,5 +16,4 @@ export interface BlockEditorConfig {
   blocksRemove?: (block: Block[]) => Observable<any>;
   blocksLevelChanged?: (blocks: Block[]) => void;
   blocksSelected?: (blocks: Block[]) => void;
-  imageUpload?: (file: Blob) => Observable<string>;
 }

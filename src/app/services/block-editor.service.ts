@@ -3,14 +3,14 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
-import { FsFile } from '@firestitch/file';
 import { FsDialog } from '@firestitch/dialog';
+import { FsFile } from '@firestitch/file';
 
-import { BlocksStore } from './blocks-store.service';
-import { LayersReorderDialogComponent } from '../components/layers-reorder-dialog/layers-reorder-dialog.component';
-import { Block } from './../interfaces/block';
 import { FsBlockComponent } from '../components/block/block.component';
+import { LayersReorderDialogComponent } from '../components/layers-reorder-dialog/layers-reorder-dialog.component';
 import { BlockEditorConfig } from '../interfaces/block-editor-config';
+import { Block } from './../interfaces/block';
+import { BlocksStore } from './blocks-store.service';
 
 
 @Injectable()
@@ -30,7 +30,7 @@ export class BlockEditorService implements OnDestroy {
   constructor(
     private _store: BlocksStore,
     private _dialog: FsDialog,
-  ) {}
+  ) { }
 
   public get blockComponents(): FsBlockComponent[] {
     return Array.from(this._blockComponents.values());
@@ -43,15 +43,15 @@ export class BlockEditorService implements OnDestroy {
 
   public init(config: BlockEditorConfig) {
     this.config = config;
-    this._store.init({...this.config});
+    this._store.init({ ...this.config });
   }
 
-  public blockAdd(block: Block, newBlock = false) {
-    this._store.blockAdd(block, newBlock);
+  public blockAdd(block: Block) {
+    this._store.blockAdd(block);
   }
 
-  public blockUpload(block: Block, fsFile: FsFile, newBlock = false) {
-    this._store.blockUpload(block, fsFile, true);
+  public blockUpload(block: Block, fsFile: FsFile) {
+    this._store.blockUpload(block, fsFile);
   }
 
   public blockRemove(block: Block) {
@@ -129,14 +129,14 @@ export class BlockEditorService implements OnDestroy {
 
   public set selectedBlocks(blocks: Block[]) {
     this.blockComponents
-    .forEach((blockComponent) => {
-      
-      if(blocks.indexOf(blockComponent.block) !== -1) {
-        blockComponent.select();
-      } else {
-        blockComponent.deselect();
-      }
-    });
+      .forEach((blockComponent) => {
+
+        if (blocks.indexOf(blockComponent.block) !== -1) {
+          blockComponent.select();
+        } else {
+          blockComponent.deselect();
+        }
+      });
 
     this._selectedBlocks$.next(blocks);
 

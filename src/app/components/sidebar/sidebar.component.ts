@@ -188,15 +188,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this._blockEditor.selectedBlockComponentChangeProperty(value, name);
   }
 
-  public imageSelect(fsFile: FsFile): void {
-    if (this.config.imageUpload) {
-      this.config.imageUpload(fsFile.file)
-        .subscribe((value) => {
-          this._blockEditor.selectedBlockComponentChangeProperty(value, 'imageUrl');
-        });
-    }
-  }
-
   public blockRemoveClick() {
     if (this.config.blocksRemove && this._blockEditor.selectedBlocks?.length) {
       this._prompt.confirm({
@@ -213,12 +204,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  public blockUpload(type, fsFile: FsFile): void {
-    this._blockEditor.blockUpload(
-      { type },
-      fsFile,
-      true
-    );
+  public blockUpload(block: Block, fsFile: FsFile): void {
+    this._blockEditor
+      .blockUpload(
+        block,
+        fsFile,
+      );
   }
 
   public blockAdd(type: BlockType): void {
@@ -233,7 +224,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       shadowBlur: 4,
     };
 
-    this._blockEditor.blockAdd(block, true);
+    this._blockEditor.blockAdd(block);
   }
 
   public layerMove(direction): void {

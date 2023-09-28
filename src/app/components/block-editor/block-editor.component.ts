@@ -88,7 +88,7 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
 
   @HostListener('document:keydown', ['$event'])
   public editorContainerKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'Delete' || event.key === 'Backspace') {
+    if ((event.key === 'Delete' || event.key === 'Backspace') && (event.target as any)?.nodeName !== 'INPUT') {
       this.sidebar.blockRemoveClick();
       event.preventDefault();
     }
