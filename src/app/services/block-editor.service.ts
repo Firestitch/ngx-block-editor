@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, mapTo, switchMap, takeUntil } from 'rxjs/operators';
 
 import { FsDialog } from '@firestitch/dialog';
 import { FsFile } from '@firestitch/file';
@@ -189,7 +189,11 @@ export class BlockEditorService implements OnDestroy {
       .afterClosed()
       .pipe(
         filter((blocks) => !!blocks),
-        switchMap((blocks) => this.config.blocksReorder(blocks)),
+        switchMap((blocks) => this.config.blocksReorder(blocks)
+          .pipe(
+            mapTo(blocks),
+          )
+        ),
         takeUntil(this._destroy$),
       )
       .subscribe((blocks: Block[]) => {
