@@ -43,6 +43,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public blockTypeIcons = index(BlockTypes, 'value', 'icon');
   public clippable = false;
   public BlockType = BlockType;
+  public blocksReordered: () => void;
   public formats = [];
 
   private _destroy$ = new Subject();
@@ -82,6 +83,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this._cdRef.markForCheck();
       });
+
+
+    if (this._blockEditor.config.blocksReordered) {
+      this.blocksReordered = () => {
+        this._document.defaultView?.scrollTo(0, 0);
+        this._blockEditor.openReorderDialog();
+      }
+    }
   }
 
   public fontFetch = (value): Observable<any> => {
@@ -264,11 +273,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public layerDown(): void {
     this.layerMove(-1);
-  }
-
-  public reorderLayers(): void {
-    this._document.defaultView?.scrollTo(0, 0);
-    this._blockEditor.openReorderDialog();
   }
 
   public inputFocus(event): void {

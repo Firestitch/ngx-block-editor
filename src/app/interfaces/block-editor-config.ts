@@ -17,4 +17,5 @@ export interface BlockEditorConfig {
   blocksRemove?: (block: Block[]) => Observable<any>;
   blocksLevelChanged?: (blocks: Block[]) => void;
   blocksSelected?: (blocks: Block[]) => void;
+  blocksReordered?: (blocks: Block[]) => Observable<any>;
 }

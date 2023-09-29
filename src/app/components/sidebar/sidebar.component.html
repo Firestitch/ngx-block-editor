@@ -54,14 +54,16 @@
           (click)="zoomCenter.emit()">
           <mat-icon>crop_free</mat-icon>
         </button>
-        <button
-          class="reorder-layers"
-          mat-icon-button
-          color="basic"
-          type="button"
-          (click)="reorderLayers()">
-          <mat-icon>swap_vert</mat-icon>
-        </button>
+        <ng-container *ngIf="blocksReordered">
+          <button
+            class="reorder-layers"
+            mat-icon-button
+            color="basic"
+            type="button"
+            (click)="blocksReordered()">
+            <mat-icon>swap_vert</mat-icon>
+          </button>
+        </ng-container>
         <ng-container *ngIf="block">
           <button
             mat-icon-button

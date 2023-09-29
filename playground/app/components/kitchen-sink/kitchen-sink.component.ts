@@ -66,6 +66,10 @@ export class KitchenSinkComponent implements OnInit {
         console.log('Blocks Removed', blocks);
         return of(blocks);
       },
+      blocksReordered: (blocks) => {
+        console.log('Blocks Reordered', blocks);
+        return of(blocks);
+      },
       blockUpload: (block, file: Blob): Observable<Block> => {
         console.log('Blocks Upload', block);
         return new Observable((observer) => {

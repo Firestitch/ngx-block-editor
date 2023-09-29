@@ -34,7 +34,7 @@ export class LayersReorderDialogComponent {
   }
 
   public done(): void {
-    this._dialogRef.close(this.blocks);
+    this._dialogRef.close(this.blocks.reverse());
   }
 
   private _init(data: any) {
