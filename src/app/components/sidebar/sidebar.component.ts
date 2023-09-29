@@ -85,7 +85,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       });
 
 
-    if (this._blockEditor.config.blocksReordered) {
+    if (this._blockEditor.config.blocksReorder) {
       this.blocksReordered = () => {
         this._document.defaultView?.scrollTo(0, 0);
         this._blockEditor.openReorderDialog();

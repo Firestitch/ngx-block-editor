@@ -78,7 +78,7 @@ export class BlocksStore implements OnDestroy {
     this._config = config;
     this._setBlocks(this._config.blocks);
 
-    if (this._config.blockChanged) {
+    if (this._config.blockChange) {
       this.blockChanged$
         .pipe(
           groupBy((block) => (block.guid)),
@@ -88,7 +88,7 @@ export class BlocksStore implements OnDestroy {
           mergeAll(),
         )
         .subscribe((block) => {
-          this._config.blockChanged(block);
+          this._config.blockChange(block);
         });
     }
   }

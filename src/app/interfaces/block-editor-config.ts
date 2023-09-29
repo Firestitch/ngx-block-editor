@@ -11,11 +11,11 @@ export interface BlockEditorConfig {
   marginLeft?: number;
   blocks?: Block[],
   defaultValidation?: (block: Block, value: any) => Observable<any>;
-  blockChanged?: (block: Block) => void;
+  blockChange?: (block: Block) => void;
   blockAdd?: (block: Block) => Observable<Block>;
   blockUpload?: (block: Block, file: Blob) => Observable<Block>;
   blocksRemove?: (block: Block[]) => Observable<any>;
   blocksLevelChanged?: (blocks: Block[]) => void;
-  blocksSelected?: (blocks: Block[]) => void;
-  blocksReordered?: (blocks: Block[]) => Observable<any>;
+  blocksSelect?: (blocks: Block[]) => void;
+  blocksReorder?: (blocks: Block[]) => Observable<any>;
 }

@@ -129,8 +129,8 @@ export class BlockEditorService implements OnDestroy {
   public set selectedBlocks(blocks: Block[]) {
     this._selectedBlocks$.next(blocks);
 
-    if (this.config.blocksSelected) {
-      this.config.blocksSelected(blocks);
+    if (this.config.blocksSelect) {
+      this.config.blocksSelect(blocks);
     }
   }
 
@@ -189,7 +189,7 @@ export class BlockEditorService implements OnDestroy {
       .afterClosed()
       .pipe(
         filter((blocks) => !!blocks),
-        switchMap((blocks) => this.config.blocksReordered(blocks)),
+        switchMap((blocks) => this.config.blocksReorder(blocks)),
         takeUntil(this._destroy$),
       )
       .subscribe((blocks: Block[]) => {

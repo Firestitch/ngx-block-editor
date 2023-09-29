@@ -51,14 +51,14 @@ export class KitchenSinkComponent implements OnInit {
         return of(true);
       },
       blocks: blocks,
-      blockChanged: (block) => {
+      blockChange: (block) => {
         console.log('Block Changed', block);
       },
       blockAdd: (block) => {
         console.log('Block Add', block);
         return of(block);
       },
-      blocksSelected: (blocks) => {
+      blocksSelect: (blocks) => {
         this.selectedBlocks = blocks;
         console.log('Blocks Selected', blocks);
       },
@@ -66,7 +66,7 @@ export class KitchenSinkComponent implements OnInit {
         console.log('Blocks Removed', blocks);
         return of(blocks);
       },
-      blocksReordered: (blocks) => {
+      blocksReorder: (blocks) => {
         console.log('Blocks Reordered', blocks);
         return of(blocks);
       },
