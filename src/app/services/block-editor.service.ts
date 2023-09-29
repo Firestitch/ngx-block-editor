@@ -1,11 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
 import { filter, mapTo, switchMap, takeUntil } from 'rxjs/operators';
 
 import { FsDialog } from '@firestitch/dialog';
 import { FsFile } from '@firestitch/file';
 
+import { FsPrompt } from '@firestitch/prompt';
 import { FsBlockComponent } from '../components/block/block.component';
 import { LayersReorderDialogComponent } from '../components/layers-reorder-dialog/layers-reorder-dialog.component';
 import { BlockEditorConfig } from '../interfaces/block-editor-config';
@@ -30,6 +31,7 @@ export class BlockEditorService implements OnDestroy {
   constructor(
     private _store: BlocksStore,
     private _dialog: FsDialog,
+    private _prompt: FsPrompt,
   ) { }
 
   public get blockComponents(): FsBlockComponent[] {
@@ -53,13 +55,21 @@ export class BlockEditorService implements OnDestroy {
     this._store.blockRemove(block);
   }
 
-  public removeSelectedBlocks() {
-    this.selectedBlocks
-      .forEach((block) => {
-        this.blockRemove(block);
+  public removeBlocks(blocks: Block[]) {
+    this._prompt.confirm({
+      title: 'Confirm',
+      template: 'Are you sure your would like to delete this block?',
+    })
+      .pipe(
+        switchMap(() => this.config.blocksRemove ? this.config.blocksRemove(blocks) : throwError('config.blocksRemove is not configured')),
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        blocks.forEach((block) => {
+          this.blockRemove(block);
+        });
+        this.selectedBlocks = [];
       });
-
-    this.selectedBlocks = [];
   }
 
   public get blocks$(): Observable<Block[]> {

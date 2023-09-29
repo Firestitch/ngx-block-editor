@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 
 import { Observable, Subject, of } from 'rxjs';
-import { filter, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 import { index, round } from '@firestitch/common';
 import { FsFile } from '@firestitch/file';
@@ -199,19 +199,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public blockRemoveClick() {
-    if (this.config.blocksRemove && this._blockEditor.selectedBlocks?.length) {
-      this._prompt.confirm({
-        title: 'Confirm',
-        template: 'Are you sure your would like to delete this block?',
-      })
-        .pipe(
-          switchMap(() => this.config.blocksRemove(this._blockEditor.selectedBlocks)),
-          takeUntil(this._destroy$),
-        )
-        .subscribe(() => {
-          this._blockEditor.removeSelectedBlocks();
-        });
-    }
+    this._blockEditor.removeBlocks(this._blockEditor.selectedBlocks);
   }
 
   public validate = (formControl: FormControl) => {

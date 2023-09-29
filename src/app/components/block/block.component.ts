@@ -1,6 +1,7 @@
 import {
   AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
   HostBinding,
+  HostListener,
   Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { filter, skip, takeUntil } from 'rxjs/operators';
@@ -10,6 +11,7 @@ import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 import Moveable, { OnClip, OnClipEnd } from 'moveable';
 import { Subject, fromEvent } from 'rxjs';
 
+import { round } from '@firestitch/common';
 import { BlockType } from '../../enums';
 import { Block } from './../../interfaces';
 import { BlockEditorService, GoogleFontService } from './../../services';
@@ -48,6 +50,17 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
 
   @HostBinding('class.transforming')
   public transformating = false;
+
+  @HostListener('document:keydown', ['$event'])
+  public keydown(event: KeyboardEvent): void {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(event.key) !== -1) {
+      this._move(event);
+    }
+
+    if (['Delete', 'Backspace'].indexOf(event.key) !== -1) {
+      this._delete(event);
+    }
+  }
 
   public unit;
   public content;
@@ -600,4 +613,46 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       this._googleFontService.loadFont({ family: this.block.fontFamily });
     }
   }
+
+  private _move(event): void {
+    if (
+      !this.selected ||
+      this.editable
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    const inchPixel = 1 / 100;
+
+    switch (event.key) {
+      case 'ArrowUp':
+        this.block.top = round(this.block.top - inchPixel, 2);
+        break;
+      case 'ArrowDown':
+        this.block.top = round(this.block.top + inchPixel, 2);
+        break;
+      case 'ArrowLeft':
+        this.block.left = round(this.block.left - inchPixel, 2);
+        break;
+      case 'ArrowRight':
+        this.block.left = round(this.block.left + inchPixel, 2);
+        break;
+    }
+
+    this._blockEditor.blockChange(this.block);
+  }
+
+  private _delete(event): void {
+    if (
+      this.selected &&
+      !this.editable &&
+      (event.target as any)?.nodeName !== 'INPUT' &&
+      (event.target as any)?.nodeName !== 'TEXTAREA'
+    ) {
+      event.preventDefault();
+      this._blockEditor.removeBlocks([this.block]);
+    }
+  }
+
 }

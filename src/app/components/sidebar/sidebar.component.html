@@ -66,37 +66,37 @@
         </ng-container>
         <ng-container *ngIf="block">
           <button
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="blockRemoveClick()">
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="blockRemoveClick()">
             <mat-icon>delete_outline</mat-icon>
           </button>
           <button
-            class="layer-up"
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="layerUp()">
+              class="layer-up"
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="layerUp()">
             <mat-icon>arrow_back</mat-icon>
             <mat-icon>layers</mat-icon>
           </button>
           <button
-            class="layer-down"
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="layerDown()">
+              class="layer-down"
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="layerDown()">
             <mat-icon>arrow_back</mat-icon>
             <mat-icon>layers</mat-icon>
           </button>
 
           <button
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="toggleLock()"
-            [matTooltip]="block.lock ? 'Unlock' : 'Lock'">
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="toggleLock()"
+              [matTooltip]="block.lock ? 'Unlock' : 'Lock'">
             <mat-icon>{{block.lock ? 'lock_outline' : 'lock_open'}}</mat-icon>
           </button>
 

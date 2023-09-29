@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component,
   ContentChildren, ElementRef,
-  HostListener,
   Input,
   OnDestroy, OnInit, QueryList, ViewChild
 } from '@angular/core';
@@ -84,18 +83,6 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
 
   public zoomCenter(): void {
     this.zoompan.center(this.artboard.nativeElement, { vertical: false });
-  }
-
-  @HostListener('document:keydown', ['$event'])
-  public editorContainerKeyDown(event: KeyboardEvent): void {
-    if (
-      (event.key === 'Delete' || event.key === 'Backspace')
-      && (event.target as any)?.nodeName !== 'INPUT'
-      && (event.target as any)?.nodeName !== 'TEXTAREA'
-    ) {
-      this.sidebar.blockRemoveClick();
-      event.preventDefault();
-    }
   }
 
   public editorContainerClick(event): void {

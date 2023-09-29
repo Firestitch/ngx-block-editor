@@ -6,10 +6,9 @@ import {
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 
-import { fromEvent, Subject } from 'rxjs';
-import { delay, filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { delay, takeUntil } from 'rxjs/operators';
 
-import { round } from '@firestitch/common';
 import { FsBlockEditorMarginDirective } from '../../directives/block-editor-margin.directive';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
 import { Block } from '../../interfaces/block';
@@ -89,42 +88,6 @@ export class ArtboardComponent implements OnInit, OnDestroy {
         this._blockEditor.selectedBlocks = [block];
 
         this._cdRef.markForCheck();
-      });
-
-    fromEvent(window, 'keydown')
-      .pipe(
-        filter((event: any) => {
-          return ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(event.key) !== -1;
-        }),
-        filter(() => {
-          const el = document.activeElement;
-          return !(el instanceof HTMLInputElement || (el as HTMLDivElement && el.classList.contains('content-editable')));
-        }),
-        takeUntil(this._destroy$),
-      )
-      .subscribe((event: any) => {
-        event.preventDefault();
-        const inchPixel = 1 / 100;
-
-        this._blockEditor.selectedBlocks
-          .forEach((block: Block) => {
-            switch (event.key) {
-              case 'ArrowUp':
-                block.top = round(block.top - inchPixel, 2);
-                break;
-              case 'ArrowDown':
-                block.top = round(block.top + inchPixel, 2);
-                break;
-              case 'ArrowLeft':
-                block.left = round(block.left - inchPixel, 2);
-                break;
-              case 'ArrowRight':
-                block.left = round(block.left + inchPixel, 2);
-                break;
-            }
-
-            this._blockEditor.blockChange(block);
-          });
       });
   }
 
