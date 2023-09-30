@@ -1,20 +1,27 @@
 import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ContentChildren, ElementRef, EventEmitter, Inject, Input,
-  OnDestroy, OnInit, Output, QueryList,
+  ContentChildren, ElementRef,
+  EventEmitter,
+  Inject, Input,
+  OnDestroy, OnInit,
+  Output,
+  QueryList
 } from '@angular/core';
 
 import { Observable, Subject, of } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
-import { index, round } from '@firestitch/common';
+import { FsClipboard } from '@firestitch/clipboard';
+import { guid, index, round } from '@firestitch/common';
 import { FsFile } from '@firestitch/file';
-import { FsPrompt } from '@firestitch/prompt';
 
 import { FormControl } from '@angular/forms';
+import { FsMessage } from '@firestitch/message';
+import { FsPrompt } from '@firestitch/prompt';
+import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 import { BlockFormats, BlockTypes } from '../../consts';
-import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
+import { FsBlockEditorSidebarPanelDirective } from '../../directives';
 import { BlockType } from '../../enums';
 import { Block } from '../../interfaces/block';
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
@@ -34,6 +41,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   @Input() public config: BlockEditorConfig;
   @Input() public blocks;
+  @Input() public zoompan: FsZoomPanComponent;
 
   @Output() public zoomCenter = new EventEmitter();
 
@@ -52,8 +60,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
     private _el: ElementRef,
     private _blockEditor: BlockEditorService,
     private _cdRef: ChangeDetectorRef,
-    private _prompt: FsPrompt,
     private _googleFontService: GoogleFontService,
+    private _clipboard: FsClipboard,
+    private _message: FsMessage,
+    private _prompt: FsPrompt,
     @Inject(DOCUMENT)
     private _document: any,
   ) { }
@@ -253,6 +263,34 @@ export class SidebarComponent implements OnInit, OnDestroy {
     if (this.config.blocksLevelChanged) {
       this.config.blocksLevelChanged(sorted.map((block) => block));
     }
+  }
+
+  public exportBlocks(): void {
+    const blocks = JSON.stringify(this._blockEditor.blocks);
+    this._clipboard.copy(blocks, { showMessage: false });
+    this._message.success('Exported blocks to clipboard');
+  }
+
+  public importBlocks(): void {
+    this._prompt.input({
+      title: 'Import blocks',
+    })
+      .subscribe((blocks) => {
+        blocks = JSON.parse(blocks);
+
+        blocks
+          .forEach((block: Block) => {
+            block = {
+              ...block,
+              guid: guid(),
+              imageUrl: null,
+            };
+
+            this._blockEditor.blockAdd(block);
+          });
+
+        this._message.success(`Imported ${blocks.length} ${blocks.length === 1 ? 'block' : 'blocks'}`);
+      });
   }
 
   public layerUp(): void {

@@ -46,38 +46,14 @@
 
     <div class="sidebar-panel">
       <div class="sidebar-row">
-        <button
-          mat-icon-button
-          color="basic"
-          type="button"
-          matTooltip="Reset zoom"
-          (click)="zoomCenter.emit()">
-          <mat-icon>crop_free</mat-icon>
-        </button>
-        <ng-container *ngIf="blocksReordered">
-          <button
-            class="reorder-layers"
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="blocksReordered()">
-            <mat-icon>swap_vert</mat-icon>
-          </button>
-        </ng-container>
         <ng-container *ngIf="block">
-          <button
-              mat-icon-button
-              color="basic"
-              type="button"
-              (click)="blockRemoveClick()">
-            <mat-icon>delete_outline</mat-icon>
-          </button>
           <button
               class="layer-up"
               mat-icon-button
               color="basic"
               type="button"
-              (click)="layerUp()">
+              (click)="layerUp()"
+              [matTooltip]="'Increase layer'">
             <mat-icon>arrow_back</mat-icon>
             <mat-icon>layers</mat-icon>
           </button>
@@ -86,11 +62,11 @@
               mat-icon-button
               color="basic"
               type="button"
-              (click)="layerDown()">
+              (click)="layerDown()"
+              [matTooltip]="'Decrease layer'">
             <mat-icon>arrow_back</mat-icon>
             <mat-icon>layers</mat-icon>
           </button>
-
           <button
               mat-icon-button
               color="basic"
@@ -99,8 +75,34 @@
               [matTooltip]="block.lock ? 'Unlock' : 'Lock'">
             <mat-icon>{{block.lock ? 'lock_outline' : 'lock_open'}}</mat-icon>
           </button>
-
+          <button
+              mat-icon-button
+              color="basic"
+              type="button"
+              [matTooltip]="'Delete block'"
+              (click)="blockRemoveClick()">
+            <mat-icon>delete_outline</mat-icon>
+          </button>          
         </ng-container>
+        <ng-container *ngIf="blocksReordered">
+          <button
+              class="reorder-layers"
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="blocksReordered()"
+              [matTooltip]="'Reorder blocks'">
+            <mat-icon>swap_vert</mat-icon>
+          </button>
+        </ng-container>
+        <button
+          mat-icon-button
+          color="basic"
+          type="button"
+          matTooltip="Reset zoom"
+          (click)="zoomCenter.emit()">
+        <mat-icon>crop_free</mat-icon>
+        </button>
       </div>
     </div>
     <ng-container *ngIf="block">
@@ -610,7 +612,7 @@
               </ng-container>
             </div>
           </div>
-        </ng-container>
+        </ng-container> 
         <div class="sidebar-panel">
           <div class="sidebar-label">Padding</div>
           <div class="sidebar-row padding-row">
@@ -675,9 +677,30 @@
               <span matPrefix *ngIf="block.paddingRight">R</span>
             </mat-form-field>
           </div>
-        </div>
-      </ng-container>
+        </div>      
+      </ng-container>       
     </ng-container>
+    <div class="sidebar-panel">
+      <div class="sidebar-label">Tools</div>
+      <div class="sidebar-row padding-row">
+        <button
+            mat-icon-button
+            color="basic"
+            type="button"
+            (click)="exportBlocks()"
+            [matTooltip]="'Export blocks'">
+          <mat-icon>download</mat-icon>
+        </button>
+        <button
+            mat-icon-button
+            color="basic"
+            type="button"
+            (click)="importBlocks()"
+            [matTooltip]="'Import blocks'">
+          <mat-icon>upload</mat-icon>
+        </button>
+      </div>
+    </div>    
 
     <ng-container *ngFor="let sidebarPanel of sidebarPanels">
       <div div class="sidebar-panel" *ngIf="sidebarPanel.show">
