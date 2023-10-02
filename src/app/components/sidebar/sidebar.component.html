@@ -179,6 +179,40 @@
           </div>
           <div class="sidebar-row">
 
+            <ng-container *ngIf="block.type === BlockType.RadioButton">
+              <mat-form-field class="full-width" class="full-width group-block">
+                <mat-label>Group</mat-label>
+                <mat-select
+                    [(ngModel)]="blockGroup"
+                    (ngModelChange)="blockGroupChange($event)"
+                    name="group">
+                  <ng-container *ngIf="blockGroups.length">
+                    <mat-option [value]="null">
+                      None
+                    </mat-option>
+                  </ng-container>
+                  <mat-option
+                      *ngFor="let item of blockGroups"
+                      [value]="item">
+                    {{ item.label }}
+                  </mat-option>
+                  <mat-option 
+                      [value]="null"
+                      (click)="blockGroupCreate($event)">
+                    Create Group
+                  </mat-option>
+                </mat-select>
+                <div matSuffix>
+                  <ng-container *ngIf="blockGroup">
+                    <a 
+                        (click)="blockGroupEdit($event)">
+                      <mat-icon>edit</mat-icon>
+                    </a>
+                  </ng-container>
+                </div>
+              </mat-form-field>
+            </ng-container>
+
             <mat-form-field class="full-width">
               <input
                 matInput
@@ -188,7 +222,7 @@
                 (ngModelChange)="blockChangeProperty($event, 'label')">
             </mat-form-field>
 
-            <ng-container *ngIf="block.type !== BlockType.Checkbox && block.type !== BlockType.RadioButton">
+            <ng-container *ngIf="block.type !== BlockType.RadioButton">
               <mat-form-field class="full-width">
                 <textarea
                   matInput
@@ -221,7 +255,7 @@
             </mat-form-field>
 
             <ng-container
-              *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.Date">
+                *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.Date">
               <mat-form-field class="full-width">
                 <textarea
                   matInput
@@ -248,51 +282,33 @@
               </mat-form-field>
             </ng-container>
 
-            <ng-container *ngIf="block.type === BlockType.RadioButton || block.type === BlockType.Checkbox">
-              <mat-form-field class="full-width">
-                <textarea
-                  matInput
-                  [cdkTextareaAutosize]="true"
-                  [ngModel]="block.groupLabel"
-                  name="groupLabel"
-                  placeholder="Group Label"
-                  (ngModelChange)="blockChangeProperty($event, 'groupLabel')">
-                </textarea>
-              </mat-form-field>
-
-              <mat-form-field class="full-width">
-                <mat-label>Group Description</mat-label>
-                <textarea
-                  matInput
-                  [cdkTextareaAutosize]="true"
-                  [ngModel]="block.groupDescription"
-                  name="groupDescription"
-                  (ngModelChange)="blockChangeProperty($event, 'groupDescription')">
-                </textarea>
-              </mat-form-field>
+            <ng-container *ngIf="!blockGroup">
+              <ng-container [ngTemplateOutlet]="name"></ng-container>
             </ng-container>
 
-            <mat-form-field class="full-width">
-              <input
-                matInput
-                [ngModel]="block.name"
-                name="name"
-                placeholder="Name"
-                (ngModelChange)="blockChangeProperty($event, 'name')">
-            </mat-form-field>
+            <ng-template #name>
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  [ngModel]="block.name"
+                  name="name"
+                  placeholder="Name"
+                  (ngModelChange)="blockChangeProperty($event, 'name')">
+              </mat-form-field>
+            </ng-template>
 
             <div class="form-field-options">
               <mat-checkbox
-                name="required"
-                [(ngModel)]="block.required"
-                (ngModelChange)="blockChangeProperty($event, 'required')">
+                  name="required"
+                  [(ngModel)]="block.required"
+                  (ngModelChange)="blockRequired($event)">
                 Required
               </mat-checkbox>
 
               <mat-checkbox
-                name="readonly"
-                [(ngModel)]="block.readonly"
-                (ngModelChange)="blockChangeProperty($event, 'readonly')">
+                  name="readonly"
+                  [(ngModel)]="block.readonly"
+                  (ngModelChange)="blockReadonly($event)">
                 Readonly
               </mat-checkbox>
             </div>

@@ -20,7 +20,7 @@ import { FsMenuModule } from '@firestitch/menu';
 import { FsZoomPanModule } from '@firestitch/zoom-pan';
 
 import { FsAutocompleteModule } from '@firestitch/autocomplete';
-import { FontComponent } from './components';
+import { FontComponent, GroupDialogComponent } from './components';
 import { ArtboardComponent } from './components/artboard/artboard.component';
 import { FsBlockEditorComponent } from './components/block-editor/block-editor.component';
 import { FsBlockComponent } from './components/block/block.component';
@@ -71,6 +71,7 @@ import { GoogleFontService } from './services';
     LayersReorderDialogComponent,
     FontComponent,
     CreateImageUrlPipe,
+    GroupDialogComponent,
   ],
   providers: [
     GoogleFontService,

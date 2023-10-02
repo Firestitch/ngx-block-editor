@@ -1,5 +1,5 @@
 import {
-  AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
+  AfterContentInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
   HostBinding,
   HostListener,
   Input, OnDestroy, OnInit, ViewChild,
@@ -13,8 +13,8 @@ import { Subject, fromEvent } from 'rxjs';
 
 import { round } from '@firestitch/common';
 import { BlockType } from '../../enums';
-import { Block } from './../../interfaces';
-import { BlockEditorService, GoogleFontService } from './../../services';
+import { Block } from '../../interfaces';
+import { BlockEditorService, GoogleFontService } from '../../services';
 
 
 @Component({
@@ -23,7 +23,7 @@ import { BlockEditorService, GoogleFontService } from './../../services';
   styleUrls: ['block.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
+export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, AfterViewInit {
 
   @ViewChild('element', { static: true })
   public element: ElementRef;
@@ -300,21 +300,18 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       });
   }
 
-  public ngAfterContentInit(): void {
+  ngAfterViewInit(): void {
     setTimeout(() => {
       this._initEvents();
       this._initMoveable();
       this._setTransform();
+      this._initElementGuidelines();
       this.rotate = this.block.rotate;
-      this._blockEditor.initBlock(this.block, this);
-      this._blockEditor.blockInited$
-        .pipe(
-          takeUntil(this._destroy$),
-        )
-        .subscribe(() => {
-          this._updateElementGuidelines();
-        });
     });
+  }
+
+  public ngAfterContentInit(): void {
+
   }
 
   public pxToIn(px) {
@@ -355,7 +352,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
   }
 
   public ngOnDestroy(): void {
-    this._blockEditor.destroyBlock(this.block);
+    //this._blockEditor.destroyBlock(this.block);
     this._destroy$.next();
     this._destroy$.complete();
   }
@@ -369,11 +366,11 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this._blockEditor.blockChange(this.block);
   }
 
-  private _updateElementGuidelines() {
-    this.moveable.elementGuidelines = this._blockEditor.blockComponents
-      .map((blockComponent) => blockComponent.el)
-      .filter((el) => !el.isSameNode(this.el));
-  }
+  // private _updateElementGuidelines() {
+  //   this.moveable.elementGuidelines = this._blockEditor.blockComponents
+  //     .map((blockComponent) => blockComponent.el)
+  //     .filter((el) => !el.isSameNode(this.el));
+  // }
 
   private _updateMoveable(): void {
     const value = !this.block.lock && this.selected;
@@ -382,6 +379,18 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
     this.moveable.resizable = this.block.resizable && value;
     this.moveable.rotatable = this.block.rotatable && value;
     this.moveable.scalable = this.block.scalable && value;
+  }
+
+  private _initElementGuidelines(): void {
+    this._blockEditor.blockComponents$
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe((blockComponents) => {
+        this.moveable.elementGuidelines = blockComponents
+          .filter((blockComponent) => this !== blockComponent)
+          .map((blockComponent) => blockComponent.el);
+      });
   }
 
   private _initMoveable(): void {
@@ -408,7 +417,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit {
       snapDistFormat: (v, type) => `${this.round(v / 96, 2)}`,
     });
 
-    this._updateElementGuidelines();
     this._updateMoveable();
 
     this.moveable

@@ -130,6 +130,15 @@
     color: #ccc;
   }
 
+  .group-block {
+    ::ng-deep {
+      .mat-form-field-suffix {
+        top: 4px;
+        padding-left: 2px;
+      }
+    }
+  }
+
   .sidebar-panel {
     padding: 10px 10px 10px 10px;
 

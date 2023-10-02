@@ -1,0 +1,40 @@
+<form fsForm [submit]="save">
+  <fs-dialog>
+    <h1 mat-dialog-title>Group</h1>
+    <mat-dialog-content>
+      <mat-form-field class="full-width">
+        <textarea
+          matInput
+          [cdkTextareaAutosize]="true"
+          [(ngModel)]="blockGroup.label"
+          name="groupLabel"
+          [required]="true"
+          placeholder="Group Label">
+        </textarea>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Group Description</mat-label>
+        <textarea
+          matInput
+          [cdkTextareaAutosize]="true"
+          [(ngModel)]="blockGroup.description"
+          name="groupDescription">
+        </textarea>
+      </mat-form-field> 
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button   
+          mat-button 
+          type="submit"
+          color="primary">
+        Save
+      </button>
+      <button   
+          mat-button 
+          type="button"
+          mat-dialog-close>
+        Cancel
+      </button>
+    </mat-dialog-actions>
+  </fs-dialog>
+</form>

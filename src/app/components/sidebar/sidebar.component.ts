@@ -17,15 +17,17 @@ import { guid, index, round } from '@firestitch/common';
 import { FsFile } from '@firestitch/file';
 
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { FsMessage } from '@firestitch/message';
 import { FsPrompt } from '@firestitch/prompt';
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 import { BlockFormats, BlockTypes } from '../../consts';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives';
 import { BlockType } from '../../enums';
-import { Block } from '../../interfaces/block';
+import { Block, BlockGroup } from '../../interfaces';
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { BlockEditorService, GoogleFontService } from '../../services';
+import { GroupDialogComponent } from '../group';
 
 
 @Component({
@@ -51,6 +53,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public blockTypeIcons = index(BlockTypes, 'value', 'icon');
   public clippable = false;
   public BlockType = BlockType;
+  public blockGroup;
   public blocksReordered: () => void;
   public formats = [];
 
@@ -64,12 +67,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
     private _clipboard: FsClipboard,
     private _message: FsMessage,
     private _prompt: FsPrompt,
+    private _dialog: MatDialog,
     @Inject(DOCUMENT)
     private _document: any,
   ) { }
 
   public get el(): any {
     return this._el.nativeElement;
+  }
+
+  public get blockGroups(): BlockGroup[] {
+    return this._blockEditor.blockGroups;
   }
 
   public ngOnInit(): void {
@@ -79,8 +87,19 @@ export class SidebarComponent implements OnInit, OnDestroy {
       )
       .subscribe((blocks: Block[]) => {
         this.block = blocks[0] ? blocks[0] : null;
-        this.formats = BlockFormats
-          .filter((blockFormat) => (blockFormat.blockTypes.indexOf(this.block?.type) !== -1));
+        this.blockGroup = null;
+
+        if (this.block) {
+          this.formats = BlockFormats
+            .filter((blockFormat) => (blockFormat.blockTypes.indexOf(this.block.type) !== -1));
+
+          if (this.block.name) {
+            this.blockGroup = this._blockEditor.blockGroups
+              .find((blockGroup) => {
+                return this.block.name === blockGroup.name;
+              });
+          }
+        }
 
         this._cdRef.markForCheck();
       });
@@ -101,6 +120,70 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this._blockEditor.openReorderDialog();
       }
     }
+  }
+
+  public blockGroupChange(blockGroup): void {
+    this._blockEditor.applyBlockGroup(this.block, blockGroup);
+  }
+
+  public blockRequired(value): void {
+    if (this.blockGroup) {
+      this._blockEditor.blockGroupChangeProperty(this.blockGroup, 'required', value);
+    } else {
+      this.blockChangeProperty(value, 'required');
+    }
+  }
+
+  public blockReadonly(value): void {
+    if (this.blockGroup) {
+      this._blockEditor.blockGroupChangeProperty(this.blockGroup, 'readonly', value);
+    } else {
+      this.blockChangeProperty(value, 'readonly');
+    }
+  }
+
+  public blockGroupEdit(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    this.blockGroupDialog(this.blockGroup)
+      .subscribe((blockGroup) => {
+        this._blockEditor.blocks
+          .filter((block) => block.name === blockGroup.name)
+          .forEach((block) => {
+            this._blockEditor.applyBlockGroup(block, blockGroup);
+          });
+      });
+  }
+
+  public blockGroupCreate(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    this.blockGroupDialog()
+      .subscribe((blockGroup) => {
+        this._blockEditor.applyBlockGroup(this.block, blockGroup);
+        this.blockGroup = blockGroup;
+        this._cdRef.markForCheck();
+      });
+  }
+
+  public blockGroupDialog(blockGroup?): Observable<BlockGroup> {
+    return this._dialog.open(
+      GroupDialogComponent,
+      {
+        data: {
+          block: this.block,
+          blockEditor: this._blockEditor,
+          blockGroup,
+        }
+      },
+    )
+      .afterClosed()
+      .pipe(
+        filter((block) => !!block),
+        takeUntil(this._destroy$),
+      );
   }
 
   public fontFetch = (value): Observable<any> => {

@@ -1,7 +1,9 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
   ContentChildren, ElementRef, Input,
-  OnDestroy, OnInit, QueryList, ViewChild, ViewChildren,
+  OnDestroy,
+  OnInit, QueryList, ViewChild, ViewChildren
 } from '@angular/core';
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
@@ -13,9 +15,9 @@ import { FsBlockEditorMarginDirective } from '../../directives/block-editor-marg
 import { FsBlockEditorSidebarPanelDirective } from '../../directives/block-editor-sidebar-panel.directive';
 import { Block } from '../../interfaces/block';
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
-import { BlockEditorService } from '../../services/block-editor.service';
-import { FsBlockComponent } from '../block/block.component';
-import { SidebarComponent } from '../sidebar/sidebar.component';
+import { BlockEditorService } from '../../services';
+import { FsBlockComponent } from '../block';
+import { SidebarComponent } from '../sidebar';
 
 
 @Component({
@@ -24,7 +26,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
   styleUrls: ['artboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ArtboardComponent implements OnInit, OnDestroy {
+export class ArtboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ContentChildren(FsBlockEditorSidebarPanelDirective)
   public sidebarPanels: QueryList<FsBlockEditorSidebarPanelDirective>;
@@ -89,6 +91,19 @@ export class ArtboardComponent implements OnInit, OnDestroy {
 
         this._cdRef.markForCheck();
       });
+  }
+
+  public ngAfterViewInit(): void {
+    this.blockComponents
+      .changes
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        this._blockEditor.blockComponents = this.blockComponents.toArray();
+      });
+
+    this._blockEditor.blockComponents = this.blockComponents.toArray();
   }
 
   public ngOnDestroy(): void {

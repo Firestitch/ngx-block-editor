@@ -1,15 +1,17 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
-import { filter, mapTo, switchMap, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, from, throwError } from 'rxjs';
+import { debounceTime, filter, groupBy, map, mapTo, mergeAll, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { FsDialog } from '@firestitch/dialog';
 import { FsFile } from '@firestitch/file';
-
 import { FsPrompt } from '@firestitch/prompt';
-import { FsBlockComponent } from '../components/block/block.component';
-import { LayersReorderDialogComponent } from '../components/layers-reorder-dialog/layers-reorder-dialog.component';
-import { BlockEditorConfig } from '../interfaces/block-editor-config';
+
+import { guid } from '@firestitch/common';
+import { FsBlockComponent } from '../components/block';
+import { LayersReorderDialogComponent } from '../components/layers-reorder-dialog';
+import { BlockType } from '../enums';
+import { BlockEditorConfig, BlockGroup } from '../interfaces';
 import { Block } from './../interfaces/block';
 import { BlocksStore } from './blocks-store.service';
 
@@ -20,13 +22,13 @@ export class BlockEditorService implements OnDestroy {
   public container;
   public margin;
   public config: BlockEditorConfig;
+  public blockGroups: BlockGroup[] = [];
 
   private _selectedBlocks$ = new BehaviorSubject<Block[]>([]);
-  private _selectionRange;
-  private _blockComponents = new Map<Block, FsBlockComponent>();
+  private _blockComponents$ = new BehaviorSubject<FsBlockComponent[]>([]);
   private _blockClippable$ = new BehaviorSubject<boolean>(null);
   private _destroy$ = new Subject();
-  private _blockInited$ = new Subject<Block>();
+  private _selectionRange;
 
   constructor(
     private _store: BlocksStore,
@@ -34,42 +36,127 @@ export class BlockEditorService implements OnDestroy {
     private _prompt: FsPrompt,
   ) { }
 
-  public get blockComponents(): FsBlockComponent[] {
-    return Array.from(this._blockComponents.values());
+  public get blockComponents$(): Observable<FsBlockComponent[]> {
+    return this._blockComponents$.asObservable();
+  }
+
+  public set blockComponents(blockComponents) {
+    this._blockComponents$.next(blockComponents);
   }
 
   public init(config: BlockEditorConfig) {
     this.config = config;
-    this._store.init({ ...this.config });
+    this._store.init(config.blocks);
+    this._initBlockGroups();
+    this._initBlockChange();
   }
 
   public blockAdd(block: Block) {
-    this._store.blockAdd(block);
+    if (!this.config.blockAdd) {
+      console.warn('[BlockEditor] Config "blockAdd" is not defined');
+
+      return;
+    }
+
+    block = this._initBlock(block);
+
+    this.config.blockAdd(block)
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe((newBlock: Block) => {
+        this._store.blockAdd(newBlock);
+      });
   }
 
   public blockUpload(block: Block, fsFile: FsFile): Observable<Block> {
-    return this._store.blockUpload(block, fsFile);
+    if (!this.config.blockUpload) {
+      return throwError('[BlockEditor] Config "blockUpload" is not defined');
+    }
+
+    const existing = this._store.blockExists(block);
+
+    if (!existing) {
+      block = this._initBlock(block);
+    }
+
+    return from(fsFile.imageInfo)
+      .pipe(
+        switchMap((imageInfo) => {
+          if (!existing && imageInfo?.height && imageInfo?.width) {
+            const ratio = imageInfo.height / imageInfo.width;
+            block.width = this.config.width * .4;
+            block.height = block.width * ratio;
+          }
+
+          return this.config.blockUpload(block, fsFile.file);
+        }),
+        tap((newBlock) => {
+          if (existing) {
+            this._store.blockUpdate({
+              ...block,
+              ...newBlock,
+            });
+
+          } else {
+            this.blockAdd(newBlock);
+          }
+        }),
+        takeUntil(this._destroy$),
+      );
+  }
+
+  private _initBlock(block: Block): Block {
+    let newBlock = {
+      ...block,
+      shapeBottomLeft: block.shapeBottomLeft ?? 'round',
+      shapeTopLeft: block.shapeTopLeft ?? 'round',
+      shapeTopRight: block.shapeTopRight ?? 'round',
+      shapeBottomRight: block.shapeBottomRight ?? 'round',
+      verticalAlign: block.verticalAlign ?? 'top',
+      horizontalAlign: block.horizontalAlign ?? 'left',
+      index: block.guid ? block.index : this._store.blocks.length,
+      guid: block.guid || guid('xxxxxxxxxxxx'),
+      keepRatio: block.keepRatio ?? [
+        BlockType.Checkbox,
+        BlockType.RadioButton,
+        BlockType.Pdf,
+      ]
+        .indexOf(block.type) !== -1
+    };
+
+    let width: any = (this.config.width * .333).toFixed(2);
+    let height: any = width / 2;
+
+    if (newBlock.type === BlockType.Rectangle) {
+      newBlock = {
+        ...newBlock,
+        borderColor: newBlock.borderColor ?? '#cccccc',
+        borderWidth: newBlock.borderWidth ?? 1,
+      };
+    } else if (newBlock.type === BlockType.Checkbox || newBlock.type === BlockType.RadioButton) {
+      width = .25;
+      height = .25;
+    } else {
+      width = 2;
+      height = .5;
+    }
+
+    //get max tabindex
+    // newBlock.tabIndex = this._lastTabIndex + 1;
+    // this.updateTabIndex(newBlock.tabIndex);
+
+    return {
+      top: height,
+      left: width,
+      width,
+      height,
+      ...newBlock,
+    };
   }
 
   public blockRemove(block: Block) {
     this._store.blockRemove(block);
-  }
-
-  public removeBlocks(blocks: Block[]) {
-    this._prompt.confirm({
-      title: 'Confirm',
-      template: 'Are you sure your would like to delete this block?',
-    })
-      .pipe(
-        switchMap(() => this.config.blocksRemove ? this.config.blocksRemove(blocks) : throwError('config.blocksRemove is not configured')),
-        takeUntil(this._destroy$),
-      )
-      .subscribe(() => {
-        blocks.forEach((block) => {
-          this.blockRemove(block);
-        });
-        this.selectedBlocks = [];
-      });
   }
 
   public get blocks$(): Observable<Block[]> {
@@ -96,10 +183,6 @@ export class BlockEditorService implements OnDestroy {
     return this._store.blockAdded$;
   }
 
-  public get blockInited$(): Observable<Block> {
-    return this._blockInited$;
-  }
-
   public get blockRemoved$(): Observable<Block> {
     return this._store.blockRemoved$;
   }
@@ -112,6 +195,13 @@ export class BlockEditorService implements OnDestroy {
     this._store.blockChange(block);
   }
 
+  public applyBlockGroup(block: Block, blockGroup: BlockGroup): void {
+    block.name = blockGroup?.name;
+    block.description = blockGroup?.description;
+    block.label = blockGroup?.label;
+    this.blockChange(block);
+  }
+
   public isSelectedBlock(block: Block) {
     return this.selectedBlocks.indexOf(block) !== -1;
   }
@@ -122,6 +212,15 @@ export class BlockEditorService implements OnDestroy {
 
   public selectedBlockComponentChangeProperty(value, name) {
     this.selectedBlocks
+      .forEach((block: Block) => {
+        block[name] = value;
+        this.blockChange(block);
+      });
+  }
+
+  public blockGroupChangeProperty(blockGroup, name, value) {
+    this.blocks
+      .filter((block) => block.name === blockGroup.name)
       .forEach((block: Block) => {
         block[name] = value;
         this.blockChange(block);
@@ -165,21 +264,29 @@ export class BlockEditorService implements OnDestroy {
     return this._selectionRange && (this._selectionRange.baseOffset - this._selectionRange.focusOffset) > 0;
   }
 
-  public initBlock(block: Block, blockComponent: FsBlockComponent) {
-    this._blockComponents.set(block, blockComponent);
-    this._blockInited$.next(block);
-  }
-
-  public destroyBlock(block: Block) {
-    this._blockComponents.delete(block);
-  }
-
   public registerContainer(container) {
     this.container = container;
   }
 
   public registerMargin(margin) {
     this.margin = margin;
+  }
+
+  public removeBlocks(blocks: Block[]) {
+    this._prompt.confirm({
+      title: 'Confirm',
+      template: 'Are you sure your would like to delete this block?',
+    })
+      .pipe(
+        switchMap(() => this.config.blocksRemove ? this.config.blocksRemove(blocks) : throwError('config.blocksRemove is not configured')),
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        blocks.forEach((block) => {
+          this.blockRemove(block);
+        });
+        this.selectedBlocks = [];
+      });
   }
 
   public openReorderDialog(): void {
@@ -210,7 +317,6 @@ export class BlockEditorService implements OnDestroy {
         blocks
           .forEach((block, index) => {
             block.index = index;
-            this._store.updateTabIndex(index);
           });
       });
   }
@@ -218,6 +324,40 @@ export class BlockEditorService implements OnDestroy {
   public ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  private _initBlockGroups(): void {
+    this.blockGroups = Object.values(
+      this._store.blocks
+        .reduce((accum: { [key: string]: BlockGroup }, block) => {
+          if (block.name) {
+            const existing = accum[block.name] || {};
+            accum[block.name] = {
+              label: block.label || existing.label,
+              description: block.description || existing.description,
+              name: block.name,
+            }
+          }
+
+          return accum;
+        }, {})
+    );
+  }
+
+  private _initBlockChange(): void {
+    if (this.config.blockChange) {
+      this.blockChanged$
+        .pipe(
+          groupBy((block) => (block.guid)),
+          map((group) => group.pipe(
+            debounceTime(250),
+          )),
+          mergeAll(),
+        )
+        .subscribe((block) => {
+          this.config.blockChange(block);
+        });
+    }
   }
 
 }

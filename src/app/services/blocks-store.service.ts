@@ -1,13 +1,9 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { guid } from '@firestitch/common';
-import { FsFile } from '@firestitch/file';
-import { BehaviorSubject, from, Observable, Subject, throwError } from 'rxjs';
-import { debounceTime, filter, groupBy, map, mergeAll, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
-import { BlockType } from '../enums/block-type.enum';
 import { Block } from '../interfaces/block';
-import { BlockEditorConfig } from '../interfaces/block-editor-config';
 
 
 enum EventType {
@@ -19,9 +15,6 @@ enum EventType {
 
 @Injectable()
 export class BlocksStore implements OnDestroy {
-
-  private _config: BlockEditorConfig;
-  private _lastTabIndex = -1;
 
   private _eventBus$ = new Subject<{ type: EventType; value: Block }>();
   private _blocks$ = new BehaviorSubject<Block[]>([]);
@@ -74,23 +67,11 @@ export class BlocksStore implements OnDestroy {
     this._destroy$.complete();
   }
 
-  public init(config: BlockEditorConfig): void {
-    this._config = config;
-    this._setBlocks(this._config.blocks);
-
-    if (this._config.blockChange) {
-      this.blockChanged$
-        .pipe(
-          groupBy((block) => (block.guid)),
-          map((group) => group.pipe(
-            debounceTime(250),
-          )),
-          mergeAll(),
-        )
-        .subscribe((block) => {
-          this._config.blockChange(block);
-        });
-    }
+  public init(blocks: Block[]): void {
+    blocks
+      .forEach((block) => {
+        this._appendBlock(block);
+      });
   }
 
   public blockExists(block: Block) {
@@ -102,58 +83,7 @@ export class BlocksStore implements OnDestroy {
   }
 
   public blockAdd(block: Block): void {
-    if (!this._config.blockAdd) {
-      console.warn('[BlockEditor] Config "blockAdd" is not defined');
-
-      return;
-    }
-
-    block = this._createBlock(block);
-
-    this._config.blockAdd(block)
-      .pipe(
-        takeUntil(this._destroy$),
-      )
-      .subscribe((newBlock: Block) => {
-        this._appendBlock(newBlock);
-      });
-  }
-
-  public blockUpload(block: Block, fsFile: FsFile): Observable<Block> {
-    if (!this._config.blockUpload) {
-      return throwError('[BlockEditor] Config "blockUpload" is not defined');
-    }
-
-    const existing = this.blockExists(block);
-
-    if (!existing) {
-      block = this._createBlock(block);
-    }
-
-    return from(fsFile.imageInfo)
-      .pipe(
-        switchMap((imageInfo) => {
-          if (!existing && imageInfo?.height && imageInfo?.width) {
-            const ratio = imageInfo.height / imageInfo.width;
-            block.width = this._config.width * .4;
-            block.height = block.width * ratio;
-          }
-
-          return this._config.blockUpload(block, fsFile.file);
-        }),
-        tap((newBlock) => {
-          if (existing) {
-            this.blockUpdate({
-              ...block,
-              ...newBlock,
-            });
-
-          } else {
-            this._appendBlock(newBlock);
-          }
-        }),
-        takeUntil(this._destroy$),
-      );
+    this._appendBlock(block);
   }
 
   public blockChange(block: Block): void {
@@ -185,29 +115,8 @@ export class BlocksStore implements OnDestroy {
     this._setBlocks(blocks);
   }
 
-  public isReordableBlock(block: Block): boolean {
-    return [
-      BlockType.LongText,
-      BlockType.ShortText,
-      BlockType.RadioButton,
-      BlockType.Checkbox,
-      BlockType.Date,
-      BlockType.Signature,
-    ].indexOf(block.type) > -1
-  }
-
-  public updateTabIndex(index: number) {
-    this._lastTabIndex = index;
-  }
-
   private _setBlocks(blocks: Block[]): void {
     this._blocks$.next([...blocks]);
-
-    blocks
-      .filter((b) => this.isReordableBlock(b))
-      .forEach((b) => {
-        this._lastTabIndex = Math.max(b.tabIndex, this._lastTabIndex);
-      });
   }
 
   private _appendBlock(block: Block) {
@@ -226,55 +135,6 @@ export class BlocksStore implements OnDestroy {
       type,
       value,
     });
-  }
-
-  private _createBlock(block: Block): Block {
-    let newBlock = {
-      ...block,
-      shapeBottomLeft: block.shapeBottomLeft ?? 'round',
-      shapeTopLeft: block.shapeTopLeft ?? 'round',
-      shapeTopRight: block.shapeTopRight ?? 'round',
-      shapeBottomRight: block.shapeBottomRight ?? 'round',
-      verticalAlign: block.verticalAlign ?? 'top',
-      horizontalAlign: block.horizontalAlign ?? 'left',
-      guid: block.guid || guid('xxxxxxxxxxxx'),
-      keepRatio: block.keepRatio ?? [
-        BlockType.Checkbox,
-        BlockType.RadioButton,
-        BlockType.Pdf,
-      ]
-        .indexOf(block.type) !== -1
-    };
-
-    let width: any = (this._config.width * .333).toFixed(2);
-    let height: any = width / 2;
-
-    if (newBlock.type === BlockType.Rectangle) {
-      newBlock = {
-        ...newBlock,
-        borderColor: newBlock.borderColor ?? '#cccccc',
-        borderWidth: newBlock.borderWidth ?? 1,
-      };
-    } else if (newBlock.type === BlockType.Checkbox || newBlock.type === BlockType.RadioButton) {
-      width = .25;
-      height = .25;
-    } else {
-      width = 2;
-      height = .5;
-    }
-
-    if (this.isReordableBlock(newBlock)) {
-      newBlock.tabIndex = this._lastTabIndex + 1;
-      this.updateTabIndex(newBlock.tabIndex);
-    }
-
-    return {
-      top: height,
-      left: width,
-      width,
-      height,
-      ...newBlock,
-    };
   }
 
   private _deduplicateIndexesFor(blocks: Block[]): void {

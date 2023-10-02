@@ -1,5 +1,5 @@
+import { FsBlockComponent } from '../components/block/block.component';
 import { BlockType } from '../enums';
-import { FsBlockComponent } from './../components/block/block.component';
 
 export interface Block {
   width?: number;
