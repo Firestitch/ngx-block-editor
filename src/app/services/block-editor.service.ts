@@ -210,19 +210,26 @@ export class BlockEditorService implements OnDestroy {
     return this.blocks.map((e) => e.guid).indexOf(block.guid);
   }
 
-  public selectedBlockComponentChangeProperty(value, name) {
+  public selectedBlockComponentChangeProperty(values: object) {
     this.selectedBlocks
       .forEach((block: Block) => {
-        block[name] = value;
+        Object.keys(values)
+          .forEach((name) => {
+            block[name] = values[name];
+          });
         this.blockChange(block);
       });
   }
 
-  public blockGroupChangeProperty(blockGroup, name, value) {
+  public blockGroupChangeProperty(blockGroup, values) {
     this.blocks
       .filter((block) => block.name === blockGroup.name)
       .forEach((block: Block) => {
-        block[name] = value;
+        Object.keys(values)
+          .forEach((name) => {
+            block[name] = values[name];
+          });
+
         this.blockChange(block);
       });
   }

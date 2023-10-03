@@ -108,7 +108,7 @@
     <ng-container *ngIf="block">
       <div class="sidebar-panel info-panel">
         <div class="sidebar-label">Info</div>
-        <div class="sidebar-row">
+        <div class="sidebar-row field-gap">
           <mat-form-field class="form-field-padless" floatLabel="never">
             <input
               matInput
@@ -141,7 +141,7 @@
           </mat-form-field>
         </div>
 
-        <div class="sidebar-row">
+        <div class="sidebar-row field-gap">
           <mat-form-field class="form-field-padless" floatLabel="never">
             <input
               matInput
@@ -180,37 +180,37 @@
           <div class="sidebar-row">
 
             <ng-container *ngIf="block.type === BlockType.RadioButton">
-              <mat-form-field class="full-width" class="full-width group-block">
-                <mat-label>Group</mat-label>
-                <mat-select
-                    [(ngModel)]="blockGroup"
-                    (ngModelChange)="blockGroupChange($event)"
-                    name="group">
-                  <ng-container *ngIf="blockGroups.length">
-                    <mat-option [value]="null">
-                      None
+              <div class="group-block">
+                <mat-form-field class="full-width" class="full-width">
+                  <mat-label>Group</mat-label>
+                  <mat-select
+                      [(ngModel)]="blockGroup"
+                      (ngModelChange)="blockGroupChange($event)"
+                      name="group">
+                    <ng-container *ngIf="blockGroups.length">
+                      <mat-option [value]="null">
+                        None
+                      </mat-option>
+                    </ng-container>
+                    <mat-option
+                        *ngFor="let item of blockGroups"
+                        [value]="item">
+                      {{ item.label }}
                     </mat-option>
-                  </ng-container>
-                  <mat-option
-                      *ngFor="let item of blockGroups"
-                      [value]="item">
-                    {{ item.label }}
-                  </mat-option>
-                  <mat-option 
-                      [value]="null"
-                      (click)="blockGroupCreate($event)">
-                    Create Group
-                  </mat-option>
-                </mat-select>
-                <div matSuffix>
-                  <ng-container *ngIf="blockGroup">
-                    <a 
-                        (click)="blockGroupEdit($event)">
-                      <mat-icon>edit</mat-icon>
-                    </a>
-                  </ng-container>
-                </div>
-              </mat-form-field>
+                    <mat-option 
+                        [value]="null"
+                        (click)="blockGroupCreate($event)">
+                      Create Group
+                    </mat-option>
+                  </mat-select>                
+                </mat-form-field>
+                <ng-container *ngIf="blockGroup">
+                  <a 
+                      (click)="blockGroupEdit($event)">
+                    <mat-icon>edit</mat-icon>
+                  </a>
+                </ng-container>
+              </div>
             </ng-container>
 
             <mat-form-field class="full-width">
@@ -219,7 +219,7 @@
                 [ngModel]="block.label"
                 name="label"
                 placeholder="Label"
-                (ngModelChange)="blockChangeProperty($event, 'label')">
+                (ngModelChange)="blockChangeProperty({ label: $event })">
             </mat-form-field>
 
             <ng-container *ngIf="block.type !== BlockType.RadioButton">
@@ -230,7 +230,7 @@
                   [ngModel]="block.description"
                   name="description"
                   placeholder="Description"
-                  (ngModelChange)="blockChangeProperty($event, 'description')">
+                  (ngModelChange)="blockChangeProperty({ description: $event })">
                 </textarea>
               </mat-form-field>
             </ng-container>
@@ -242,7 +242,7 @@
               <mat-select
                 [(ngModel)]="block.format"
                 name="format"
-                (ngModelChange)="blockChangeProperty($event, 'format')">
+                (ngModelChange)="blockChangeProperty({ format: $event })"> 
                 <mat-option [value]="null">
                   None
                 </mat-option>
@@ -264,7 +264,7 @@
                   name="default"
                   [validate]="validate"
                   placeholder="Default"
-                  (ngModelChange)="blockChangeProperty($event, 'default')">
+                  (ngModelChange)="blockChangeProperty({ default: $event })">
                 </textarea>
               </mat-form-field>
             </ng-container>
@@ -277,7 +277,7 @@
                   [ngModel]="block.formula"
                   name="formula"
                   placeholder="Formula"
-                  (ngModelChange)="blockChangeProperty($event, 'formula')">
+                  (ngModelChange)="blockChangeProperty({ formula: $event })">
                 </textarea>
               </mat-form-field>
             </ng-container>
@@ -293,7 +293,7 @@
                   [ngModel]="block.name"
                   name="name"
                   placeholder="Name"
-                  (ngModelChange)="blockChangeProperty($event, 'name')">
+                  (ngModelChange)="blockChangeProperty({ name: $event })">
               </mat-form-field>
             </ng-template>
 
@@ -318,7 +318,7 @@
       <ng-container *ngIf="block.type === BlockType.Rectangle || block.type === BlockType.Image || block.type === BlockType.Pdf">
         <div class="sidebar-panel typography-panel">
           <div class="sidebar-label">Typography</div>
-          <div class="sidebar-row">
+          <div class="sidebar-row field-gap">
             <fs-autocomplete
               [fetch]="fontFetch"
               [fetchOnFocus]="true"
@@ -392,7 +392,7 @@
             </button>
           </div>
 
-          <div class="sidebar-row align-row">
+          <div class="sidebar-row align-row field-gap">
             <button
               mat-icon-button
               class="toggle-button"
@@ -461,7 +461,7 @@
         <div class="sidebar-panel">
           <div class="sidebar-label">Border</div>
 
-          <div class="sidebar-row">
+          <div class="sidebar-row field-gap">
             <fs-color-picker-chip
               (changed)="borderColorChange($event)"
               [color]="block.borderColor">
@@ -483,7 +483,7 @@
         <div class="sidebar-panel">
           <div class="sidebar-label">Shape</div>
 
-          <div class="sidebar-row">
+          <div class="sidebar-row field-gap">
             <fs-color-picker-chip
               (changed)="backgroundColorChange($event)"
               [color]="block.backgroundColor">
@@ -524,7 +524,7 @@
         <div class="sidebar-panel shadow-panel">
           <div class="sidebar-label">Shadow</div>
 
-          <div class="sidebar-row">
+          <div class="sidebar-row field-gap">
             <fs-color-picker-chip
               (changed)="shadowColorChange($event)"
               [color]="block.shadowColor">
@@ -631,7 +631,7 @@
         </ng-container> 
         <div class="sidebar-panel">
           <div class="sidebar-label">Padding</div>
-          <div class="sidebar-row padding-row">
+          <div class="sidebar-row padding-row field-gap">
 
             <mat-form-field class="form-field-padless" floatLabel="never">
               <input

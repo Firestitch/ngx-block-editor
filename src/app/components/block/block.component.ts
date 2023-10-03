@@ -366,12 +366,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
     this._blockEditor.blockChange(this.block);
   }
 
-  // private _updateElementGuidelines() {
-  //   this.moveable.elementGuidelines = this._blockEditor.blockComponents
-  //     .map((blockComponent) => blockComponent.el)
-  //     .filter((el) => !el.isSameNode(this.el));
-  // }
-
   private _updateMoveable(): void {
     const value = !this.block.lock && this.selected;
     this.keepRatio = this.block.keepRatio;

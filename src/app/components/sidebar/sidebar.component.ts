@@ -127,18 +127,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public blockRequired(value): void {
+    const values = { required: value, readonly: false };
     if (this.blockGroup) {
-      this._blockEditor.blockGroupChangeProperty(this.blockGroup, 'required', value);
+      this._blockEditor.blockGroupChangeProperty(this.blockGroup, values);
     } else {
-      this.blockChangeProperty(value, 'required');
+      this.blockChangeProperty(values);
     }
   }
 
   public blockReadonly(value): void {
+    const values = { readonly: value, required: false };
     if (this.blockGroup) {
-      this._blockEditor.blockGroupChangeProperty(this.blockGroup, 'readonly', value);
+      this._blockEditor.blockGroupChangeProperty(this.blockGroup, values);
     } else {
-      this.blockChangeProperty(value, 'readonly');
+      this.blockChangeProperty(values);
     }
   }
 
@@ -195,39 +197,39 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public fontChanged(font) {
-    this._blockEditor.selectedBlockComponentChangeProperty(font?.family, 'fontFamily');
+    this._blockEditor.selectedBlockComponentChangeProperty({ fontFamily: font?.family });
   }
 
   public verticalAlignClick(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'verticalAlign');
+    this._blockEditor.selectedBlockComponentChangeProperty({ verticalAlign: value });
   }
 
   public boldClick(): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.bold, 'bold');
+    this._blockEditor.selectedBlockComponentChangeProperty({ bold: !this.block.bold });
   }
 
   public toggleLock(): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.lock, 'lock');
+    this._blockEditor.selectedBlockComponentChangeProperty({ lock: !this.block.lock });
   }
 
   public fontColorChange(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'fontColor');
+    this._blockEditor.selectedBlockComponentChangeProperty({ fontColor: value });
   }
 
   public italicClick(): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.italic, 'italic');
+    this._blockEditor.selectedBlockComponentChangeProperty({ italic: !this.block.italic });
   }
 
   public underlineClick(): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.underline, 'underline');
+    this._blockEditor.selectedBlockComponentChangeProperty({ underline: !this.block.underline });
   }
 
   public backgroundColorChange(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'backgroundColor');
+    this._blockEditor.selectedBlockComponentChangeProperty({ backgroundColor: value });
   }
 
   public shadowColorChange(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'shadowColor');
+    this._blockEditor.selectedBlockComponentChangeProperty({ shadowColor: value });
   }
 
   public paddingAllChange(value): void {
@@ -257,29 +259,29 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public borderColorChange(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'borderColor');
+    this._blockEditor.selectedBlockComponentChangeProperty({ borderColor: value });
   }
 
   public toggleKeepRatio(): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(!this.block.keepRatio, 'keepRatio');
+    this._blockEditor.selectedBlockComponentChangeProperty({ keepRatio: !this.block.keepRatio });
   }
 
   public horizontalAlignClick(value): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, 'horizontalAlign');
+    this._blockEditor.selectedBlockComponentChangeProperty({ horizontalAlign: value });
   }
 
   public shapeRound(name): void {
     const value = this.block[name] === 'round' ? 'square' : 'round';
-    this._blockEditor.selectedBlockComponentChangeProperty(value, name);
+    this._blockEditor.selectedBlockComponentChangeProperty({ [name]: value });
   }
 
   public numberChange(value, name): void {
     value = this.validNumeric(value) ? Number(value) : null;
-    this._blockEditor.selectedBlockComponentChangeProperty(value, name);
+    this._blockEditor.selectedBlockComponentChangeProperty({ [name]: value });
   }
 
   public imageRemove(): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(null, 'imageUrl');
+    this._blockEditor.selectedBlockComponentChangeProperty({ imageUrl: null });
   }
 
   public imageClip(): void {
@@ -287,8 +289,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this._blockEditor.blockClippable = true;
   }
 
-  public blockChangeProperty(value, name): void {
-    this._blockEditor.selectedBlockComponentChangeProperty(value, name);
+  public blockChangeProperty(values): void {
+    this._blockEditor.selectedBlockComponentChangeProperty(values);
   }
 
   public blockRemoveClick() {
@@ -392,7 +394,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
       this.block[name] = round(Number(this.block[name] || 0) + ((event.code === 'ArrowDown' ? -1 : 1) * unit), 3);
 
-      this._blockEditor.selectedBlockComponentChangeProperty(this.block[name], name);
+      this._blockEditor.selectedBlockComponentChangeProperty({ [name]: this.block[name] });
     }
   }
 
