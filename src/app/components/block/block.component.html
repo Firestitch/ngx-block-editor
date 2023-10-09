@@ -42,13 +42,10 @@
         'vertical-align-center': block.verticalAlign === 'center',
         'vertical-align-bottom': block.verticalAlign === 'bottom'
       }">
-    <ng-container [ngSwitch]="block.type">
-      <ng-container *ngIf="block.imageUrl && ((block.imageUrl | createImageUrl) | async) as src">
-        <img                
-          [style.opacity]="block.imageOpacity ? block.imageOpacity/100 : 1"
-          [src]="src">
-      </ng-container>
-
+    <ng-container *ngIf="block.imageUrl && ((block.imageUrl | createImageUrl) | async) as src">
+      <img                
+        [style.opacity]="block.imageOpacity ? block.imageOpacity/100 : 1"
+        [src]="src">
     </ng-container>
     <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.Date">
       {{block.label || block.name}}
