@@ -23,7 +23,7 @@ export class LayersReorderDialogComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    _dialogData: unknown,
+    private _dialogData: unknown,
     private _dialogRef: MatDialogRef<LayersReorderDialogComponent>,
   ) {
     this._init(_dialogData);

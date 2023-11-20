@@ -1,17 +1,21 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { BehaviorSubject, Observable, Subject, from, throwError } from 'rxjs';
-import { debounceTime, filter, groupBy, map, mapTo, mergeAll, switchMap, takeUntil, tap } from 'rxjs/operators';
 
+import { guid } from '@firestitch/common';
 import { FsDialog } from '@firestitch/dialog';
 import { FsFile } from '@firestitch/file';
 import { FsPrompt } from '@firestitch/prompt';
 
-import { guid } from '@firestitch/common';
+import { BehaviorSubject, Observable, Subject, from, throwError } from 'rxjs';
+import {
+  debounceTime, filter, groupBy, map, mapTo, mergeAll, switchMap, takeUntil, tap,
+} from 'rxjs/operators';
+
 import { FsBlockComponent } from '../components/block';
 import { LayersReorderDialogComponent } from '../components/layers-reorder-dialog';
 import { BlockType } from '../enums';
 import { BlockEditorConfig, BlockGroup } from '../interfaces';
+
 import { Block } from './../interfaces/block';
 import { BlocksStore } from './blocks-store.service';
 
@@ -106,55 +110,6 @@ export class BlockEditorService implements OnDestroy {
       );
   }
 
-  private _initBlock(block: Block): Block {
-    let newBlock = {
-      ...block,
-      shapeBottomLeft: block.shapeBottomLeft ?? 'round',
-      shapeTopLeft: block.shapeTopLeft ?? 'round',
-      shapeTopRight: block.shapeTopRight ?? 'round',
-      shapeBottomRight: block.shapeBottomRight ?? 'round',
-      verticalAlign: block.verticalAlign ?? 'top',
-      horizontalAlign: block.horizontalAlign ?? 'left',
-      index: block.guid ? block.index : this._store.blocks.length,
-      guid: block.guid || guid('xxxxxxxxxxxx'),
-      keepRatio: block.keepRatio ?? [
-        BlockType.Checkbox,
-        BlockType.RadioButton,
-        BlockType.Pdf,
-      ]
-        .indexOf(block.type) !== -1
-    };
-
-    let width: any = (this.config.width * .333).toFixed(2);
-    let height: any = width / 2;
-
-    if (newBlock.type === BlockType.Rectangle) {
-      newBlock = {
-        ...newBlock,
-        borderColor: newBlock.borderColor ?? '#cccccc',
-        borderWidth: newBlock.borderWidth ?? 1,
-      };
-    } else if (newBlock.type === BlockType.Checkbox || newBlock.type === BlockType.RadioButton) {
-      width = .25;
-      height = .25;
-    } else {
-      width = 2;
-      height = .5;
-    }
-
-    //get max tabindex
-    // newBlock.tabIndex = this._lastTabIndex + 1;
-    // this.updateTabIndex(newBlock.tabIndex);
-
-    return {
-      top: height,
-      left: width,
-      width,
-      height,
-      ...newBlock,
-    };
-  }
-
   public blockRemove(block: Block) {
     this._store.blockRemove(block);
   }
@@ -172,7 +127,7 @@ export class BlockEditorService implements OnDestroy {
   }
 
   public get blockClippable$() {
-    return this._blockClippable$;
+    return this._blockClippable$.asObservable();
   }
 
   public set blockClippable(value) {
@@ -210,7 +165,7 @@ export class BlockEditorService implements OnDestroy {
     return this.blocks.map((e) => e.guid).indexOf(block.guid);
   }
 
-  public selectedBlockComponentChangeProperty(values: object) {
+  public selectedBlockComponentChangeProperty(values: { [key: string]: any }) {
     this.selectedBlocks
       .forEach((block: Block) => {
         Object.keys(values)
@@ -307,21 +262,21 @@ export class BlockEditorService implements OnDestroy {
         {
           data: {
             blocks,
-          }
+          },
         },
       )
       .afterClosed()
       .pipe(
-        filter((blocks) => !!blocks),
-        switchMap((blocks) => this.config.blocksReorder(blocks)
+        filter((b) => !!b),
+        switchMap((b) => this.config.blocksReorder(b)
           .pipe(
             mapTo(blocks),
-          )
+          ),
         ),
         takeUntil(this._destroy$),
       )
-      .subscribe((blocks: Block[]) => {
-        blocks
+      .subscribe((b: Block[]) => {
+        b
           .forEach((block, index) => {
             block.index = index;
           });
@@ -343,11 +298,11 @@ export class BlockEditorService implements OnDestroy {
               label: block.label || existing.label,
               description: block.description || existing.description,
               name: block.name,
-            }
+            };
           }
 
           return accum;
-        }, {})
+        }, {}),
     );
   }
 
@@ -365,6 +320,55 @@ export class BlockEditorService implements OnDestroy {
           this.config.blockChange(block);
         });
     }
+  }
+
+  private _initBlock(block: Block): Block {
+    let newBlock = {
+      ...block,
+      shapeBottomLeft: block.shapeBottomLeft ?? 'round',
+      shapeTopLeft: block.shapeTopLeft ?? 'round',
+      shapeTopRight: block.shapeTopRight ?? 'round',
+      shapeBottomRight: block.shapeBottomRight ?? 'round',
+      verticalAlign: block.verticalAlign ?? 'top',
+      horizontalAlign: block.horizontalAlign ?? 'left',
+      index: block.guid ? block.index : this._store.blocks.length,
+      guid: block.guid || guid('xxxxxxxxxxxx'),
+      keepRatio: block.keepRatio ?? [
+        BlockType.Checkbox,
+        BlockType.RadioButton,
+        BlockType.Pdf,
+      ]
+        .indexOf(block.type) !== -1,
+    };
+
+    let width: any = (this.config.width * .333).toFixed(2);
+    let height: any = width / 2;
+
+    if (newBlock.type === BlockType.Rectangle) {
+      newBlock = {
+        ...newBlock,
+        borderColor: newBlock.borderColor ?? '#cccccc',
+        borderWidth: newBlock.borderWidth ?? 1,
+      };
+    } else if (newBlock.type === BlockType.Checkbox || newBlock.type === BlockType.RadioButton) {
+      width = .25;
+      height = .25;
+    } else {
+      width = 2;
+      height = .5;
+    }
+
+    //get max tabindex
+    // newBlock.tabIndex = this._lastTabIndex + 1;
+    // this.updateTabIndex(newBlock.tabIndex);
+
+    return {
+      top: height,
+      left: width,
+      width,
+      height,
+      ...newBlock,
+    };
   }
 
 }

@@ -2,7 +2,7 @@ import { Directive, Input, TemplateRef } from '@angular/core';
 
 
 @Directive({
-  selector: '[fsBlockEditorSidebarPanel]'
+  selector: '[fsBlockEditorSidebarPanel]',
 })
 export class FsBlockEditorSidebarPanelDirective {
 

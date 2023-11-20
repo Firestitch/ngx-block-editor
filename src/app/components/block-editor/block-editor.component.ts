@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component,
   ContentChildren, ElementRef,
   Input,
-  OnDestroy, OnInit, QueryList, ViewChild
+  OnDestroy, OnInit, QueryList, ViewChild,
 } from '@angular/core';
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
@@ -12,6 +12,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { BlocksStore } from '../../services/blocks-store.service';
 import { ArtboardComponent } from '../artboard/artboard.component';
+
 import { FsBlockEditorSidebarPanelDirective } from './../../directives/block-editor-sidebar-panel.directive';
 import { Block } from './../../interfaces/block';
 import { BlockEditorConfig } from './../../interfaces/block-editor-config';
@@ -21,13 +22,13 @@ import { SidebarComponent } from './../sidebar/sidebar.component';
 
 @Component({
   selector: 'fs-block-editor',
-  templateUrl: 'block-editor.component.html',
-  styleUrls: ['block-editor.component.scss'],
+  templateUrl: './block-editor.component.html',
+  styleUrls: ['./block-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     BlockEditorService,
     BlocksStore,
-  ]
+  ],
 })
 export class FsBlockEditorComponent implements OnInit, OnDestroy {
 

@@ -1,17 +1,20 @@
 import {
-  AfterContentInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
+  AfterViewInit, ChangeDetectionStrategy,
+  ChangeDetectorRef, Component, ElementRef,
   HostBinding,
   HostListener,
   Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
-import { filter, skip, takeUntil } from 'rxjs/operators';
-
-import { FsZoomPanComponent } from '@firestitch/zoom-pan';
-
-import Moveable, { OnClip, OnClipEnd } from 'moveable';
-import { Subject, fromEvent } from 'rxjs';
 
 import { round } from '@firestitch/common';
+import { FsZoomPanComponent } from '@firestitch/zoom-pan';
+
+import { Subject, fromEvent } from 'rxjs';
+import { filter, skip, takeUntil } from 'rxjs/operators';
+
+import Moveable, { OnClip, OnClipEnd } from 'moveable';
+
+
 import { BlockType } from '../../enums';
 import { Block } from '../../interfaces';
 import { BlockEditorService, GoogleFontService } from '../../services';
@@ -19,11 +22,11 @@ import { BlockEditorService, GoogleFontService } from '../../services';
 
 @Component({
   selector: 'fs-block',
-  templateUrl: 'block.component.html',
-  styleUrls: ['block.component.scss'],
+  templateUrl: './block.component.html',
+  styleUrls: ['./block.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, AfterViewInit {
+export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
 
   @ViewChild('element', { static: true })
   public element: ElementRef;
@@ -43,7 +46,11 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
     if (this.moveable) {
       this._updateMoveable();
     }
-  };
+  }
+
+  public get block(): Block {
+    return this._block;
+  }
 
   @Input() public html: string;
   @Input() public zoompan: FsZoomPanComponent;
@@ -51,18 +58,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
   @HostBinding('class.transforming')
   public transformating = false;
 
-  @HostListener('document:keydown', ['$event'])
-  public keydown(event: KeyboardEvent): void {
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(event.key) !== -1) {
-      this._move(event);
-    }
-
-    if (['Delete', 'Backspace'].indexOf(event.key) !== -1) {
-      this._delete(event);
-    }
-  }
-
-  public unit;
+  public unit: string;
   public content;
   public selected;
   public BlockType = BlockType;
@@ -80,8 +76,16 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
     private _googleFontService: GoogleFontService,
   ) { }
 
-  public get block(): Block {
-    return this._block;
+
+  @HostListener('document:keydown', ['$event'])
+  public keydown(event: KeyboardEvent): void {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(event.key) !== -1) {
+      this._move(event);
+    }
+
+    if (['Delete', 'Backspace'].indexOf(event.key) !== -1) {
+      this._delete(event);
+    }
   }
 
   public get el(): any {
@@ -100,20 +104,31 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
     return this._editable;
   }
 
+  public set editable(value) {
+    this._editable = value;
+
+    if (!value) {
+      this.deselectContent();
+    }
+  }
+
   public get styleTop(): string {
-    let top = this.block.top;
+    const top = this.block.top;
+
     return `${top}${this.unit}`;
   }
 
   public get styleLeft(): string {
-    let left = this.block.left;
+    const left = this.block.left;
+
     return `${left}${this.unit}`;
   }
 
   public get styleWidth(): string {
     let width = this.block.width;
     if (this.block.clipPath) {
-      width -= (this.block.width * this.block.clipPath.values[1] / 100) + (this.block.width * this.block.clipPath.values[3] / 100);
+      width -= (this.block.width * this.block.clipPath.values[1] / 100) +
+        (this.block.width * this.block.clipPath.values[3] / 100);
     }
 
     return `${width}${this.unit}`;
@@ -122,14 +137,15 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
   public get styleHeight(): string {
     let height = this.block.height;
     if (this.block.clipPath) {
-      height -= (this.block.height * this.block.clipPath.values[0] / 100) + (this.block.height * this.block.clipPath.values[2] / 100);
+      height -= (this.block.height * this.block.clipPath.values[0] / 100) +
+        (this.block.height * this.block.clipPath.values[2] / 100);
     }
 
     return `${height}${this.unit}`;
   }
 
   public get styleImageHeight(): string {
-    let height = this.block.height;
+    const height = this.block.height;
     if (this.block.clipPath) {
       const values = this.block.clipPath.values || {};
       //height += (values[0]/100 * height) + (values[2]/100 * height);
@@ -139,7 +155,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
   }
 
   public get styleImageWidth(): string {
-    let width = this.block.width;
+    const width = this.block.width;
     if (this.block.clipPath) {
       const values = this.block.clipPath.values || {};
       //width += (values[1]/100 * width) + (values[3]/100 * width);
@@ -190,19 +206,12 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
     }
 
     const shadow = `${this.block.shadowX}pt ${(this.block.shadowY || 0)}pt ${(this.block.shadowBlur || 0)}pt ${(this.block.shadowSpread || 0)}pt  ${this.block.shadowColor}`;
+
     return shadow;
   }
 
   public set elementGuidelines(value) {
     this.moveable.elementGuidelines = value;
-  }
-
-  public set editable(value) {
-    this._editable = value;
-
-    if (!value) {
-      this.deselectContent();
-    }
   }
 
   public get clippable(): boolean {
@@ -253,7 +262,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
     this._blockEditor.selectedBlocks$
       .pipe(
         skip(1),
-        takeUntil(this._destroy$)
+        takeUntil(this._destroy$),
       )
       .subscribe((blocks) => {
         this.selected = blocks.includes(this.block);
@@ -300,7 +309,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
       });
   }
 
-  ngAfterViewInit(): void {
+  public ngAfterViewInit(): void {
     setTimeout(() => {
       this._initEvents();
       this._initMoveable();
@@ -308,10 +317,6 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
       this._initElementGuidelines();
       this.rotate = this.block.rotate;
     });
-  }
-
-  public ngAfterContentInit(): void {
-
   }
 
   public pxToIn(px) {
@@ -422,8 +427,9 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
           type: 'inset',
           values: e.clipStyles
             .map((value) => {
-              const number = Number(value.replace('%', ''));
-              return number > 0 ? number : 0;
+              const n = Number(value.replace('%', ''));
+
+              return n > 0 ? n : 0;
             }),
         };
       })
@@ -443,8 +449,8 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
         this._cdRef.markForCheck();
       })
       .on('drag', ({ target, left, top }) => {
-        target!.style.left = this.pxToIn(left) + this.unit;
-        target!.style.top = this.pxToIn(top) + this.unit;
+        target.style.left = `${this.pxToIn(left)}${this.unit}`;
+        target.style.top = `${this.pxToIn(top)}${this.unit}`;
         this.block.top = this.pxToIn(top);
         this.block.left = this.pxToIn(left);
       })
@@ -465,12 +471,12 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
 
         if (delta[0]) {
           this.block.width = width;
-          target!.style.width = width + this.unit;
+          target.style.width = `${width}${this.unit}`;
         }
 
         if (delta[1]) {
           this.block.height = height;
-          target!.style.height = height + this.unit;
+          target.style.height = `${height}${this.unit}`;
         }
 
         const transform = [0, 0];
@@ -533,7 +539,7 @@ export class FsBlockComponent implements OnDestroy, AfterContentInit, OnInit, Af
       .subscribe((e: any) => {
         e.preventDefault();
         const clipboardData = e.clipboardData;
-        const text = clipboardData.getData('Text');;
+        const text = clipboardData.getData('Text');
         const range = document.getSelection().getRangeAt(0);
         range.deleteContents();
 

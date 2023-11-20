@@ -293,6 +293,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this._blockEditor.selectedBlockComponentChangeProperty(values);
   }
 
+  public blockDuplicateClick() {
+    const selectedBlock = this._blockEditor.selectedBlocks[0];
+    const block = {
+      ...selectedBlock,
+      guid: null,
+      top: selectedBlock.top + selectedBlock.height + .1,
+    };
+
+    this._blockEditor.blockAdd(block);
+  }
+
   public blockRemoveClick() {
     this._blockEditor.removeBlocks(this._blockEditor.selectedBlocks);
   }

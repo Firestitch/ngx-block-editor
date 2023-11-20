@@ -1,6 +1,7 @@
 <div class="sidebar">
   <form fsForm>
-    <div class="sidebar-panel">
+    <div class="sidebar-panel">      
+      <div class="sidebar-label">Elements</div>
       <div class="sidebar-row">
         <ng-container *ngFor="let blockType of BlockTypes">
           <ng-container *ngIf="blockType.type === 'draw'">
@@ -32,6 +33,7 @@
     </div>
 
     <div class="sidebar-panel">
+      <div class="sidebar-label">Form</div>
       <div class="sidebar-row">
         <ng-container *ngFor="let blockType of BlockTypes">
           <ng-container *ngIf="blockType.type === 'form'">
@@ -45,6 +47,7 @@
     </div>  
 
     <div class="sidebar-panel">
+      <div class="sidebar-label">Tools</div>
       <div class="sidebar-row">
         <ng-container *ngIf="block">
           <button
@@ -74,6 +77,14 @@
               (click)="toggleLock()"
               [matTooltip]="block.lock ? 'Unlock' : 'Lock'">
             <mat-icon>{{block.lock ? 'lock_outline' : 'lock_open'}}</mat-icon>
+          </button>
+          <button
+              mat-icon-button
+              color="basic"
+              type="button"
+              [matTooltip]="'Duplicate block'"
+              (click)="blockDuplicateClick()">
+            <mat-icon>content_copy</mat-icon>
           </button>
           <button
               mat-icon-button
@@ -179,7 +190,7 @@
           </div>
           <div class="sidebar-row">
 
-            <ng-container *ngIf="block.type === BlockType.RadioButton">
+            <ng-container *ngIf="block.type === BlockType.RadioButton; else notRadioButton">
               <div class="group-block">
                 <mat-form-field class="full-width" class="full-width">
                   <mat-label>Group</mat-label>
@@ -213,6 +224,17 @@
               </div>
             </ng-container>
 
+            <ng-template #notRadioButton>
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  [ngModel]="block.name"
+                  name="name"
+                  placeholder="Name"
+                  (ngModelChange)="blockChangeProperty({ name: $event })">
+              </mat-form-field>
+            </ng-template>
+            
             <mat-form-field class="full-width">
               <input
                 matInput
@@ -697,7 +719,7 @@
       </ng-container>       
     </ng-container>
     <div class="sidebar-panel">
-      <div class="sidebar-label">Tools</div>
+      <div class="sidebar-label">Utilities</div>
       <div class="sidebar-row padding-row">
         <button
             mat-icon-button
