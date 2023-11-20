@@ -6,21 +6,22 @@ import {
   Inject, Input,
   OnDestroy, OnInit,
   Output,
-  QueryList
+  QueryList,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
-import { Observable, Subject, of } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 
 import { FsClipboard } from '@firestitch/clipboard';
 import { guid, index, round } from '@firestitch/common';
 import { FsFile } from '@firestitch/file';
-
-import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FsMessage } from '@firestitch/message';
 import { FsPrompt } from '@firestitch/prompt';
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
+
+import { Observable, Subject, of } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+
 import { BlockFormats, BlockTypes } from '../../consts';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives';
 import { BlockType } from '../../enums';
@@ -118,7 +119,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       this.blocksReordered = () => {
         this._document.defaultView?.scrollTo(0, 0);
         this._blockEditor.openReorderDialog();
-      }
+      };
     }
   }
 
@@ -178,7 +179,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
           block: this.block,
           blockEditor: this._blockEditor,
           blockGroup,
-        }
+        },
       },
     )
       .afterClosed()
@@ -190,11 +191,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public fontFetch = (value): Observable<any> => {
     return this._googleFontService.getItems();
-  }
+  };
 
   public fontDisplayWith = (value): string => {
     return value?.family;
-  }
+  };
 
   public fontChanged(font) {
     this._blockEditor.selectedBlockComponentChangeProperty({ fontFamily: font?.family });
@@ -297,6 +298,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
     const selectedBlock = this._blockEditor.selectedBlocks[0];
     const block = {
       ...selectedBlock,
+      id: null,
+      data: null,
       guid: null,
       top: selectedBlock.top + selectedBlock.height + .1,
     };
@@ -351,10 +354,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
       return a.index > b.index ? 1 : -1;
     });
 
-    sorted.forEach((block, index) => {
-      block.index = index;
-      this._blockEditor.blockChange(block);
-    });
+    sorted
+      .forEach((block, index) => {
+        block.index = index;
+        this._blockEditor.blockChange(block);
+      });
 
     if (this.config.blocksLevelChanged) {
       this.config.blocksLevelChanged(sorted.map((block) => block));
