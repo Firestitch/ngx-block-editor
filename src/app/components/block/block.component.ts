@@ -564,11 +564,7 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
       .pipe(
         takeUntil(this._destroy$),
       ).subscribe((event: any) => {
-        if (this.typeForm) {
-          this.block.name = event.target.innerHTML;
-        } else {
-          this.block.content = event.target.innerHTML;
-        }
+        this.block.content = event.target.innerHTML;
 
         this._triggerChanged();
       });
