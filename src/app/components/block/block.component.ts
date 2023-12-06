@@ -14,7 +14,7 @@ import { filter, skip, takeUntil } from 'rxjs/operators';
 
 import Moveable, { OnClip, OnClipEnd } from 'moveable';
 
-
+import { BlockTypes } from '../../consts';
 import { BlockType } from '../../enums';
 import { Block } from '../../interfaces';
 import { BlockEditorService, GoogleFontService } from '../../services';
@@ -46,6 +46,11 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
     if (this.moveable) {
       this._updateMoveable();
     }
+
+    this.typeForm = BlockTypes
+      .some((blockType) => {
+        return blockType.type === 'form' && blockType.value === this.block.type;
+      });
   }
 
   public get block(): Block {
@@ -62,6 +67,7 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
   public content;
   public selected;
   public BlockType = BlockType;
+  public typeForm: boolean;
 
   private _moveable;
   private _block: Block;
@@ -148,7 +154,6 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
     const height = this.block.height;
     if (this.block.clipPath) {
       const values = this.block.clipPath.values || {};
-      //height += (values[0]/100 * height) + (values[2]/100 * height);
     }
 
     return `${height}${this.unit}`;
@@ -158,7 +163,6 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
     const width = this.block.width;
     if (this.block.clipPath) {
       const values = this.block.clipPath.values || {};
-      //width += (values[1]/100 * width) + (values[3]/100 * width);
     }
 
     return `${width}${this.unit}`;
@@ -560,7 +564,12 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
       .pipe(
         takeUntil(this._destroy$),
       ).subscribe((event: any) => {
-        this.block.content = event.target.innerHTML;
+        if (this.typeForm) {
+          this.block.name = event.target.innerHTML;
+        } else {
+          this.block.content = event.target.innerHTML;
+        }
+
         this._triggerChanged();
       });
 

@@ -52,7 +52,7 @@
     </ng-container>
     <div
       #contentEditable
-      [contentEditable]="editable"
+      [contentEditable]="editable && !typeForm"
       class="content-editable"
       [innerHTML]="content">
     </div>

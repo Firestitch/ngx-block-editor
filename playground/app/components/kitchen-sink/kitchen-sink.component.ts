@@ -1,7 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 
-import { FsExampleComponent } from '@firestitch/example';
-import { FsMessage } from '@firestitch/message';
 import { BlockType } from '@firestitch/package';
 
 import { Observable, of, throwError } from 'rxjs';
@@ -11,10 +9,12 @@ import { Block } from 'src/app/interfaces/block';
 import { FsBlockEditorComponent } from './../../../../src/app/components/block-editor/block-editor.component';
 import { BlockEditorConfig } from './../../../../src/app/interfaces/block-editor-config';
 
+
 @Component({
   selector: 'kitchen-sink',
-  templateUrl: 'kitchen-sink.component.html',
-  styleUrls: ['kitchen-sink.component.scss'],
+  templateUrl: './kitchen-sink.component.html',
+  styleUrls: ['./kitchen-sink.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KitchenSinkComponent implements OnInit {
 
@@ -24,15 +24,7 @@ export class KitchenSinkComponent implements OnInit {
   public config: BlockEditorConfig = {};
   public selectedBlocks: Block[] = [];
 
-  constructor(
-    private exampleComponent: FsExampleComponent,
-    private message: FsMessage,
-  ) {
-  }
-
   public ngOnInit(): void {
-    const blocks: Block[] = this.getBlocks();
-
     this.config = {
       unit: 'in',
       width: 8.5,
@@ -50,7 +42,7 @@ export class KitchenSinkComponent implements OnInit {
 
         return of(true);
       },
-      blocks,
+      blocks: this.getBlocks(),
       blockChange: (block) => {
         console.log('Block Changed', block);
       },
@@ -109,8 +101,4 @@ export class KitchenSinkComponent implements OnInit {
     ];
 
   }
-}
-
-interface CustomBlock {
-  mapping?: string;
 }

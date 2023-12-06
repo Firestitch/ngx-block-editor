@@ -33,8 +33,8 @@ import { GroupDialogComponent } from '../group';
 
 @Component({
   selector: 'sidebar',
-  templateUrl: 'sidebar.component.html',
-  styleUrls: ['sidebar.component.scss'],
+  templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent implements OnInit, OnDestroy {
@@ -350,13 +350,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       }
     });
 
-    const sorted = this._blockEditor.blocks.sort((a, b) => {
-      return a.index > b.index ? 1 : -1;
-    });
+    const sorted = this._blockEditor.blocks
+      .sort((a, b) => {
+        return a.index > b.index ? 1 : -1;
+      });
 
     sorted
-      .forEach((block, index) => {
-        block.index = index;
+      .forEach((block, idx) => {
+        block.index = idx;
         this._blockEditor.blockChange(block);
       });
 
@@ -389,7 +390,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
             this._blockEditor.blockAdd(block);
           });
 
-        this._message.success(`Imported ${blocks.length} ${blocks.length === 1 ? 'block' : 'blocks'}`);
+        this._message
+          .success(`Imported ${blocks.length} ${blocks.length === 1 ? 'block' : 'blocks'}`);
       });
   }
 
@@ -407,7 +409,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public numericInputKeypress(event: KeyboardEvent, name, unit = 1): void {
     if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
-      this.block[name] = round(Number(this.block[name] || 0) + ((event.code === 'ArrowDown' ? -1 : 1) * unit), 3);
+      this.block[name] = round(
+        Number(this.block[name] || 0) +
+        ((event.code === 'ArrowDown' ? -1 : 1) * unit),
+        3);
 
       this._blockEditor.selectedBlockComponentChangeProperty({ [name]: this.block[name] });
     }

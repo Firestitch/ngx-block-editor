@@ -190,7 +190,7 @@
           </div>
           <div class="sidebar-row">
 
-            <ng-container *ngIf="block.type === BlockType.RadioButton; else notRadioButton">
+            <ng-container *ngIf="block.type === BlockType.RadioButton; else nameField">
               <div class="group-block">
                 <mat-form-field class="full-width" class="full-width">
                   <mat-label>Group</mat-label>
@@ -223,17 +223,6 @@
                 </ng-container>
               </div>
             </ng-container>
-
-            <ng-template #notRadioButton>
-              <mat-form-field class="full-width">
-                <input
-                  matInput
-                  [ngModel]="block.name"
-                  name="name"
-                  placeholder="Name"
-                  (ngModelChange)="blockChangeProperty({ name: $event })">
-              </mat-form-field>
-            </ng-template>
             
             <mat-form-field class="full-width">
               <input
@@ -304,11 +293,7 @@
               </mat-form-field>
             </ng-container>
 
-            <ng-container *ngIf="!blockGroup">
-              <ng-container [ngTemplateOutlet]="name"></ng-container>
-            </ng-container>
-
-            <ng-template #name>
+            <ng-template #nameField>
               <mat-form-field class="full-width">
                 <input
                   matInput
