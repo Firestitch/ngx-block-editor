@@ -1,20 +1,23 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
-import { FsFileModule } from '@firestitch/file';
 
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+
+import { FsApiModule } from '@firestitch/api';
 import { FsExampleModule } from '@firestitch/example';
+import { FsFileModule } from '@firestitch/file';
 import { FsLabelModule } from '@firestitch/label';
 import { FsMessageModule } from '@firestitch/message';
 import { FsBlockEditorModule } from '@firestitch/package';
 
-import { FsApiModule } from '@firestitch/api';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { AppComponent } from './app.component';
 import {
   ExamplesComponent,
-  KitchenSinkComponent
+  KitchenSinkComponent,
 } from './components';
 import { KitchenSinkConfigureComponent } from './components/kitchen-sink-configure';
 import { AppMaterialModule } from './material.module';
@@ -42,7 +45,13 @@ const routes: Routes = [
     AppComponent,
     ExamplesComponent,
     KitchenSinkComponent,
-    KitchenSinkConfigureComponent
+    KitchenSinkConfigureComponent,
+  ],
+  providers: [
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: { appearance: 'outline' },
+    },
   ],
 })
 export class PlaygroundModule {

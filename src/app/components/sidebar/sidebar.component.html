@@ -367,10 +367,8 @@
                 placeholder="Line">
               <span matPrefix *ngIf="block.lineHeight">L</span>
             </mat-form-field>
-          </div>
 
-          <div class="sidebar-row style-row">
-            <button
+              <button
               mat-icon-button
               class="toggle-button"
               color="basic"
@@ -568,7 +566,7 @@
                 (ngModelChange)="numberChange($event, 'shadowBlur')">
               <span matPrefix *ngIf="block.shadowBlur">B</span>
             </mat-form-field>
-            <mat-form-field class="form-field-padless" floatLabel="never">
+            <mat-form-field class="form-field-padless shadow-spread" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.shadowSpread"

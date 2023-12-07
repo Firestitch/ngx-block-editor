@@ -1,5 +1,5 @@
 .sidebar {
-  width: 285px;
+  width: 320px;
   font-size: 14px;
   height: 100%;
   overflow: auto;
@@ -108,6 +108,8 @@
       cursor: pointer;
 
       &.round {
+        background-color: #212121;
+
         &.shape-corner-top-right {
           border-top-right-radius: 50%;
         }
@@ -182,7 +184,7 @@
         width: 60px;
 
         &.rotate {
-          width: 40px;
+          width: 50px;
         }
       }
     }
@@ -192,9 +194,16 @@
         width: 41px;
 
         &.shadow-x,
-        &.shadow-y,
+        &.shadow-y {
+          width: 40px;
+        }
+
         &.shadow-blur {
-          width: 26px;
+          width: 50px;
+        }
+
+        &.shadow-spread {
+          width: 60px;
         }
       }
     }
@@ -238,6 +247,12 @@
 
 :host {
   ::ng-deep {
+    .mat-form-field-appearance-outline {
+      .mat-form-field-suffix, .mat-form-field-prefix{ 
+        top: 0;
+      }
+    }
+
     .mat-form-field-prefix {
       color: #9e9e9e;
       margin-right: 3px;
