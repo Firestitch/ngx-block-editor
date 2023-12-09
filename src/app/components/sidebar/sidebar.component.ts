@@ -198,7 +198,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public fontChanged(font) {
-    this._blockEditor.selectedBlockComponentChangeProperty({ fontFamily: font?.family });
+    this._blockEditor.selectedBlockComponentChangeProperty({ fontFamily: font });
   }
 
   public verticalAlignClick(value): void {

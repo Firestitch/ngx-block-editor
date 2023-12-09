@@ -2,7 +2,7 @@
   "name": "@firestitch/block-editor",
   "title": "Block Editor",
   "description": "@firestitch/block-editor",
-  "version": "12.4.3",
+  "version": "12.4.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/ngx-block-editor"
@@ -55,7 +55,7 @@
     "@firestitch/example": "^12.1.1",
     "@firestitch/exif-js": "^2.3.0",
     "@firestitch/file": "^12.9.6",
-    "@firestitch/font-picker": "^12.0.4",
+    "@firestitch/font-picker": "^12.0.5",
     "@firestitch/form": "^12.4.15",
     "@firestitch/iframe": "^12.0.7",
     "@firestitch/label": "^12.0.0",

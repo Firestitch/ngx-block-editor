@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 
 import { round } from '@firestitch/common';
+import { FsFontPickerService } from '@firestitch/font-picker';
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 
 import { Subject, fromEvent } from 'rxjs';
@@ -79,6 +80,7 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
     private _blockEditor: BlockEditorService,
     private _elementRef: ElementRef,
     private _cdRef: ChangeDetectorRef,
+    private _fontPickerService: FsFontPickerService,
   ) { }
 
 
@@ -316,6 +318,7 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
   public ngAfterViewInit(): void {
     setTimeout(() => {
       this._initEvents();
+      this._initFont();
       this._initMoveable();
       this._setTransform();
       this._initElementGuidelines();
@@ -533,6 +536,12 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
           this._triggerChanged();
         }
       });
+  }
+
+  private _initFont(): void {
+    if (this.block.fontFamily) {
+      this._fontPickerService.importFont(this.block.fontFamily);
+    }
   }
 
   private _initEvents(): void {
