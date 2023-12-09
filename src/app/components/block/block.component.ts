@@ -17,7 +17,7 @@ import Moveable, { OnClip, OnClipEnd } from 'moveable';
 import { BlockTypes } from '../../consts';
 import { BlockType } from '../../enums';
 import { Block } from '../../interfaces';
-import { BlockEditorService, GoogleFontService } from '../../services';
+import { BlockEditorService } from '../../services';
 
 
 @Component({
@@ -79,18 +79,19 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
     private _blockEditor: BlockEditorService,
     private _elementRef: ElementRef,
     private _cdRef: ChangeDetectorRef,
-    private _googleFontService: GoogleFontService,
   ) { }
 
 
   @HostListener('document:keydown', ['$event'])
   public keydown(event: KeyboardEvent): void {
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(event.key) !== -1) {
-      this._move(event);
-    }
+    if (event.target === document.body && this.selected) {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(event.key) !== -1) {
+        this._move(event);
+      }
 
-    if (['Delete', 'Backspace'].indexOf(event.key) !== -1) {
-      this._delete(event);
+      if (['Delete', 'Backspace'].indexOf(event.key) !== -1) {
+        this._delete(event);
+      }
     }
   }
 
@@ -261,7 +262,6 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
     this.unit = this._blockEditor.config.unit;
     this.content = this.block.content;
     this.block.shadowOpacity = this.block.shadowOpacity || 100;
-    this._initFonts();
 
     this._blockEditor.selectedBlocks$
       .pipe(
@@ -619,12 +619,6 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
           });
         }
       });
-  }
-
-  private _initFonts(): void {
-    if (this.block.fontFamily) {
-      this._googleFontService.loadFont({ family: this.block.fontFamily });
-    }
   }
 
   private _move(event): void {

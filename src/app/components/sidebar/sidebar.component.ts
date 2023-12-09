@@ -27,7 +27,7 @@ import { FsBlockEditorSidebarPanelDirective } from '../../directives';
 import { BlockType } from '../../enums';
 import { Block, BlockGroup } from '../../interfaces';
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
-import { BlockEditorService, GoogleFontService } from '../../services';
+import { BlockEditorService } from '../../services';
 import { GroupDialogComponent } from '../group';
 
 
@@ -64,7 +64,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     private _el: ElementRef,
     private _blockEditor: BlockEditorService,
     private _cdRef: ChangeDetectorRef,
-    private _googleFontService: GoogleFontService,
     private _clipboard: FsClipboard,
     private _message: FsMessage,
     private _prompt: FsPrompt,
@@ -79,6 +78,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public get blockGroups(): BlockGroup[] {
     return this._blockEditor.blockGroups;
+  }
+
+  public get blockTypeForm(): boolean {
+    return this.block.type === BlockType.LongText ||
+      this.block.type === BlockType.ShortText ||
+      this.block.type === BlockType.RadioButton ||
+      this.block.type === BlockType.Checkbox ||
+      this.block.type === BlockType.Date ||
+      this.block.type === BlockType.Signature;
   }
 
   public ngOnInit(): void {
@@ -189,14 +197,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
       );
   }
 
-  public fontFetch = (value): Observable<any> => {
-    return this._googleFontService.getItems();
-  };
-
-  public fontDisplayWith = (value): string => {
-    return value?.family;
-  };
-
   public fontChanged(font) {
     this._blockEditor.selectedBlockComponentChangeProperty({ fontFamily: font?.family });
   }
@@ -248,12 +248,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   public paddingKeypress(event: KeyboardEvent, name): void {
     this.block.padding = null;
-    this.numericInputKeypress(event, name, 1);
+    this.numericInputKeypress(event, name);
   }
 
-  public paddingAllKeypress(event: KeyboardEvent, unit = 1): void {
+  public paddingAllKeypress(event: KeyboardEvent, unit = .1): void {
     if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
-      this.block.padding = round(Number(this.block.padding || 0) + ((event.code === 'ArrowDown' ? -1 : 1) * unit), 3);
+      this.block.padding = (this.block.padding) + ((event.code === 'ArrowDown' ? -1 : 1) * unit);
 
       this.paddingAllChange(this.block.padding);
     }
@@ -277,7 +277,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public numberChange(value, name): void {
-    value = this.validNumeric(value) ? Number(value) : null;
+    value = this.validNumeric(value) ? value : null;
     this._blockEditor.selectedBlockComponentChangeProperty({ [name]: value });
   }
 
@@ -407,7 +407,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     event.target.select();
   }
 
-  public numericInputKeypress(event: KeyboardEvent, name, unit = 1): void {
+  public numericInputKeypress(event: KeyboardEvent, name, unit = .1): void {
     if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
       this.block[name] = round(
         Number(this.block[name] || 0) +

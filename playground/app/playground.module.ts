@@ -8,6 +8,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { FsApiModule } from '@firestitch/api';
 import { FsExampleModule } from '@firestitch/example';
 import { FsFileModule } from '@firestitch/file';
+import { FsFontPickerModule } from '@firestitch/font-picker';
 import { FsLabelModule } from '@firestitch/label';
 import { FsMessageModule } from '@firestitch/message';
 import { FsBlockEditorModule } from '@firestitch/package';
@@ -39,6 +40,9 @@ const routes: Routes = [
     FsFileModule.forRoot(),
     FsExampleModule.forRoot(),
     FsMessageModule.forRoot(),
+    FsFontPickerModule.forRoot({
+      googleApiKey: 'AIzaSyDMnGc3CbikvvHkTYBw0QKtWRaQNwK1reE',
+    }),
     RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
   ],
   declarations: [

@@ -120,44 +120,52 @@
       <div class="sidebar-panel info-panel">
         <div class="sidebar-label">Info</div>
         <div class="sidebar-row field-gap">
-          <mat-form-field class="form-field-padless" floatLabel="never">
+          <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
             <input
               matInput
               [ngModel]="block.left"
               name="left"
+              fsMaskNumber
+              scale="5"
               (focus)="inputFocus($event)"
               (keydown)="numericInputKeypress($event, 'left', .01)"
               (ngModelChange)="numberChange($event, 'left')">
             <span matPrefix>X</span>
           </mat-form-field>
-          <mat-form-field class="form-field-padless" floatLabel="never">
+          <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
             <input
               matInput
               [ngModel]="block.top"
               name="top"
+              fsMaskNumber
+              scale="5"
               (focus)="inputFocus($event)"
               (keydown)="numericInputKeypress($event, 'top', .01)"
               (ngModelChange)="numberChange($event, 'top')">
             <span matPrefix>Y</span>
           </mat-form-field>
-          <mat-form-field class="form-field-padless rotate" floatLabel="never">
+          <mat-form-field class="form-field-padless form-field-prefix rotate" floatLabel="never">
             <input
               matInput
               [ngModel]="block.rotate"
               name="rotate"
+              fsMaskNumber
+              scale="5"
               (focus)="inputFocus($event)"
-              (keydown)="numericInputKeypress($event, 'rotate')"
+              (keydown)="numericInputKeypress($event, 'rotate', 1)"
               (ngModelChange)="numberChange($event, 'rotate')">
             <span matPrefix>R</span>
           </mat-form-field>
         </div>
 
         <div class="sidebar-row field-gap">
-          <mat-form-field class="form-field-padless" floatLabel="never">
+          <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
             <input
               matInput
               [ngModel]="block.width"
               name="width"
+              fsMaskNumber
+              scale="5"
               (focus)="inputFocus($event)"
               (keydown)="numericInputKeypress($event, 'width', .01)"
               (ngModelChange)="numberChange($event, 'width')">
@@ -169,11 +177,13 @@
               <mat-icon>{{block.keepRatio ? 'lock_outline' : 'lock_open'}}</mat-icon>
             </a>
           </div>
-          <mat-form-field class="form-field-padless" floatLabel="never">
+          <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
             <input
               matInput
               [ngModel]="block.height"
               name="height"
+              fsMaskNumber
+              scale="5"
               (focus)="inputFocus($event)"
               (keydown)="numericInputKeypress($event, 'height', .01)"
               (ngModelChange)="numberChange($event, 'height')">
@@ -182,7 +192,7 @@
         </div>
       </div>
       <ng-container
-        *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.RadioButton || block.type === BlockType.Checkbox || block.type === BlockType.Date || block.type === BlockType.Signature">
+        *ngIf="blockTypeForm">
         <div class="sidebar-panel block-form-panel">
           <div class="sidebar-label">
             <mat-icon>{{blockTypeIcons[block.type]}}</mat-icon>
@@ -326,43 +336,39 @@
         <div class="sidebar-panel typography-panel">
           <div class="sidebar-label">Typography</div>
           <div class="sidebar-row field-gap">
-            <fs-autocomplete
-              [fetch]="fontFetch"
-              [fetchOnFocus]="true"
-              [displayWith]="fontDisplayWith"
-              [ngModel]="block.fontFamily ? { family: block.fontFamily } : null"
-              placeholder="Font"
-              [panelClass]="'font-autocomplete-panel'"
+            <fs-font-picker        
+              [(ngModel)]="block.fontFamily"       
               (ngModelChange)="fontChanged($event)"
               name="fontfamily">
-              <ng-template fsAutocompleteTemplate let-data="data">
-                <app-font [font]="data"></app-font>
-              </ng-template>
-            </fs-autocomplete>
+            </fs-font-picker>
             <fs-color-picker-chip
               (changed)="fontColorChange($event)"
               [color]="block.fontColor">
             </fs-color-picker-chip>
 
-            <mat-form-field class="form-field-padless font-size" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix font-size" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.fontSize"
                 name="fontSize"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
-                (keydown)="numericInputKeypress($event, 'fontSize')"
+                (keydown)="numericInputKeypress($event, 'fontSize', 1)"
                 (ngModelChange)="numberChange($event, 'fontSize')"
                 placeholder="Size">
               <span matPrefix *ngIf="block.fontSize">S</span>
             </mat-form-field>
 
-            <mat-form-field class="form-field-padless line-height" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix line-height" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.lineHeight"
                 name="lineHeight"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
-                (keydown)="numericInputKeypress($event, 'lineHeight')"
+                (keydown)="numericInputKeypress($event, 'lineHeight', 1)"
                 (ngModelChange)="numberChange($event, 'lineHeight')"
                 placeholder="Line">
               <span matPrefix *ngIf="block.lineHeight">L</span>
@@ -472,13 +478,15 @@
               [color]="block.borderColor">
             </fs-color-picker-chip>
 
-            <mat-form-field class="form-field-padless border-width" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix border-width" floatLabel="never">
               <input
                 matInput
                 [(ngModel)]="block.borderWidth"
                 name="borderWidth"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
-                (keydown)="numericInputKeypress($event, 'borderWidth')"
+                (keydown)="numericInputKeypress($event, 'borderWidth', 1)"
                 (ngModelChange)="numberChange($event, 'borderWidth')"
                 placeholder="Width">
               <span matPrefix *ngIf="block.borderWidth">W</span>
@@ -494,11 +502,13 @@
               [color]="block.backgroundColor">
             </fs-color-picker-chip>
 
-            <mat-form-field class="form-field-padless shape-radius" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix shape-radius" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.shapeRadius"
                 name="shapeRadius"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'shapeRadius', 1)"
                 (ngModelChange)="numberChange($event, 'shapeRadius')"
@@ -535,17 +545,19 @@
               [color]="block.shadowColor">
             </fs-color-picker-chip>
 
-            <mat-form-field class="form-field-padless shadow-x" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix shadow-x" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.shadowX"
                 name="shadowX"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'shadowX')"
                 (ngModelChange)="numberChange($event, 'shadowX')">
               <span matPrefix>X</span>
             </mat-form-field>
-            <mat-form-field class="form-field-padless shadow-y" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix shadow-y" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.shadowY"
@@ -555,23 +567,27 @@
                 (ngModelChange)="numberChange($event, 'shadowY')">
               <span matPrefix>Y</span>
             </mat-form-field>
-            <mat-form-field class="form-field-padless shadow-blur" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix shadow-blur" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.shadowBlur"
                 name="shadowBlur"
                 placeholder="Blur"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'shadowBlur')"
                 (ngModelChange)="numberChange($event, 'shadowBlur')">
               <span matPrefix *ngIf="block.shadowBlur">B</span>
             </mat-form-field>
-            <mat-form-field class="form-field-padless shadow-spread" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix shadow-spread" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.shadowSpread"
                 name="shadowSpread"
                 placeholder="Spread"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'shadowSpread')"
                 (ngModelChange)="numberChange($event, 'shadowSpread')">
@@ -623,10 +639,12 @@
                   <input
                     matInput
                     [ngModel]="block.imageOpacity"
+                    fsMaskNumber
+                    scale="5"
                     name="imageOpacity"
                     placeholder="Opacity"
                     (focus)="inputFocus($event)"
-                    (keydown)="numericInputKeypress($event, 'imageOpacity')"
+                    (keydown)="numericInputKeypress($event, 'imageOpacity', 1)"
                     (ngModelChange)="numberChange($event, 'imageOpacity')">
                   <span matPrefix *ngIf="block.imageOpacity">O</span>
                 </mat-form-field>
@@ -638,11 +656,13 @@
           <div class="sidebar-label">Padding</div>
           <div class="sidebar-row padding-row field-gap">
 
-            <mat-form-field class="form-field-padless" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
               <input
                 matInput
                 [(ngModel)]="block.padding"
                 name="padding"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
                 (ngModelChange)="paddingAllChange($event)"
                 (keydown)="paddingAllKeypress($event, 1)"
@@ -650,11 +670,13 @@
               <span matPrefix *ngIf="block.padding">A</span>
             </mat-form-field>
 
-            <mat-form-field class="form-field-padless" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.paddingTop"
                 name="paddingTop"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
                 (keydown)="paddingKeypress($event, 'paddingTop')"
                 (ngModelChange)="numberChange($event, 'paddingTop')"
@@ -662,11 +684,13 @@
               <span matPrefix *ngIf="block.paddingTop">T</span>
             </mat-form-field>
 
-            <mat-form-field class="form-field-padless" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.paddingBottom"
                 name="paddingBottom"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
                 (keydown)="paddingKeypress($event, 'paddingBottom')"
                 (ngModelChange)="numberChange($event, 'paddingBottom')"
@@ -674,11 +698,13 @@
               <span matPrefix *ngIf="block.paddingBottom">B</span>
             </mat-form-field>
 
-            <mat-form-field class="form-field-padless" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.paddingLeft"
                 name="paddingLeft"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
                 (keydown)="paddingKeypress($event, 'paddingLeft')"
                 (ngModelChange)="numberChange($event, 'paddingLeft')"
@@ -686,11 +712,13 @@
               <span matPrefix *ngIf="block.paddingLeft">L</span>
             </mat-form-field>
 
-            <mat-form-field class="form-field-padless" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
               <input
                 matInput
                 [ngModel]="block.paddingRight"
                 name="paddingRight"
+                fsMaskNumber
+                scale="5"
                 (focus)="inputFocus($event)"
                 (keydown)="paddingKeypress($event, 'paddingRight')"
                 (ngModelChange)="numberChange($event, 'paddingRight')"

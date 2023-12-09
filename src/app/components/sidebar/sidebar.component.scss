@@ -86,13 +86,16 @@
   }
 
   .line-height,
-  .font-size,
-  .border-width {
+  .font-size {
     width: 45px;
   }
 
-  .shape-radius {
+  .border-width {
     width: 50px;
+  }
+
+  .shape-radius {
+    width: 60px;
   }
 
   .shape-corners {
@@ -209,7 +212,7 @@
     }
 
     &.typography-panel {
-      fs-autocomplete {
+      fs-font-picker {
         width: 100%;
       }
       
@@ -247,7 +250,7 @@
 
 :host {
   ::ng-deep {
-    .mat-form-field-appearance-outline {
+    .mat-form-field-appearance-outline.form-field-prefix     {
       .mat-form-field-suffix, .mat-form-field-prefix{ 
         top: 0;
       }
