@@ -86,7 +86,7 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
 
   @HostListener('document:keydown', ['$event'])
   public keydown(event: KeyboardEvent): void {
-    if (event.target === document.body && this.selected) {
+    if (this.selected) {
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(event.key) !== -1) {
         this._move(event);
       }
@@ -271,7 +271,12 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
         takeUntil(this._destroy$),
       )
       .subscribe((blocks) => {
-        this.selected = blocks.includes(this.block);
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+
+        this.selected = blocks
+          .some((block) => block.guid === this.block.guid);
         this.transformable = true;
         this._cdRef.markForCheck();
       });
