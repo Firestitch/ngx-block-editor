@@ -83,7 +83,7 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
   }
 
   public zoomCenter(): void {
-    this.zoompan.center(this.artboard.nativeElement, { vertical: false });
+   
   }
 
   public editorContainerClick(event): void {

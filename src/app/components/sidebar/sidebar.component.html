@@ -126,7 +126,7 @@
               [ngModel]="block.left"
               name="left"
               fsMaskNumber
-              scale="5"
+              [scale]="5"
               (focus)="inputFocus($event)"
               (keydown)="numericInputKeypress($event, 'left', .01)"
               (ngModelChange)="numberChange($event, 'left')">
@@ -138,7 +138,7 @@
               [ngModel]="block.top"
               name="top"
               fsMaskNumber
-              scale="5"
+              [scale]="5"
               (focus)="inputFocus($event)"
               (keydown)="numericInputKeypress($event, 'top', .01)"
               (ngModelChange)="numberChange($event, 'top')">
@@ -150,7 +150,7 @@
               [ngModel]="block.rotate"
               name="rotate"
               fsMaskNumber
-              scale="5"
+              [scale]="5"
               (focus)="inputFocus($event)"
               (keydown)="numericInputKeypress($event, 'rotate', 1)"
               (ngModelChange)="numberChange($event, 'rotate')">
@@ -165,7 +165,7 @@
               [ngModel]="block.width"
               name="width"
               fsMaskNumber
-              scale="5"
+              [scale]="5"
               (focus)="inputFocus($event)"
               (keydown)="numericInputKeypress($event, 'width', .01)"
               (ngModelChange)="numberChange($event, 'width')">
@@ -183,7 +183,7 @@
               [ngModel]="block.height"
               name="height"
               fsMaskNumber
-              scale="5"
+              [scale]="5"
               (focus)="inputFocus($event)"
               (keydown)="numericInputKeypress($event, 'height', .01)"
               (ngModelChange)="numberChange($event, 'height')">
@@ -352,7 +352,7 @@
                 [ngModel]="block.fontSize"
                 name="fontSize"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'fontSize', 1)"
                 (ngModelChange)="numberChange($event, 'fontSize')"
@@ -366,7 +366,7 @@
                 [ngModel]="block.lineHeight"
                 name="lineHeight"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'lineHeight', 1)"
                 (ngModelChange)="numberChange($event, 'lineHeight')"
@@ -484,7 +484,7 @@
                 [(ngModel)]="block.borderWidth"
                 name="borderWidth"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'borderWidth', 1)"
                 (ngModelChange)="numberChange($event, 'borderWidth')"
@@ -508,7 +508,7 @@
                 [ngModel]="block.shapeRadius"
                 name="shapeRadius"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'shapeRadius', 1)"
                 (ngModelChange)="numberChange($event, 'shapeRadius')"
@@ -551,7 +551,7 @@
                 [ngModel]="block.shadowX"
                 name="shadowX"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'shadowX')"
                 (ngModelChange)="numberChange($event, 'shadowX')">
@@ -574,7 +574,7 @@
                 name="shadowBlur"
                 placeholder="Blur"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'shadowBlur')"
                 (ngModelChange)="numberChange($event, 'shadowBlur')">
@@ -587,7 +587,7 @@
                 name="shadowSpread"
                 placeholder="Spread"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="numericInputKeypress($event, 'shadowSpread')"
                 (ngModelChange)="numberChange($event, 'shadowSpread')">
@@ -640,7 +640,7 @@
                     matInput
                     [ngModel]="block.imageOpacity"
                     fsMaskNumber
-                    scale="5"
+                    [scale]="5"
                     name="imageOpacity"
                     placeholder="Opacity"
                     (focus)="inputFocus($event)"
@@ -662,7 +662,7 @@
                 [(ngModel)]="block.padding"
                 name="padding"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (ngModelChange)="paddingAllChange($event)"
                 (keydown)="paddingAllKeypress($event, 1)"
@@ -676,7 +676,7 @@
                 [ngModel]="block.paddingTop"
                 name="paddingTop"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="paddingKeypress($event, 'paddingTop')"
                 (ngModelChange)="numberChange($event, 'paddingTop')"
@@ -690,7 +690,7 @@
                 [ngModel]="block.paddingBottom"
                 name="paddingBottom"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="paddingKeypress($event, 'paddingBottom')"
                 (ngModelChange)="numberChange($event, 'paddingBottom')"
@@ -704,7 +704,7 @@
                 [ngModel]="block.paddingLeft"
                 name="paddingLeft"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="paddingKeypress($event, 'paddingLeft')"
                 (ngModelChange)="numberChange($event, 'paddingLeft')"
@@ -718,7 +718,7 @@
                 [ngModel]="block.paddingRight"
                 name="paddingRight"
                 fsMaskNumber
-                scale="5"
+                [scale]="5"
                 (focus)="inputFocus($event)"
                 (keydown)="paddingKeypress($event, 'paddingRight')"
                 (ngModelChange)="numberChange($event, 'paddingRight')"
