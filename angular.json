@@ -31,7 +31,12 @@
               "highlight.js",
               "color",
               "date-fns-tz"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules/"
+              ]
+            }
           },
           "configurations": {
             "production": {
@@ -50,7 +55,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-                            "namedChunks": false,
+              "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -153,6 +158,5 @@
         }
       }
     }
-  },
-  "defaultProject": "fs-package-app"
+  }
 }

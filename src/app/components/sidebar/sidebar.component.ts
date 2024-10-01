@@ -8,7 +8,7 @@ import {
   Output,
   QueryList,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 import { MatDialog } from '@angular/material/dialog';
 
@@ -311,7 +311,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this._blockEditor.removeBlocks(this._blockEditor.selectedBlocks);
   }
 
-  public validate = (formControl: FormControl) => {
+  public validate = (formControl: UntypedFormControl) => {
     if (this._blockEditor.config.defaultValidation) {
       return this._blockEditor.config.defaultValidation(this.block, formControl.value);
     }
