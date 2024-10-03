@@ -43,7 +43,7 @@ const routes: Routes = [
     FsFontPickerModule.forRoot({
       googleApiKey: 'AIzaSyDMnGc3CbikvvHkTYBw0QKtWRaQNwK1reE',
     }),
-    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
+    RouterModule.forRoot(routes, {}),
   ],
   declarations: [
     AppComponent,
