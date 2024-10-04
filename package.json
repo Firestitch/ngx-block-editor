@@ -43,6 +43,7 @@
     "@firestitch/api": "^14.0.0",
     "@firestitch/autocomplete": "^14.0.0",
     "@firestitch/autocomplete-chips": "^15.0.1",
+    "@firestitch/chip": "^14.0.0",
     "@firestitch/clear": "^14.0.0",
     "@firestitch/clipboard": "^14.0.0",
     "@firestitch/colorpicker": "^14.0.0",

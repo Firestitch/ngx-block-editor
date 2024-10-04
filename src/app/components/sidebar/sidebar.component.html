@@ -120,7 +120,7 @@
       <div class="sidebar-panel info-panel">
         <div class="sidebar-label">Info</div>
         <div class="sidebar-row field-gap">
-          <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
+          <mat-form-field class="form-field-padless form-field-prefix">
             <input
               matInput
               [ngModel]="block.left"
@@ -132,7 +132,7 @@
               (ngModelChange)="numberChange($event, 'left')">
             <span matPrefix>X</span>
           </mat-form-field>
-          <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
+          <mat-form-field class="form-field-padless form-field-prefix">
             <input
               matInput
               [ngModel]="block.top"
@@ -144,7 +144,7 @@
               (ngModelChange)="numberChange($event, 'top')">
             <span matPrefix>Y</span>
           </mat-form-field>
-          <mat-form-field class="form-field-padless form-field-prefix rotate" floatLabel="never">
+          <mat-form-field class="form-field-padless form-field-prefix rotate">
             <input
               matInput
               [ngModel]="block.rotate"
@@ -159,7 +159,7 @@
         </div>
 
         <div class="sidebar-row field-gap">
-          <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
+          <mat-form-field class="form-field-padless form-field-prefix">
             <input
               matInput
               [ngModel]="block.width"
@@ -177,7 +177,7 @@
               <mat-icon>{{block.keepRatio ? 'lock_outline' : 'lock_open'}}</mat-icon>
             </a>
           </div>
-          <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
+          <mat-form-field class="form-field-padless form-field-prefix">
             <input
               matInput
               [ngModel]="block.height"
@@ -346,7 +346,7 @@
               [color]="block.fontColor">
             </fs-color-picker-chip>
 
-            <mat-form-field class="form-field-padless form-field-prefix font-size" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix font-size">
               <input
                 matInput
                 [ngModel]="block.fontSize"
@@ -360,7 +360,7 @@
               <span matPrefix *ngIf="block.fontSize">S</span>
             </mat-form-field>
 
-            <mat-form-field class="form-field-padless form-field-prefix line-height" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix line-height">
               <input
                 matInput
                 [ngModel]="block.lineHeight"
@@ -478,7 +478,7 @@
               [color]="block.borderColor">
             </fs-color-picker-chip>
 
-            <mat-form-field class="form-field-padless form-field-prefix border-width" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix border-width">
               <input
                 matInput
                 [(ngModel)]="block.borderWidth"
@@ -502,7 +502,7 @@
               [color]="block.backgroundColor">
             </fs-color-picker-chip>
 
-            <mat-form-field class="form-field-padless form-field-prefix shape-radius" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix shape-radius">
               <input
                 matInput
                 [ngModel]="block.shapeRadius"
@@ -545,7 +545,7 @@
               [color]="block.shadowColor">
             </fs-color-picker-chip>
 
-            <mat-form-field class="form-field-padless form-field-prefix shadow-x" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix shadow-x">
               <input
                 matInput
                 [ngModel]="block.shadowX"
@@ -557,7 +557,7 @@
                 (ngModelChange)="numberChange($event, 'shadowX')">
               <span matPrefix>X</span>
             </mat-form-field>
-            <mat-form-field class="form-field-padless form-field-prefix shadow-y" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix shadow-y">
               <input
                 matInput
                 [ngModel]="block.shadowY"
@@ -567,7 +567,7 @@
                 (ngModelChange)="numberChange($event, 'shadowY')">
               <span matPrefix>Y</span>
             </mat-form-field>
-            <mat-form-field class="form-field-padless form-field-prefix shadow-blur" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix shadow-blur">
               <input
                 matInput
                 [ngModel]="block.shadowBlur"
@@ -580,7 +580,7 @@
                 (ngModelChange)="numberChange($event, 'shadowBlur')">
               <span matPrefix *ngIf="block.shadowBlur">B</span>
             </mat-form-field>
-            <mat-form-field class="form-field-padless form-field-prefix shadow-spread" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix shadow-spread">
               <input
                 matInput
                 [ngModel]="block.shadowSpread"
@@ -593,7 +593,7 @@
                 (ngModelChange)="numberChange($event, 'shadowSpread')">
               <span matPrefix *ngIf="block.shadowSpread">S</span>
             </mat-form-field>
-            <!-- <mat-form-field class="form-field-padless" floatLabel="never">
+            <!-- <mat-form-field class="form-field-padless">
               <input
                   matInput
                   [ngModel]="block.shadowOpacity"
@@ -635,7 +635,7 @@
                   <mat-icon>crop</mat-icon>
                 </button>
 
-                <mat-form-field class="form-field-padless opacity" floatLabel="never">
+                <mat-form-field class="form-field-padless opacity">
                   <input
                     matInput
                     [ngModel]="block.imageOpacity"
@@ -656,7 +656,7 @@
           <div class="sidebar-label">Padding</div>
           <div class="sidebar-row padding-row field-gap">
 
-            <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix">
               <input
                 matInput
                 [(ngModel)]="block.padding"
@@ -670,7 +670,7 @@
               <span matPrefix *ngIf="block.padding">A</span>
             </mat-form-field>
 
-            <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix">
               <input
                 matInput
                 [ngModel]="block.paddingTop"
@@ -684,7 +684,7 @@
               <span matPrefix *ngIf="block.paddingTop">T</span>
             </mat-form-field>
 
-            <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix">
               <input
                 matInput
                 [ngModel]="block.paddingBottom"
@@ -698,7 +698,7 @@
               <span matPrefix *ngIf="block.paddingBottom">B</span>
             </mat-form-field>
 
-            <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix">
               <input
                 matInput
                 [ngModel]="block.paddingLeft"
@@ -712,7 +712,7 @@
               <span matPrefix *ngIf="block.paddingLeft">L</span>
             </mat-form-field>
 
-            <mat-form-field class="form-field-padless form-field-prefix" floatLabel="never">
+            <mat-form-field class="form-field-padless form-field-prefix">
               <input
                 matInput
                 [ngModel]="block.paddingRight"
