@@ -370,7 +370,7 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
 
   public ngOnDestroy(): void {
     //this._blockEditor.destroyBlock(this.block);
-    this._destroy$.next();
+    this._destroy$.next(null);
     this._destroy$.complete();
   }
 
