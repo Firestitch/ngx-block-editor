@@ -19,5 +19,5 @@
 //    `@include fs-style.core(mat.define-legacy-typography-config());`
 @include fs-style.core();
 @include mat.core();
-@include fs-drawer(mat.$blue-palette);
-@include fs-file(mat.$blue-palette);
+@include fs-drawer(mat.$m2-blue-palette);
+@include fs-file(mat.$m2-blue-palette);
