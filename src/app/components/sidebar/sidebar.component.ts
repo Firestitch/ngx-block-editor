@@ -375,6 +375,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public importBlocks(): void {
     this._prompt.input({
       title: 'Import blocks',
+      label: 'Import blocks',
+      required: true,
     })
       .subscribe((blocks) => {
         blocks = JSON.parse(blocks);
