@@ -63,6 +63,12 @@
     }
   }
 
+  .shadow-panel .sidebar-row {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: start;
+  }
+
   .layer-up, .layer-down {
     ::ng-deep .mat-button-wrapper {
       position: relative;
