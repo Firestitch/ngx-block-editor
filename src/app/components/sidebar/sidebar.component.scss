@@ -20,6 +20,10 @@
     flex-wrap: wrap;
     align-items: center;
 
+    &.tools {
+      align-items: start;
+    }
+
     + .sidebar-row {
       margin-top: 12px;
     }
@@ -70,6 +74,7 @@
   }
 
   .layer-up, .layer-down {
+    height: 77px;
     ::ng-deep .mat-button-wrapper {
       position: relative;
       mat-icon:first-child {
