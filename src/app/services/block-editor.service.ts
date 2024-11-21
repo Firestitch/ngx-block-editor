@@ -348,6 +348,7 @@ export class BlockEditorService implements OnDestroy {
       newBlock = {
         ...newBlock,
         borderColor: newBlock.borderColor ?? '#cccccc',
+        backgroundColor: newBlock.backgroundColor ?? '#cccccc',
         borderWidth: newBlock.borderWidth ?? 1,
       };
     } else if (newBlock.type === BlockType.Checkbox || newBlock.type === BlockType.RadioButton) {
