@@ -24,10 +24,6 @@
       align-items: start;
     }
 
-    + .sidebar-row {
-      margin-top: 12px;
-    }
-
     fs-color-picker-chip {
       margin-left: 6px;
     }
@@ -59,7 +55,7 @@
     }
 
     &.field-gap > *:not(.mat-icon-button):not(fs-file) {
-      margin-right: 11px;
+      margin-right: 2px;
 
       &:last-child {
         margin-right: 0;
