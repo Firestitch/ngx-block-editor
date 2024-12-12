@@ -367,8 +367,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public exportBlocks(): void {
-    const blocks = JSON.stringify(this._blockEditor.blocks);
-    this._clipboard.copy(blocks, { showMessage: false });
+    const blocks = this._blockEditor.blocks
+      .map((block) => ({
+        ...block,
+        id: null,
+        pdfPageId: null,
+        guid: guid(),
+        imageUrl: null,
+      }));
+
+    this._clipboard.copy(JSON.stringify(blocks), { showMessage: false });
     this._message.success('Exported blocks to clipboard');
   }
 
@@ -383,12 +391,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
         blocks
           .forEach((block: Block) => {
-            block = {
-              ...block,
-              guid: guid(),
-              imageUrl: null,
-            };
-
             this._blockEditor.blockAdd(block);
           });
 

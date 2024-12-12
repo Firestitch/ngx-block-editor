@@ -31,7 +31,7 @@
     &.padding-row {
       flex-wrap: unset;
       ::ng-deep {
-        .mat-form-field {
+        mat-form-field {
           width: 20%;
           min-width: 0;
         }
@@ -49,7 +49,7 @@
 
     ::ng-deep {
       .mat-checkbox,
-      .mat-form-field {
+      mat-form-field {
         font-size: 12px;
       }
     }
@@ -94,11 +94,11 @@
 
   .line-height,
   .font-size {
-    width: 45px;
+    width: 60px;
   }
 
   .border-width {
-    width: 50px;
+    width: 60px;
   }
 
   .shape-radius {
@@ -190,8 +190,8 @@
     }
 
     &.info-panel {
-      .mat-form-field {
-        width: 60px;
+      mat-form-field {
+        width: 70px;
 
         &.rotate {
           width: 50px;
@@ -200,7 +200,7 @@
     }
 
     &.shadow-panel {
-      .mat-form-field {
+      mat-form-field {
         width: 41px;
 
         &.shadow-x,
@@ -257,8 +257,8 @@
 
 :host {
   ::ng-deep {
-    .mat-form-field-appearance-outline.form-field-prefix     {
-      .mat-form-field-suffix, .mat-form-field-prefix{ 
+    mat-form-field-appearance-outline.form-field-prefix     {
+      mat-form-field-suffix, mat-form-field-prefix{ 
         top: 0;
       }
     }
