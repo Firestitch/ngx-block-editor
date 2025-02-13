@@ -20,7 +20,7 @@ import { FsPrompt } from '@firestitch/prompt';
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 
 import { Observable, Subject, of } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { catchError, filter, takeUntil } from 'rxjs/operators';
 
 import { BlockFormats, BlockTypes } from '../../consts';
 import { FsBlockEditorSidebarPanelDirective } from '../../directives';
@@ -386,6 +386,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: 'Import blocks',
       required: true,
     })
+      .pipe(
+        catchError(() => of(null)),
+        filter((blocks) => !!blocks),
+      )
       .subscribe((blocks) => {
         blocks = JSON.parse(blocks);
 
