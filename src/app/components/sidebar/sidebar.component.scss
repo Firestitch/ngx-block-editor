@@ -29,10 +29,10 @@
     }
 
     &.padding-row {
-      flex-wrap: unset;
+      flex-wrap: wrap;
       ::ng-deep {
         mat-form-field {
-          width: 20%;
+          width: 45%;
           min-width: 0;
         }
       }
@@ -42,7 +42,7 @@
       margin-bottom: -5px;
 
       .opacity {
-        width: 60px;
+        width: 80px;
         margin-left: 10px;
       }
     }
@@ -60,6 +60,10 @@
       &:last-child {
         margin-right: 0;
       }
+    }
+
+    fs-color-picker-chip {
+      margin-right: 4px !important;
     }
   }
 
@@ -98,11 +102,11 @@
   }
 
   .border-width {
-    width: 60px;
+    width: 75px;
   }
 
   .shape-radius {
-    width: 60px;
+    width: 75px;
   }
 
   .shape-corners {
@@ -201,20 +205,20 @@
 
     &.shadow-panel {
       mat-form-field {
-        width: 41px;
+        width: 75px;
 
-        &.shadow-x,
-        &.shadow-y {
-          width: 40px;
-        }
+        // &.shadow-x,
+        // &.shadow-y {
+        //   width: 70px;
+        // }
 
-        &.shadow-blur {
-          width: 50px;
-        }
+        // &.shadow-blur {
+        //   width: 70px;
+        // }
 
-        &.shadow-spread {
-          width: 60px;
-        }
+        // &.shadow-spread {
+        //   width: 70px;
+        // }
       }
     }
 
