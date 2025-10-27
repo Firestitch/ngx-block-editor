@@ -1,10 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, ElementRef,
-  HostBinding,
-  HostListener,
-  Input, OnDestroy, OnInit, ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, Input, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 
 import { round } from '@firestitch/common';
 import { FsFontPickerService } from '@firestitch/font-picker';
@@ -36,6 +30,11 @@ import { CreateImageUrlPipe } from '../../pipes/create-image-url.pipe';
     ],
 })
 export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
+  private _blockEditor = inject(BlockEditorService);
+  private _elementRef = inject(ElementRef);
+  private _cdRef = inject(ChangeDetectorRef);
+  private _fontPickerService = inject(FsFontPickerService);
+
 
   @ViewChild('element', { static: true })
   public element: ElementRef;
@@ -83,13 +82,6 @@ export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
   private _editable = false;
   private _transformable = false;
   private _destroy$ = new Subject();
-
-  constructor(
-    private _blockEditor: BlockEditorService,
-    private _elementRef: ElementRef,
-    private _cdRef: ChangeDetectorRef,
-    private _fontPickerService: FsFontPickerService,
-  ) { }
 
 
   @HostListener('document:keydown', ['$event'])

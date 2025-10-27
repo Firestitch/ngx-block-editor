@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 
@@ -38,16 +38,14 @@ import { MatButton } from '@angular/material/button';
     ],
 })
 export class GroupDialogComponent implements OnInit {
+  private _data = inject(MAT_DIALOG_DATA);
+  private _dialogRef = inject<MatDialogRef<GroupDialogComponent>>(MatDialogRef);
+
 
   public block: Block;
   public blockGroup: BlockGroup;
 
   private _blockEditor: BlockEditorService;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) private _data,
-    private _dialogRef: MatDialogRef<GroupDialogComponent>,
-  ) { }
 
   public ngOnInit(): void {
     this._blockEditor = this._data.blockEditor;

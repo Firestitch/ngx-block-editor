@@ -1,4 +1,4 @@
-import { Directive, Input, TemplateRef } from '@angular/core';
+import { Directive, Input, TemplateRef, inject } from '@angular/core';
 
 
 @Directive({
@@ -6,12 +6,9 @@ import { Directive, Input, TemplateRef } from '@angular/core';
     standalone: true,
 })
 export class FsBlockEditorSidebarPanelDirective {
+  templateRef = inject<TemplateRef<any>>(TemplateRef);
+
 
   @Input() public label: string;
   @Input() public show = true;
-
-
-  constructor(public templateRef: TemplateRef<any>) {
-
-  }
 }

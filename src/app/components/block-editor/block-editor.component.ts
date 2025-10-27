@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-  ContentChildren, ElementRef,
-  Input,
-  OnDestroy, OnInit, QueryList, ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ContentChildren, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChild, inject } from '@angular/core';
 
 import { FsZoomPanComponent, FsZoomPanModule } from '@firestitch/zoom-pan';
 
@@ -38,6 +33,9 @@ import { SidebarComponent as SidebarComponent_1 } from '../sidebar/sidebar.compo
     ],
 })
 export class FsBlockEditorComponent implements OnInit, OnDestroy {
+  private _el = inject(ElementRef);
+  private _blockEditor = inject(BlockEditorService);
+
 
   @ContentChildren(FsBlockEditorSidebarPanelDirective)
   public sidebarPanels: QueryList<FsBlockEditorSidebarPanelDirective>;
@@ -59,11 +57,6 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
   public blocks: Block[];
 
   private _destroy$ = new Subject();
-
-  constructor(
-    private _el: ElementRef,
-    private _blockEditor: BlockEditorService,
-  ) { }
 
   public get el(): any {
     return this._el.nativeElement;

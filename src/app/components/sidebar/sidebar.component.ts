@@ -1,13 +1,5 @@
 import { DOCUMENT, NgTemplateOutlet, NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ContentChildren, ElementRef,
-  EventEmitter,
-  Inject, Input,
-  OnDestroy, OnInit,
-  Output,
-  QueryList,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, QueryList, inject } from '@angular/core';
 import { UntypedFormControl, FormsModule } from '@angular/forms';
 
 import { MatDialog } from '@angular/material/dialog';
@@ -73,6 +65,15 @@ import { FsColorPickerModule } from '@firestitch/colorpicker';
     ],
 })
 export class SidebarComponent implements OnInit, OnDestroy {
+  private _el = inject(ElementRef);
+  private _blockEditor = inject(BlockEditorService);
+  private _cdRef = inject(ChangeDetectorRef);
+  private _clipboard = inject(FsClipboard);
+  private _message = inject(FsMessage);
+  private _prompt = inject(FsPrompt);
+  private _dialog = inject(MatDialog);
+  private _document = inject(DOCUMENT);
+
 
   @ContentChildren(FsBlockEditorSidebarPanelDirective)
   public sidebarPanels: QueryList<FsBlockEditorSidebarPanelDirective>;
@@ -94,18 +95,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public formats = [];
 
   private _destroy$ = new Subject();
-
-  constructor(
-    private _el: ElementRef,
-    private _blockEditor: BlockEditorService,
-    private _cdRef: ChangeDetectorRef,
-    private _clipboard: FsClipboard,
-    private _message: FsMessage,
-    private _prompt: FsPrompt,
-    private _dialog: MatDialog,
-    @Inject(DOCUMENT)
-    private _document: any,
-  ) { }
 
   public get el(): any {
     return this._el.nativeElement;

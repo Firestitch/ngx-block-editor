@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ContentChildren, ElementRef, Input,
-  OnDestroy,
-  OnInit, QueryList, ViewChild, ViewChildren
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, inject } from '@angular/core';
 
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
 
@@ -30,6 +24,10 @@ import { FsBlockComponent as FsBlockComponent_1 } from '../block/block.component
     imports: [FsBlockComponent_1],
 })
 export class ArtboardComponent implements OnInit, OnDestroy, AfterViewInit {
+  private _el = inject(ElementRef);
+  private _blockEditor = inject(BlockEditorService);
+  private _cdRef = inject(ChangeDetectorRef);
+
 
   @ContentChildren(FsBlockEditorSidebarPanelDirective)
   public sidebarPanels: QueryList<FsBlockEditorSidebarPanelDirective>;
@@ -55,12 +53,6 @@ export class ArtboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public blocks: Block[] = [];
 
   private _destroy$ = new Subject();
-
-  constructor(
-    private _el: ElementRef,
-    private _blockEditor: BlockEditorService,
-    private _cdRef: ChangeDetectorRef,
-  ) { }
 
   public get el(): any {
     return this._el.nativeElement;

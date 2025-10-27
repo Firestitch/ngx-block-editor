@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 
@@ -8,10 +8,8 @@ import { FsApi } from '@firestitch/api';
     standalone: true
 })
 export class CreateImageUrlPipe implements PipeTransform {
+  private _api = inject(FsApi);
 
-  public constructor(
-    private _api: FsApi,
-  ) { }
 
   public transform(url) {
     return this._api.createApiFile(url).safeDataUrl;

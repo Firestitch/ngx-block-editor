@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
@@ -40,16 +40,17 @@ import { FsFormModule } from '@firestitch/form';
     ],
 })
 export class LayersReorderDialogComponent {
+  private _dialogData = inject(MAT_DIALOG_DATA);
+  private _dialogRef = inject<MatDialogRef<LayersReorderDialogComponent>>(MatDialogRef);
+
 
   public blocks: Block[];
 
   public blockTypeIcons = index(BlockTypes, 'value', 'icon');
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    private _dialogData: unknown,
-    private _dialogRef: MatDialogRef<LayersReorderDialogComponent>,
-  ) {
+  constructor() {
+    const _dialogData = this._dialogData;
+
     this._init(_dialogData);
   }
 

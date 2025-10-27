@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 
 
 import { guid } from '@firestitch/common';
@@ -22,6 +22,10 @@ import { BlocksStore } from './blocks-store.service';
 
 @Injectable()
 export class BlockEditorService implements OnDestroy {
+  private _store = inject(BlocksStore);
+  private _dialog = inject(FsDialog);
+  private _prompt = inject(FsPrompt);
+
 
   public container;
   public margin;
@@ -33,12 +37,6 @@ export class BlockEditorService implements OnDestroy {
   private _blockClippable$ = new BehaviorSubject<boolean>(null);
   private _destroy$ = new Subject();
   private _selectionRange;
-
-  constructor(
-    private _store: BlocksStore,
-    private _dialog: FsDialog,
-    private _prompt: FsPrompt,
-  ) { }
 
   public get blockComponents$(): Observable<FsBlockComponent[]> {
     return this._blockComponents$.asObservable();

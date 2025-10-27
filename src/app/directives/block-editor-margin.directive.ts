@@ -1,4 +1,4 @@
-import { Directive, TemplateRef, ElementRef } from '@angular/core';
+import { Directive, TemplateRef, ElementRef, inject } from '@angular/core';
 
 
 @Directive({
@@ -6,10 +6,8 @@ import { Directive, TemplateRef, ElementRef } from '@angular/core';
     standalone: true
 })
 export class FsBlockEditorMarginDirective {
+  private _elementRef = inject(ElementRef);
 
-  constructor(
-    private _elementRef: ElementRef) {
-  }
 
   public get element() {
     return this._elementRef.nativeElement;
