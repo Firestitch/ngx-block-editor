@@ -1,10 +1,10 @@
 <div
-    #element
-    [class]="'block ' + 'block-' + block.type"
-    [style.top]="styleTop"
-    [style.left]="styleLeft"
-    [style.width]="styleWidth"
-    [style.height]="styleHeight"
+  #element
+  [class]="'block ' + 'block-' + block.type"
+  [style.top]="styleTop"
+  [style.left]="styleLeft"
+  [style.width]="styleWidth"
+  [style.height]="styleHeight"
     [ngClass]="{ 
       editable: editable, 
       readonly: block.readonly,
@@ -12,44 +12,44 @@
       lock: block.lock,
       selected: selected
     }"
-    [style.zIndex]="block.index">
+  [style.zIndex]="block.index">
   <div
-      #contentElement
-      class="content"
-      [style.borderColor]="block.borderColor"
-      [style.borderWidth]="block.borderWidth ? block.borderWidth + 'pt' : ''"
-      [style.borderStyle]="block.borderColor ? 'solid' : 'dashed'"
-      [style.textAlign]="block.horizontalAlign"
-      [style.fontStyle]="block.italic ? 'italic' : ''"
-      [style.fontFamily]="block.fontFamily || ''"
-      [style.fontSize]="block.fontSize ? block.fontSize + 'pt' : ''"
-      [style.lineHeight]="block.lineHeight ? block.lineHeight + 'pt' : ''"
-      [style.color]="block.fontColor"
-      [style.fontWeight]="block.bold ? 'bold' : ''"
-      [style.textDecoration]="block.underline ? 'underline' : ''"
-      [style.paddingTop]="block.paddingTop ? block.paddingTop + 'in' : ''"
-      [style.paddingBottom]="block.paddingBottom ? block.paddingBottom + 'in' : ''"
-      [style.paddingLeft]="block.paddingLeft ? block.paddingLeft + 'in' : ''"
-      [style.paddingRight]="block.paddingRight ? block.paddingRight + 'in' : ''"
-      [style.backgroundColor]="block.backgroundColor"
-      [style.borderBottomLeftRadius]="block.shapeRadius && block.shapeBottomLeft === 'round' ? block.shapeRadius + '%' : ''"
-      [style.borderBottomRightRadius]="block.shapeRadius && block.shapeBottomRight === 'round' ? block.shapeRadius + '%' : ''"
-      [style.borderTopRightRadius]="block.shapeRadius && block.shapeTopRight === 'round' ? block.shapeRadius + '%' : ''"
-      [style.borderTopLeftRadius]="block.shapeRadius && block.shapeTopLeft === 'round' ? block.shapeRadius + '%' : ''"
-      [style.boxShadow]="styleBoxShadow"
+    #contentElement
+    class="content"
+    [style.borderColor]="block.borderColor"
+    [style.borderWidth]="block.borderWidth ? block.borderWidth + 'pt' : ''"
+    [style.borderStyle]="block.borderColor ? 'solid' : 'dashed'"
+    [style.textAlign]="block.horizontalAlign"
+    [style.fontStyle]="block.italic ? 'italic' : ''"
+    [style.fontFamily]="block.fontFamily || ''"
+    [style.fontSize]="block.fontSize ? block.fontSize + 'pt' : ''"
+    [style.lineHeight]="block.lineHeight ? block.lineHeight + 'pt' : ''"
+    [style.color]="block.fontColor"
+    [style.fontWeight]="block.bold ? 'bold' : ''"
+    [style.textDecoration]="block.underline ? 'underline' : ''"
+    [style.paddingTop]="block.paddingTop ? block.paddingTop + 'in' : ''"
+    [style.paddingBottom]="block.paddingBottom ? block.paddingBottom + 'in' : ''"
+    [style.paddingLeft]="block.paddingLeft ? block.paddingLeft + 'in' : ''"
+    [style.paddingRight]="block.paddingRight ? block.paddingRight + 'in' : ''"
+    [style.backgroundColor]="block.backgroundColor"
+    [style.borderBottomLeftRadius]="block.shapeRadius && block.shapeBottomLeft === 'round' ? block.shapeRadius + '%' : ''"
+    [style.borderBottomRightRadius]="block.shapeRadius && block.shapeBottomRight === 'round' ? block.shapeRadius + '%' : ''"
+    [style.borderTopRightRadius]="block.shapeRadius && block.shapeTopRight === 'round' ? block.shapeRadius + '%' : ''"
+    [style.borderTopLeftRadius]="block.shapeRadius && block.shapeTopLeft === 'round' ? block.shapeRadius + '%' : ''"
+    [style.boxShadow]="styleBoxShadow"
       [ngClass]="{
         'editable': editable,
         'vertical-align-center': block.verticalAlign === 'center',
         'vertical-align-bottom': block.verticalAlign === 'bottom'
       }">
-    <ng-container *ngIf="block.imageUrl && ((block.imageUrl | createImageUrl) | async) as src">
-      <img                
+    @if (block.imageUrl && ((block.imageUrl | createImageUrl) | async); as src) {
+      <img
         [style.opacity]="block.imageOpacity ? block.imageOpacity/100 : 1"
         [src]="src">
-    </ng-container>
-    <ng-container *ngIf="block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.Date">
+    }
+    @if (block.type === BlockType.LongText || block.type === BlockType.ShortText || block.type === BlockType.Date) {
       {{block.label || block.name}}
-    </ng-container>
+    }
     <div
       #contentEditable
       [contentEditable]="editable && !typeForm"
