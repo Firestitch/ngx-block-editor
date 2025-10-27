@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgTemplateOutlet, NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
   ContentChildren, ElementRef,
@@ -8,13 +8,13 @@ import {
   Output,
   QueryList,
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl, FormsModule } from '@angular/forms';
 
 import { MatDialog } from '@angular/material/dialog';
 
 import { FsClipboard } from '@firestitch/clipboard';
 import { guid, index, round } from '@firestitch/common';
-import { FsFile } from '@firestitch/file';
+import { FsFile, FsFileModule } from '@firestitch/file';
 import { FsMessage } from '@firestitch/message';
 import { FsPrompt } from '@firestitch/prompt';
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
@@ -29,13 +29,48 @@ import { Block, BlockGroup } from '../../interfaces';
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { BlockEditorService } from '../../services';
 import { GroupDialogComponent } from '../group';
+import { FsFormModule } from '@firestitch/form';
+import { MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatPrefix, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FsMaskModule } from '@firestitch/mask';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { FsFontPickerModule } from '@firestitch/font-picker';
+import { FsColorPickerModule } from '@firestitch/colorpicker';
 
 
 @Component({
-  selector: 'sidebar',
-  templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'sidebar',
+    templateUrl: './sidebar.component.html',
+    styleUrls: ['./sidebar.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FormsModule,
+        FsFormModule,
+        NgTemplateOutlet,
+        FsFileModule,
+        MatIconButton,
+        MatTooltip,
+        MatIcon,
+        MatFormField,
+        MatInput,
+        FsMaskModule,
+        MatPrefix,
+        MatLabel,
+        MatSelect,
+        MatOption,
+        CdkTextareaAutosize,
+        MatCheckbox,
+        FsFontPickerModule,
+        FsColorPickerModule,
+        NgClass,
+    ],
 })
 export class SidebarComponent implements OnInit, OnDestroy {
 

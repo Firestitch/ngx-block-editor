@@ -8,13 +8,22 @@ import { Block } from 'src/app/interfaces/block';
 
 import { FsBlockEditorComponent } from './../../../../src/app/components/block-editor/block-editor.component';
 import { BlockEditorConfig } from './../../../../src/app/interfaces/block-editor-config';
+import { FsBlockEditorComponent as FsBlockEditorComponent_1 } from '../../../../src/app/components/block-editor/block-editor.component';
+import { FsBlockEditorSidebarPanelDirective } from '../../../../src/app/directives/block-editor-sidebar-panel.directive';
+import { JsonPipe } from '@angular/common';
 
 
 @Component({
-  selector: 'kitchen-sink',
-  templateUrl: './kitchen-sink.component.html',
-  styleUrls: ['./kitchen-sink.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'kitchen-sink',
+    templateUrl: './kitchen-sink.component.html',
+    styleUrls: ['./kitchen-sink.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FsBlockEditorComponent_1,
+        FsBlockEditorSidebarPanelDirective,
+        JsonPipe,
+    ],
 })
 export class KitchenSinkComponent implements OnInit {
 

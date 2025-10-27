@@ -19,13 +19,21 @@ import { BlockTypes } from '../../consts';
 import { BlockType } from '../../enums';
 import { Block } from '../../interfaces';
 import { BlockEditorService } from '../../services';
+import { NgClass, AsyncPipe } from '@angular/common';
+import { CreateImageUrlPipe } from '../../pipes/create-image-url.pipe';
 
 
 @Component({
-  selector: 'fs-block',
-  templateUrl: './block.component.html',
-  styleUrls: ['./block.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'fs-block',
+    templateUrl: './block.component.html',
+    styleUrls: ['./block.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        NgClass,
+        AsyncPipe,
+        CreateImageUrlPipe,
+    ],
 })
 export class FsBlockComponent implements OnDestroy, OnInit, AfterViewInit {
 

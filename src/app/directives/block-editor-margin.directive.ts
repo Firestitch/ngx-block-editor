@@ -2,7 +2,8 @@ import { Directive, TemplateRef, ElementRef } from '@angular/core';
 
 
 @Directive({
-  selector: '[fsBlockEditorMargin]'
+    selector: '[fsBlockEditorMargin]',
+    standalone: true
 })
 export class FsBlockEditorMarginDirective {
 

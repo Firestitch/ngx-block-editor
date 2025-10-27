@@ -18,13 +18,16 @@ import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { BlockEditorService } from '../../services';
 import { FsBlockComponent } from '../block';
 import { SidebarComponent } from '../sidebar';
+import { FsBlockComponent as FsBlockComponent_1 } from '../block/block.component';
 
 
 @Component({
-  selector: 'app-artboard',
-  templateUrl: 'artboard.component.html',
-  styleUrls: ['artboard.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-artboard',
+    templateUrl: 'artboard.component.html',
+    styleUrls: ['artboard.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [FsBlockComponent_1],
 })
 export class ArtboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
