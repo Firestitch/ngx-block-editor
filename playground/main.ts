@@ -1,27 +1,28 @@
 import { enableProdMode, importProvidersFrom } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-
-import { environment } from './environments/environment';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
-import { FsBlockEditorModule } from '@firestitch/package';
-import { FsApiModule } from '@firestitch/api';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { FsLabelModule } from '@firestitch/label';
-import { FsFileModule } from '@firestitch/file';
+import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { Routes, provideRouter } from '@angular/router';
+
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+
+import { FsApiModule } from '@firestitch/api';
 import { FsExampleModule } from '@firestitch/example';
-import { FsMessageModule } from '@firestitch/message';
+import { FsFileModule } from '@firestitch/file';
 import { FsFontPickerModule } from '@firestitch/font-picker';
-import { provideRouter, Routes } from '@angular/router';
-import { ExamplesComponent } from './app/components';
+import { FsLabelModule } from '@firestitch/label';
+import { FsMessageModule } from '@firestitch/message';
+import { FsBlockEditorModule } from '@firestitch/package';
+
+import { provideAnimations } from '@angular/platform-browser/animations';
+
+
 import { AppComponent } from './app/app.component';
+import { ExamplesComponent } from './app/components';
+import { environment } from './environments/environment';
 
 const routes: Routes = [
   { path: '', component: ExamplesComponent },
 ];
-
 
 
 if (environment.production) {
@@ -29,17 +30,17 @@ if (environment.production) {
 }
 
 bootstrapApplication(AppComponent, {
-    providers: [
-        importProvidersFrom(BrowserModule, FsBlockEditorModule, FsApiModule.forRoot(), FormsModule, FsLabelModule, FsFileModule.forRoot(), FsExampleModule.forRoot(), FsMessageModule.forRoot(), FsFontPickerModule.forRoot({
-            googleApiKey: 'AIzaSyDMnGc3CbikvvHkTYBw0QKtWRaQNwK1reE',
-        })),
-        {
-            provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-            useValue: { appearance: 'outline' },
-        },
-        provideAnimations(),
-        provideRouter(routes),
-    ]
+  providers: [
+    importProvidersFrom(BrowserModule, FsBlockEditorModule, FsApiModule.forRoot(), FormsModule, FsLabelModule, FsFileModule.forRoot(), FsExampleModule.forRoot(), FsMessageModule.forRoot(), FsFontPickerModule.forRoot({
+      googleApiKey: 'AIzaSyDMnGc3CbikvvHkTYBw0QKtWRaQNwK1reE',
+    })),
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: { appearance: 'outline' },
+    },
+    provideAnimations(),
+    provideRouter(routes),
+  ],
 })
-  .catch(err => console.error(err));
+  .catch((err) => console.error(err));
 

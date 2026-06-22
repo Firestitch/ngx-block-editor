@@ -28,11 +28,11 @@
               }
             }
             <ng-template
-              #addFile
-              let-type="type">
+                #addFile
+                let-type="type">
               <fs-file
-                (select)="blockUpload({ type: type, keepRatio: true, borderWidth: 0 }, $event)"
-                [accept]="blockType.accept">
+                  (select)="blockUpload({ type: type, keepRatio: true, borderWidth: 0 }, $event)"
+                  [accept]="blockType.accept">
                 <ng-container
                   [ngTemplateOutlet]="addButton"
                   [ngTemplateOutletContext]="{ blockType: blockType }">
@@ -62,62 +62,56 @@
       <div class="sidebar-label">
         Tools
       </div>
-      <div class="sidebar-row tools">
+      <div class="sidebar-row tools row-wrap row-gap">
         @if (block) {
           <button
-            class="layer-up"
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="layerUp()"
-            [matTooltip]="'Increase layer'">
-            <mat-icon>
-              arrow_back
-            </mat-icon>
-            <mat-icon>
-              layers
+              class="layer-up"
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="layerUp()"
+              [matTooltip]="'Increase layer'">
+            <mat-icon class="arrow-icon">
+              move_up
             </mat-icon>
           </button>
           <button
-            class="layer-down"
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="layerDown()"
-            [matTooltip]="'Decrease layer'">
-            <mat-icon>
-              arrow_back
-            </mat-icon>
-            <mat-icon>
-              layers
+              class="layer-down"
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="layerDown()"
+              [matTooltip]="'Decrease layer'">
+            <mat-icon class="arrow-icon">
+              move_down
             </mat-icon>
           </button>
           <button
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="toggleLock()"
-            [matTooltip]="block.lock ? 'Unlock' : 'Lock'">
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="toggleLock()"
+              [matTooltip]="block.lock ? 'Unlock' : 'Lock'">
             <mat-icon>
               {{ block.lock ? 'lock_outline' : 'lock_open' }}
             </mat-icon>
           </button>
           <button
-            mat-icon-button
-            color="basic"
-            type="button"
-            [matTooltip]="'Duplicate block'"
-            (click)="blockDuplicateClick()">
+              mat-icon-button
+              color="basic"
+              type="button"
+              [matTooltip]="'Duplicate block'"
+              (click)="blockDuplicateClick()">
             <mat-icon>
               content_copy
             </mat-icon>
           </button>
           <button
-            mat-icon-button
-            color="basic"
-            type="button"
-            [matTooltip]="'Delete block'"
-            (click)="blockRemoveClick()">
+              mat-icon-button
+              color="basic"
+              type="button"
+              [matTooltip]="'Delete block'"
+              (click)="blockRemoveClick()">
             <mat-icon>
               delete_outline
             </mat-icon>
@@ -125,23 +119,23 @@
         }
         @if (blocksReordered) {
           <button
-            class="reorder-layers"
-            mat-icon-button
-            color="basic"
-            type="button"
-            (click)="blocksReordered()"
-            [matTooltip]="'Reorder blocks'">
+              class="reorder-layers"
+              mat-icon-button
+              color="basic"
+              type="button"
+              (click)="blocksReordered()"
+              [matTooltip]="'Reorder blocks'">
             <mat-icon>
               swap_vert
             </mat-icon>
           </button>
         }
         <button
-          mat-icon-button
-          color="basic"
-          type="button"
-          matTooltip="Reset zoom"
-          (click)="zoomCenter.emit()">
+            mat-icon-button
+            color="basic"
+            type="button"
+            matTooltip="Reset zoom"
+            (click)="zoomCenter.emit()">
           <mat-icon>
             crop_free
           </mat-icon>
@@ -153,7 +147,7 @@
         <div class="sidebar-label">
           Info
         </div>
-        <div class="sidebar-row field-gap">
+        <div class="sidebar-row  row-wrap row-gap">
           <mat-form-field class="form-field-padless form-field-prefix">
             <input
               matInput
@@ -197,7 +191,7 @@
             </span>
           </mat-form-field>
         </div>
-        <div class="sidebar-row field-gap">
+        <div class="sidebar-row  row-wrap row-gap">
           <mat-form-field class="form-field-padless form-field-prefix">
             <input
               matInput
@@ -214,8 +208,8 @@
           </mat-form-field>
           <div>
             <a
-              (click)="toggleKeepRatio()"
-              class="keep-ratio">
+                (click)="toggleKeepRatio()"
+                class="keep-ratio">
               <mat-icon>
                 {{ block.keepRatio ? 'lock_outline' : 'lock_open' }}
               </mat-icon>
@@ -245,33 +239,32 @@
             </mat-icon>
             {{ blockTypeNames[block.type] }}
           </div>
-          <div class="sidebar-row">
+          <div class="sidebar-row row-column">
             @if (block.type === BlockType.RadioButton) {
               <div class="group-block">
                 <mat-form-field
-                  class="full-width"
-                  class="full-width">
+                    class="full-width"
+                    class="full-width">
                   <mat-label>
                     Group
                   </mat-label>
                   <mat-select
-                    [(ngModel)]="blockGroup"
-                    (ngModelChange)="blockGroupChange($event)"
-                    name="group">
+                      [(ngModel)]="blockGroup"
+                      (ngModelChange)="blockGroupChange($event)"
+                      name="group">
                     @if (blockGroups.length) {
                       <mat-option [value]="null">
                         None
                       </mat-option>
                     }
                     @for (item of blockGroups; track item) {
-                      <mat-option
-                        [value]="item">
+                      <mat-option [value]="item">
                         {{ item.label }}
                       </mat-option>
                     }
                     <mat-option
-                      [value]="null"
-                      (click)="blockGroupCreate($event)">
+                        [value]="null"
+                        (click)="blockGroupCreate($event)">
                       Create Group
                     </mat-option>
                   </mat-select>
@@ -315,21 +308,19 @@
               </mat-form-field>
             }
             @if (formats.length) {
-              <mat-form-field
-                class="full-width">
+              <mat-form-field class="full-width">
                 <mat-label>
                   Format
                 </mat-label>
                 <mat-select
-                  [(ngModel)]="block.format"
-                  name="format"
-                  (ngModelChange)="blockChangeProperty({ format: $event })">
+                    [(ngModel)]="block.format"
+                    name="format"
+                    (ngModelChange)="blockChangeProperty({ format: $event })">
                   <mat-option [value]="null">
                     None
                   </mat-option>
                   @for (item of formats; track item) {
-                    <mat-option
-                      [value]="item.value">
+                    <mat-option [value]="item.value">
                       {{ item.name }}
                     </mat-option>
                   }
@@ -363,15 +354,15 @@
             }
             <div class="form-field-options">
               <mat-checkbox
-                name="required"
-                [(ngModel)]="block.required"
-                (ngModelChange)="blockRequired($event)">
+                  name="required"
+                  [(ngModel)]="block.required"
+                  (ngModelChange)="blockRequired($event)">
                 Required
               </mat-checkbox>
               <mat-checkbox
-                name="readonly"
-                [(ngModel)]="block.readonly"
-                (ngModelChange)="blockReadonly($event)">
+                  name="readonly"
+                  [(ngModel)]="block.readonly"
+                  (ngModelChange)="blockReadonly($event)">
                 Readonly
               </mat-checkbox>
             </div>
@@ -383,163 +374,163 @@
           <div class="sidebar-label">
             Typography
           </div>
-          <div class="sidebar-row field-gap">
+          <div class="sidebar-row  row-wrap row-gap row-wrap row-gap">
             <fs-font-picker
               [(ngModel)]="block.fontFamily"
               (ngModelChange)="fontChanged($event)"
               name="fontfamily">
             </fs-font-picker>
-            <fs-color-picker-chip
-              (ngModelChange)="fontColorChange($event)"
-              [(ngModel)]="block.fontColor"
-              name="fontColor">
-            </fs-color-picker-chip>
-            <mat-form-field class="form-field-padless form-field-prefix font-size">
-              <input
-                matInput
-                [ngModel]="block.fontSize"
-                name="fontSize"
-                fsMaskNumber
-                [scale]="5"
-                (focus)="inputFocus($event)"
-                (keydown)="numericInputKeypress($event, 'fontSize', 1)"
-                (ngModelChange)="numberChange($event, 'fontSize')"
-                placeholder="Size">
-              @if (block.fontSize) {
-                <span
-                  matTextPrefix
-                  >
-                  S
-                </span>
-              }
-            </mat-form-field>
-            <mat-form-field class="form-field-padless form-field-prefix line-height">
-              <input
-                matInput
-                [ngModel]="block.lineHeight"
-                name="lineHeight"
-                fsMaskNumber
-                [scale]="5"
-                (focus)="inputFocus($event)"
-                (keydown)="numericInputKeypress($event, 'lineHeight', 1)"
-                (ngModelChange)="numberChange($event, 'lineHeight')"
-                placeholder="Line">
-              @if (block.lineHeight) {
-                <span
-                  matTextPrefix
-                  >
-                  L
-                </span>
-              }
-            </mat-form-field>
-            <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: block.bold }"
-              (click)="boldClick()">
-              <mat-icon>
-                format_bold
-              </mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: block.italic }"
-              (click)="italicClick()">
-              <mat-icon>
-                format_italic
-              </mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: block.underline }"
-              (click)="underlineClick()">
-              <mat-icon>
-                format_underlined
-              </mat-icon>
-            </button>
+            <div>
+              <mat-form-field class="form-field-padless form-field-prefix font-size">
+                <input
+                  matInput
+                  [ngModel]="block.fontSize"
+                  name="fontSize"
+                  fsMaskNumber
+                  [scale]="5"
+                  (focus)="inputFocus($event)"
+                  (keydown)="numericInputKeypress($event, 'fontSize', 1)"
+                  (ngModelChange)="numberChange($event, 'fontSize')"
+                  placeholder="Size">
+                @if (block.fontSize) {
+                  <span matTextPrefix>
+                    S
+                  </span>
+                }
+              </mat-form-field>
+              <mat-form-field class="form-field-padless form-field-prefix line-height">
+                <input
+                  matInput
+                  [ngModel]="block.lineHeight"
+                  name="lineHeight"
+                  fsMaskNumber
+                  [scale]="5"
+                  (focus)="inputFocus($event)"
+                  (keydown)="numericInputKeypress($event, 'lineHeight', 1)"
+                  (ngModelChange)="numberChange($event, 'lineHeight')"
+                  placeholder="Line">
+                @if (block.lineHeight) {
+                  <span matTextPrefix>
+                    L
+                  </span>
+                }
+              </mat-form-field>
+            </div>
+            <div>
+              <fs-color-picker-chip
+                (ngModelChange)="fontColorChange($event)"
+                [(ngModel)]="block.fontColor"
+                name="fontColor">
+              </fs-color-picker-chip>
+              <button
+                  mat-icon-button
+                  class="toggle-button"
+                  color="basic"
+                  type="button"
+                  [ngClass]="{ selected: block.bold }"
+                  (click)="boldClick()">
+                <mat-icon>
+                  format_bold
+                </mat-icon>
+              </button>
+              <button
+                  mat-icon-button
+                  class="toggle-button"
+                  color="basic"
+                  type="button"
+                  [ngClass]="{ selected: block.italic }"
+                  (click)="italicClick()">
+                <mat-icon>
+                  format_italic
+                </mat-icon>
+              </button>
+              <button
+                  mat-icon-button
+                  class="toggle-button"
+                  color="basic"
+                  type="button"
+                  [ngClass]="{ selected: block.underline }"
+                  (click)="underlineClick()">
+                <mat-icon>
+                  format_underlined
+                </mat-icon>
+              </button>
+            </div>
           </div>
-          <div class="sidebar-row align-row field-gap">
+          <div class="sidebar-row align-row  row-wrap row-gap">
             <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: block.horizontalAlign === 'left' }"
-              (click)="horizontalAlignClick('left')">
+                mat-icon-button
+                class="toggle-button"
+                color="basic"
+                type="button"
+                [ngClass]="{ selected: block.horizontalAlign === 'left' }"
+                (click)="horizontalAlignClick('left')">
               <mat-icon>
                 format_align_left
               </mat-icon>
             </button>
             <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: block.horizontalAlign === 'center' }"
-              (click)="horizontalAlignClick('center')">
+                mat-icon-button
+                class="toggle-button"
+                color="basic"
+                type="button"
+                [ngClass]="{ selected: block.horizontalAlign === 'center' }"
+                (click)="horizontalAlignClick('center')">
               <mat-icon>
                 format_align_center
               </mat-icon>
             </button>
             <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: block.horizontalAlign === 'justify' }"
-              (click)="horizontalAlignClick('justify')">
+                mat-icon-button
+                class="toggle-button"
+                color="basic"
+                type="button"
+                [ngClass]="{ selected: block.horizontalAlign === 'justify' }"
+                (click)="horizontalAlignClick('justify')">
               <mat-icon>
                 format_align_justify
               </mat-icon>
             </button>
             <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: block.horizontalAlign === 'right' }"
-              (click)="horizontalAlignClick('right')">
+                mat-icon-button
+                class="toggle-button"
+                color="basic"
+                type="button"
+                [ngClass]="{ selected: block.horizontalAlign === 'right' }"
+                (click)="horizontalAlignClick('right')">
               <mat-icon>
                 format_align_right
               </mat-icon>
             </button>
             <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: block.verticalAlign === 'top' }"
-              (click)="verticalAlignClick('top')">
+                mat-icon-button
+                class="toggle-button"
+                color="basic"
+                type="button"
+                [ngClass]="{ selected: block.verticalAlign === 'top' }"
+                (click)="verticalAlignClick('top')">
               <mat-icon>
                 vertical_align_top
               </mat-icon>
             </button>
             <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: block.verticalAlign === 'center' }"
-              (click)="verticalAlignClick('center')">
+                mat-icon-button
+                class="toggle-button"
+                color="basic"
+                type="button"
+                [ngClass]="{ selected: block.verticalAlign === 'center' }"
+                (click)="verticalAlignClick('center')">
               <mat-icon>
                 vertical_align_center
               </mat-icon>
             </button>
             <button
-              mat-icon-button
-              class="toggle-button"
-              color="basic"
-              type="button"
-              [ngClass]="{ selected: block.verticalAlign === 'bottom' }"
-              (click)="verticalAlignClick('bottom')">
+                mat-icon-button
+                class="toggle-button"
+                color="basic"
+                type="button"
+                [ngClass]="{ selected: block.verticalAlign === 'bottom' }"
+                (click)="verticalAlignClick('bottom')">
               <mat-icon>
                 vertical_align_bottom
               </mat-icon>
@@ -550,7 +541,7 @@
           <div class="sidebar-label">
             Border
           </div>
-          <div class="sidebar-row field-gap">
+          <div class="sidebar-row  row-wrap row-gap">
             <fs-color-picker-chip
               (ngModelChange)="borderColorChange($event)"
               [(ngModel)]="block.borderColor"
@@ -568,9 +559,7 @@
                 (ngModelChange)="numberChange($event, 'borderWidth')"
                 placeholder="Width">
               @if (block.borderWidth) {
-                <span
-                  matTextPrefix
-                  >
+                <span matTextPrefix>
                   W
                 </span>
               }
@@ -581,12 +570,7 @@
           <div class="sidebar-label">
             Shape
           </div>
-          <div class="sidebar-row field-gap">
-            <fs-color-picker-chip
-              (ngModelChange)="backgroundColorChange($event)"
-              [(ngModel)]="block.backgroundColor"
-              name="backgroundColor">
-            </fs-color-picker-chip>
+          <div class="sidebar-row row-wrap row-gap">
             <mat-form-field class="form-field-padless form-field-prefix shape-radius">
               <input
                 matInput
@@ -599,9 +583,7 @@
                 (ngModelChange)="numberChange($event, 'shapeRadius')"
                 placeholder="Radius">
               @if (block.shapeRadius) {
-                <span
-                  matTextPrefix
-                  >
+                <span matTextPrefix>
                   R
                 </span>
               }
@@ -628,18 +610,18 @@
                 (click)="shapeRound('shapeBottomRight')">
               </div>
             </div>
+            <fs-color-picker-chip
+              (ngModelChange)="backgroundColorChange($event)"
+              [(ngModel)]="block.backgroundColor"
+              name="backgroundColor">
+            </fs-color-picker-chip>
           </div>
         </div>
         <div class="sidebar-panel shadow-panel">
           <div class="sidebar-label">
             Shadow
           </div>
-          <div class="sidebar-row field-gap">
-            <fs-color-picker-chip
-              (ngModelChange)="shadowColorChange($event)"
-              [(ngModel)]="block.shadowColor"
-              name="shadowColor">
-            </fs-color-picker-chip>
+          <div class="sidebar-row  row-wrap row-gap">
             <mat-form-field class="form-field-padless form-field-prefix shadow-x">
               <input
                 matInput
@@ -678,9 +660,7 @@
                 (keydown)="numericInputKeypress($event, 'shadowBlur')"
                 (ngModelChange)="numberChange($event, 'shadowBlur')">
               @if (block.shadowBlur) {
-                <span
-                  matTextPrefix
-                  >
+                <span matTextPrefix>
                   B
                 </span>
               }
@@ -697,13 +677,16 @@
                 (keydown)="numericInputKeypress($event, 'shadowSpread')"
                 (ngModelChange)="numberChange($event, 'shadowSpread')">
               @if (block.shadowSpread) {
-                <span
-                  matTextPrefix
-                  >
+                <span matTextPrefix>
                   S
                 </span>
               }
             </mat-form-field>
+            <fs-color-picker-chip
+              (ngModelChange)="shadowColorChange($event)"
+              [(ngModel)]="block.shadowColor"
+              name="shadowColor">
+            </fs-color-picker-chip>
             <!-- <mat-form-field class="form-field-padless">
             <input
               matInput
@@ -715,224 +698,206 @@
               (ngModelChange)="numberChange($event, 'shadowOpacity')">
             <span matTextPrefix *ngIf="block.shadowOpacity">O</span>
           </mat-form-field> -->
+          </div>
         </div>
-      </div>
-      @if (block.type === BlockType.Rectangle) {
+        @if (block.type === BlockType.Rectangle) {
+          <div class="sidebar-panel">
+            <div class="sidebar-label">
+              Image
+            </div>
+            <div class="sidebar-row image-row">
+              <fs-file (select)="blockUpload(block, $event)">
+                <button
+                    type="button"
+                    mat-icon-button>
+                  <mat-icon>
+                    cloud_upload
+                  </mat-icon>
+                </button>
+              </fs-file>
+              @if (block.imageUrl) {
+                <button
+                    mat-icon-button
+                    color="basic"
+                    type="button"
+                    (click)="imageRemove()">
+                  <mat-icon>
+                    clear
+                  </mat-icon>
+                </button>
+                <button
+                    mat-icon-button
+                    class="toggle-button"
+                    color="basic"
+                    type="button"
+                    [ngClass]="{ selected: clippable }"
+                    (click)="imageClip()">
+                  <mat-icon>
+                    crop
+                  </mat-icon>
+                </button>
+                <mat-form-field class="form-field-padless opacity">
+                  <input
+                    matInput
+                    [ngModel]="block.imageOpacity"
+                    fsMaskNumber
+                    [scale]="5"
+                    name="imageOpacity"
+                    placeholder="Opacity"
+                    (focus)="inputFocus($event)"
+                    (keydown)="numericInputKeypress($event, 'imageOpacity', 1)"
+                    (ngModelChange)="numberChange($event, 'imageOpacity')">
+                  @if (block.imageOpacity) {
+                    <span matTextPrefix>
+                      O
+                    </span>
+                  }
+                </mat-form-field>
+              }
+            </div>
+          </div>
+        }
         <div class="sidebar-panel">
           <div class="sidebar-label">
-            Image
+            Padding
           </div>
-          <div class="sidebar-row image-row">
-            <fs-file (select)="blockUpload(block, $event)">
-              <button
-                type="button"
-                mat-icon-button>
-                <mat-icon>
-                  cloud_upload
-                </mat-icon>
-              </button>
-            </fs-file>
-            @if (block.imageUrl) {
-              <button
-                mat-icon-button
-                color="basic"
-                type="button"
-                (click)="imageRemove()">
-                <mat-icon>
-                  clear
-                </mat-icon>
-              </button>
-              <button
-                mat-icon-button
-                class="toggle-button"
-                color="basic"
-                type="button"
-                [ngClass]="{ selected: clippable }"
-                (click)="imageClip()">
-                <mat-icon>
-                  crop
-                </mat-icon>
-              </button>
-              <mat-form-field class="form-field-padless opacity">
-                <input
-                  matInput
-                  [ngModel]="block.imageOpacity"
-                  fsMaskNumber
-                  [scale]="5"
-                  name="imageOpacity"
-                  placeholder="Opacity"
-                  (focus)="inputFocus($event)"
-                  (keydown)="numericInputKeypress($event, 'imageOpacity', 1)"
-                  (ngModelChange)="numberChange($event, 'imageOpacity')">
-                @if (block.imageOpacity) {
-                  <span
-                    matTextPrefix
-                    >
-                    O
-                  </span>
-                }
-              </mat-form-field>
-            }
+          <div class="sidebar-row padding-row  row-wrap row-gap">
+            <mat-form-field
+                class="form-field-padless form-field-prefix"
+                floatLabel="always">
+              <mat-label>
+                All
+              </mat-label>
+              <input
+                matInput
+                [(ngModel)]="block.padding"
+                name="padding"
+                fsMaskNumber
+                [scale]="5"
+                (focus)="inputFocus($event)"
+                (ngModelChange)="paddingAllChange($event)"
+                (keydown)="paddingAllKeypress($event, 1)">
+            </mat-form-field>
+            <mat-form-field
+                class="form-field-padless form-field-prefix"
+                floatLabel="always">
+              <mat-label>
+                Top
+              </mat-label>
+              <input
+                matInput
+                [ngModel]="block.paddingTop"
+                name="paddingTop"
+                fsMaskNumber
+                [scale]="5"
+                (focus)="inputFocus($event)"
+                (keydown)="paddingKeypress($event, 'paddingTop')"
+                (ngModelChange)="numberChange($event, 'paddingTop')">
+            </mat-form-field>
+            <mat-form-field
+                class="form-field-padless form-field-prefix"
+                floatLabel="always">
+              <mat-label>
+                Bottom
+              </mat-label>
+              <input
+                matInput
+                [ngModel]="block.paddingBottom"
+                name="paddingBottom"
+                fsMaskNumber
+                [scale]="5"
+                (focus)="inputFocus($event)"
+                (keydown)="paddingKeypress($event, 'paddingBottom')"
+                (ngModelChange)="numberChange($event, 'paddingBottom')">
+            </mat-form-field>
+            <mat-form-field
+                class="form-field-padless form-field-prefix"
+                floatLabel="always">
+              <mat-label>
+                Left
+              </mat-label>
+              <input
+                matInput
+                [ngModel]="block.paddingLeft"
+                name="paddingLeft"
+                fsMaskNumber
+                [scale]="5"
+                (focus)="inputFocus($event)"
+                (keydown)="paddingKeypress($event, 'paddingLeft')"
+                (ngModelChange)="numberChange($event, 'paddingLeft')">
+            </mat-form-field>
+            <mat-form-field
+                class="form-field-padless form-field-prefix"
+                floatLabel="always">
+              <mat-label>
+                Right
+              </mat-label>
+              <input
+                matInput
+                [ngModel]="block.paddingRight"
+                name="paddingRight"
+                fsMaskNumber
+                [scale]="5"
+                (focus)="inputFocus($event)"
+                (keydown)="paddingKeypress($event, 'paddingRight')"
+                (ngModelChange)="numberChange($event, 'paddingRight')">
+            </mat-form-field>
           </div>
         </div>
       }
-      <div class="sidebar-panel">
-        <div class="sidebar-label">
-          Padding
-        </div>
-        <div class="sidebar-row padding-row field-gap">
-          <mat-form-field class="form-field-padless form-field-prefix">
-            <input
-              matInput
-              [(ngModel)]="block.padding"
-              name="padding"
-              fsMaskNumber
-              [scale]="5"
-              (focus)="inputFocus($event)"
-              (ngModelChange)="paddingAllChange($event)"
-              (keydown)="paddingAllKeypress($event, 1)"
-              placeholder="All">
-            @if (block.padding) {
-              <span
-                matTextPrefix
-                >
-                A
-              </span>
-            }
-          </mat-form-field>
-          <mat-form-field class="form-field-padless form-field-prefix">
-            <input
-              matInput
-              [ngModel]="block.paddingTop"
-              name="paddingTop"
-              fsMaskNumber
-              [scale]="5"
-              (focus)="inputFocus($event)"
-              (keydown)="paddingKeypress($event, 'paddingTop')"
-              (ngModelChange)="numberChange($event, 'paddingTop')"
-              placeholder="Top">
-            @if (block.paddingTop) {
-              <span
-                matTextPrefix
-                >
-                T
-              </span>
-            }
-          </mat-form-field>
-          <mat-form-field class="form-field-padless form-field-prefix">
-            <input
-              matInput
-              [ngModel]="block.paddingBottom"
-              name="paddingBottom"
-              fsMaskNumber
-              [scale]="5"
-              (focus)="inputFocus($event)"
-              (keydown)="paddingKeypress($event, 'paddingBottom')"
-              (ngModelChange)="numberChange($event, 'paddingBottom')"
-              placeholder="Bottom">
-            @if (block.paddingBottom) {
-              <span
-                matTextPrefix
-                >
-                B
-              </span>
-            }
-          </mat-form-field>
-          <mat-form-field class="form-field-padless form-field-prefix">
-            <input
-              matInput
-              [ngModel]="block.paddingLeft"
-              name="paddingLeft"
-              fsMaskNumber
-              [scale]="5"
-              (focus)="inputFocus($event)"
-              (keydown)="paddingKeypress($event, 'paddingLeft')"
-              (ngModelChange)="numberChange($event, 'paddingLeft')"
-              placeholder="Left">
-            @if (block.paddingLeft) {
-              <span
-                matTextPrefix
-                >
-                L
-              </span>
-            }
-          </mat-form-field>
-          <mat-form-field class="form-field-padless form-field-prefix">
-            <input
-              matInput
-              [ngModel]="block.paddingRight"
-              name="paddingRight"
-              fsMaskNumber
-              [scale]="5"
-              (focus)="inputFocus($event)"
-              (keydown)="paddingKeypress($event, 'paddingRight')"
-              (ngModelChange)="numberChange($event, 'paddingRight')"
-              placeholder="Right">
-            @if (block.paddingRight) {
-              <span
-                matTextPrefix
-                >
-                R
-              </span>
-            }
-          </mat-form-field>
-        </div>
-      </div>
     }
-  }
-  <div class="sidebar-panel">
-    <div class="sidebar-label">
-      Utilities
-    </div>
-    <div class="sidebar-row padding-row">
-      <button
-        mat-icon-button
-        color="basic"
-        type="button"
-        (click)="exportBlocks()"
-        [matTooltip]="'Export blocks'">
-        <mat-icon>
-          download
-        </mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        color="basic"
-        type="button"
-        (click)="importBlocks()"
-        [matTooltip]="'Import blocks'">
-        <mat-icon>
-          upload
-        </mat-icon>
-      </button>
-    </div>
-  </div>
-  @for (sidebarPanel of sidebarPanels; track sidebarPanel) {
-    @if (sidebarPanel.show) {
-      <div
-        div
-        class="sidebar-panel"
-        >
-        <div class="sidebar-label">
-          {{ sidebarPanel.label }}
-        </div>
-        <ng-container
-          [ngTemplateOutlet]="sidebarPanel.templateRef"
-          [ngTemplateOutletContext]="{ block: block }">
-        </ng-container>
+    <div class="sidebar-panel">
+      <div class="sidebar-label">
+        Utilities
       </div>
+      <div class="sidebar-row padding-row">
+        <button
+            mat-icon-button
+            color="basic"
+            type="button"
+            (click)="exportBlocks()"
+            [matTooltip]="'Export blocks'">
+          <mat-icon>
+            download
+          </mat-icon>
+        </button>
+        <button
+            mat-icon-button
+            color="basic"
+            type="button"
+            (click)="importBlocks()"
+            [matTooltip]="'Import blocks'">
+          <mat-icon>
+            upload
+          </mat-icon>
+        </button>
+      </div>
+    </div>
+    @for (sidebarPanel of sidebarPanels; track sidebarPanel) {
+      @if (sidebarPanel.show) {
+        <div
+            div
+            class="sidebar-panel">
+          <div class="sidebar-label">
+            {{ sidebarPanel.label }}
+          </div>
+          <ng-container
+            [ngTemplateOutlet]="sidebarPanel.templateRef"
+            [ngTemplateOutletContext]="{ block: block }">
+          </ng-container>
+        </div>
+      }
     }
-  }
-</form>
+  </form>
 </div>
 <ng-template
-  #addButton
-  let-blockType="blockType">
+    #addButton
+    let-blockType="blockType">
   <button
-    type="button"
-    mat-icon-button
-    [matTooltip]="'Add ' + blockType.name"
-    (click)="blockAdd(blockType.value)">
+      type="button"
+      mat-icon-button
+      [matTooltip]="'Add ' + blockType.name"
+      (click)="blockAdd(blockType.value)">
     <mat-icon>
       {{ blockType.icon }}
     </mat-icon>

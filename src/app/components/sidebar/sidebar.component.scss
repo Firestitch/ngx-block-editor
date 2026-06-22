@@ -10,6 +10,12 @@
   position: relative;
   box-sizing: border-box;
 
+  ::ng-deep {
+    .mdc-text-field {
+      padding-left: 10px;
+    }
+  }
+
   form {
     height: 100%;
   }
@@ -17,22 +23,30 @@
   .sidebar-row {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
     align-items: center;
 
-    &.tools {
+    &.row-column {
+      flex-direction: column;
       align-items: start;
     }
 
-    fs-color-picker-chip {
-      margin-left: 6px;
+    &.row-wrap {
+      flex-wrap: wrap;
+    }
+
+    &.row-gap {
+      gap: 3px;
+    }
+
+    &.tools {
+      align-items: start;
     }
 
     &.padding-row {
       flex-wrap: wrap;
       ::ng-deep {
         mat-form-field {
-          width: 45%;
+          width: 19%;
           min-width: 0;
         }
       }
@@ -53,37 +67,12 @@
         font-size: 12px;
       }
     }
-
-    &.field-gap > *:not(.mat-icon-button):not(fs-file) {
-      margin-right: 2px;
-
-      &:last-child {
-        margin-right: 0;
-      }
-    }
-
-    fs-color-picker-chip {
-      margin-right: 4px !important;
-    }
   }
 
   .shadow-panel .sidebar-row {
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: nowrap;
     align-items: start;
-  }
-
-  .layer-up, .layer-down {
-    height: 77px;
-    ::ng-deep .mat-button-wrapper {
-      position: relative;
-      mat-icon:first-child {
-        position: absolute;
-        transform: rotate(90deg) scale(0.5);
-        top: -7px;
-        color: #fff;
-      }
-    }
   }
 
   .layer-down {

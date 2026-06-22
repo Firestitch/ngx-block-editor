@@ -1,12 +1,25 @@
-import { DOCUMENT, NgTemplateOutlet, NgClass } from '@angular/common';
+import { DOCUMENT, NgClass, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, QueryList, inject } from '@angular/core';
-import { UntypedFormControl, FormsModule } from '@angular/forms';
+import { FormsModule, UntypedFormControl } from '@angular/forms';
 
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { MatIconButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
 
 import { FsClipboard } from '@firestitch/clipboard';
+import { FsColorPickerModule } from '@firestitch/colorpicker';
 import { guid, index, round } from '@firestitch/common';
 import { FsFile, FsFileModule } from '@firestitch/file';
+import { FsFontPickerModule } from '@firestitch/font-picker';
+import { FsFormModule } from '@firestitch/form';
+import { FsMaskModule } from '@firestitch/mask';
 import { FsMessage } from '@firestitch/message';
 import { FsPrompt } from '@firestitch/prompt';
 import { FsZoomPanComponent } from '@firestitch/zoom-pan';
@@ -21,59 +34,43 @@ import { Block, BlockGroup } from '../../interfaces';
 import { BlockEditorConfig } from '../../interfaces/block-editor-config';
 import { BlockEditorService } from '../../services';
 import { GroupDialogComponent } from '../group';
-import { FsFormModule } from '@firestitch/form';
-import { MatIconButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatPrefix, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { FsMaskModule } from '@firestitch/mask';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { FsFontPickerModule } from '@firestitch/font-picker';
-import { FsColorPickerModule } from '@firestitch/colorpicker';
 
 
 @Component({
-    selector: 'sidebar',
-    templateUrl: './sidebar.component.html',
-    styleUrls: ['./sidebar.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [
-        FormsModule,
-        FsFormModule,
-        NgTemplateOutlet,
-        FsFileModule,
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-        MatFormField,
-        MatInput,
-        FsMaskModule,
-        MatPrefix,
-        MatLabel,
-        MatSelect,
-        MatOption,
-        CdkTextareaAutosize,
-        MatCheckbox,
-        FsFontPickerModule,
-        FsColorPickerModule,
-        NgClass,
-    ],
+  selector: 'sidebar',
+  templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    FormsModule,
+    FsFormModule,
+    NgTemplateOutlet,
+    FsFileModule,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    MatFormField,
+    MatInput,
+    FsMaskModule,
+    MatPrefix,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    CdkTextareaAutosize,
+    MatCheckbox,
+    FsFontPickerModule,
+    FsColorPickerModule,
+    NgClass,
+  ],
+  providers: [
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: { appearance: 'fill' },
+    },
+  ],  
 })
 export class SidebarComponent implements OnInit, OnDestroy {
-  private _el = inject(ElementRef);
-  private _blockEditor = inject(BlockEditorService);
-  private _cdRef = inject(ChangeDetectorRef);
-  private _clipboard = inject(FsClipboard);
-  private _message = inject(FsMessage);
-  private _prompt = inject(FsPrompt);
-  private _dialog = inject(MatDialog);
-  private _document = inject(DOCUMENT);
-
 
   @ContentChildren(FsBlockEditorSidebarPanelDirective)
   public sidebarPanels: QueryList<FsBlockEditorSidebarPanelDirective>;
@@ -95,6 +92,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public formats = [];
 
   private _destroy$ = new Subject();
+  private _el = inject(ElementRef);
+  private _blockEditor = inject(BlockEditorService);
+  private _cdRef = inject(ChangeDetectorRef);
+  private _clipboard = inject(FsClipboard);
+  private _message = inject(FsMessage);
+  private _prompt = inject(FsPrompt);
+  private _dialog = inject(MatDialog);
+  private _document = inject(DOCUMENT);
 
   public get el(): any {
     return this._el.nativeElement;
