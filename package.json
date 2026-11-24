@@ -48,7 +48,7 @@
     "@firestitch/clipboard": "^18.0.2",
     "@firestitch/colorpicker": "^18.0.7",
     "@firestitch/common": "^18.0.17",
-    "@firestitch/component-tools": "^18.0.17",
+    "@firestitch/component-tools": "^18.0.19",
     "@firestitch/core": "^18.0.1",
     "@firestitch/date": "^18.0.12",
     "@firestitch/datepicker": "^18.0.22",

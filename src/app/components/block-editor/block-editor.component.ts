@@ -76,14 +76,16 @@ export class FsBlockEditorComponent implements OnInit, OnDestroy {
       .subscribe((blocks) => {
         this.blocks = blocks;
       });
-
-    setTimeout(() => {
-      this.zoomCenter();
-    });
   }
 
+  /**
+   * put the view back to how the editor opened: the default zoom, and the artboard at the
+   * [top]/[left] offset the zoom-pan was given. reset() alone pans to 0,0, which is not where
+   * the editor opens
+   */
   public zoomCenter(): void {
-   
+    this.zoompan.reset();
+    this.zoompan.move(this.zoompan.left, this.zoompan.top);
   }
 
   public editorContainerClick(event): void {
