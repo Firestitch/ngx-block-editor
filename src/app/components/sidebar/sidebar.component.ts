@@ -1,5 +1,5 @@
 import { DOCUMENT, NgClass, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, QueryList, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, QueryList, inject } from '@angular/core';
 import { FormsModule, UntypedFormControl } from '@angular/forms';
 
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
@@ -72,9 +72,9 @@ import { GroupDialogComponent } from '../group';
 })
 export class SidebarComponent implements OnInit, OnDestroy {
 
-  @ContentChildren(FsBlockEditorSidebarPanelDirective)
-  public sidebarPanels: QueryList<FsBlockEditorSidebarPanelDirective>;
-
+  // The panels written inside <fs-block-editor>, handed down by the editor: the sidebar has no
+  // content of its own, so a @ContentChildren query here would always be empty
+  @Input() public sidebarPanels: QueryList<FsBlockEditorSidebarPanelDirective>;
   @Input() public config: BlockEditorConfig;
   @Input() public blocks;
   @Input() public zoompan: FsZoomPanComponent;
