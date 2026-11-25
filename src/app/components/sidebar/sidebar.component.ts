@@ -379,10 +379,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Boxes on the same layer keep the order they are drawn in
     const sorted = this._blockEditor.blocks
-      .sort((a, b) => {
-        return a.index > b.index ? 1 : -1;
-      });
+      .sort((blockA: Block, blockB: Block) => blockA.index - blockB.index);
 
     sorted
       .forEach((block, idx) => {

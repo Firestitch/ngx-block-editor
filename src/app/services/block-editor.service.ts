@@ -329,7 +329,7 @@ export class BlockEditorService implements OnDestroy {
       shapeBottomRight: block.shapeBottomRight ?? 'round',
       verticalAlign: block.verticalAlign ?? 'top',
       horizontalAlign: block.horizontalAlign ?? 'left',
-      index: block.guid ? block.index : this._store.blocks.length,
+      index: block.guid ? block.index : this._store.nextIndex,
       guid: block.guid || guid('xxxxxxxxxxxx'),
       keepRatio: block.keepRatio ?? [
         BlockType.Checkbox,

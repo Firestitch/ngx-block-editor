@@ -30,6 +30,12 @@ export class BlocksStore implements OnDestroy {
     return this._blocks$.asObservable();
   }
 
+  // The layer above every box: where a box added to the page goes
+  public get nextIndex(): number {
+    return this.blocks
+      .reduce((highest: number, block: Block) => Math.max(highest, block.index), -1) + 1;
+  }
+
   public get blockAdded$(): Observable<Block> {
     return this._eventBus$
       .pipe(
@@ -120,13 +126,15 @@ export class BlocksStore implements OnDestroy {
   }
 
   private _appendBlock(block: Block) {
-    const blocks = [
+    // A box keeps the layer it was saved with, the one a print of the page draws it
+    // at: numbering it by its place in the list would save that number on its next
+    // change. A box saved without a layer is on layer 0, as the print draws it.
+    block.index = Number(block.index) || 0;
+
+    this._setBlocks([
       ...this.blocks,
       block,
-    ];
-
-    this._deduplicateIndexesFor(blocks);
-    this._setBlocks(blocks);
+    ]);
     this._dispatchEvent(EventType.Add, block);
   }
 
@@ -134,12 +142,6 @@ export class BlocksStore implements OnDestroy {
     this._eventBus$.next({
       type,
       value,
-    });
-  }
-
-  private _deduplicateIndexesFor(blocks: Block[]): void {
-    blocks.forEach((block, index) => {
-      block.index = index;
     });
   }
 }
